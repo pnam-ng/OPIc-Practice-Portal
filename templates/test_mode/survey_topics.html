@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Background Survey - OPIc Practice Test{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Progress Indicator -->
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list-check me-2"></i>Step 2 of 3: Background Survey
+                    </h4>
+                    <p class="mb-0 mt-2 small">Select 12-15 topics you are comfortable discussing in English</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('test_mode.survey_topics') }}" id="topicForm">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Instructions:</strong> Choose topics you can discuss comfortably. Your test questions will be based on these selections.
+                            <div class="mt-2">
+                                <span class="badge bg-secondary">Selected: <span id="selected-count">0</span> / 12-15</span>
+                            </div>
+                        </div>
+
+                        <!-- Personal Life & Home -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-home me-2 text-primary"></i>Personal Life & Home
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Your home/apartment" id="home">
+                                        <label class="form-check-label" for="home">Your home/apartment</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Your neighborhood" id="neighborhood">
+                                        <label class="form-check-label" for="neighborhood">Your neighborhood</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Household chores" id="chores">
+                                        <label class="form-check-label" for="chores">Household chores</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- People & Relationships -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-users me-2 text-primary"></i>People & Relationships
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Family members" id="family">
+                                        <label class="form-check-label" for="family">Family members</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Friends" id="friends">
+                                        <label class="form-check-label" for="friends">Friends</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Colleagues" id="colleagues">
+                                        <label class="form-check-label" for="colleagues">Colleagues</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leisure Activities -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-gamepad me-2 text-primary"></i>Leisure Activities
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Going to restaurants" id="restaurants">
+                                        <label class="form-check-label" for="restaurants">Going to restaurants</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Watching movies/TV" id="movies">
+                                        <label class="form-check-label" for="movies">Watching movies/TV</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Listening to music" id="music">
+                                        <label class="form-check-label" for="music">Listening to music</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Playing sports" id="sports">
+                                        <label class="form-check-label" for="sports">Playing sports</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Reading books" id="reading">
+                                        <label class="form-check-label" for="reading">Reading books</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Traveling/Tourism" id="travel">
+                                        <label class="form-check-label" for="travel">Traveling/Tourism</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Work & Career -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-briefcase me-2 text-primary"></i>Work & Career
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Your workplace" id="workplace">
+                                        <label class="form-check-label" for="workplace">Your workplace</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Job responsibilities" id="job">
+                                        <label class="form-check-label" for="job">Job responsibilities</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Business meetings" id="meetings">
+                                        <label class="form-check-label" for="meetings">Business meetings</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-graduation-cap me-2 text-primary"></i>Education
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Your school/university" id="school">
+                                        <label class="form-check-label" for="school">Your school/university</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Classes/Subjects" id="classes">
+                                        <label class="form-check-label" for="classes">Classes/Subjects</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Study habits" id="study">
+                                        <label class="form-check-label" for="study">Study habits</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technology -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-laptop me-2 text-primary"></i>Technology
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Using computers" id="computers">
+                                        <label class="form-check-label" for="computers">Using computers</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Using smartphones" id="smartphones">
+                                        <label class="form-check-label" for="smartphones">Using smartphones</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Internet/Social media" id="internet">
+                                        <label class="form-check-label" for="internet">Internet/Social media</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health & Fitness -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-heartbeat me-2 text-primary"></i>Health & Fitness
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Exercise/Fitness" id="exercise">
+                                        <label class="form-check-label" for="exercise">Exercise/Fitness</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Healthy eating" id="health">
+                                        <label class="form-check-label" for="health">Healthy eating</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Going to the doctor" id="doctor">
+                                        <label class="form-check-label" for="doctor">Going to the doctor</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shopping & Services -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-shopping-cart me-2 text-primary"></i>Shopping & Services
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Going shopping" id="shopping">
+                                        <label class="form-check-label" for="shopping">Going shopping</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Online shopping" id="online-shopping">
+                                        <label class="form-check-label" for="online-shopping">Online shopping</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Banking/Financial services" id="banking">
+                                        <label class="form-check-label" for="banking">Banking/Financial services</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transportation -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-car me-2 text-primary"></i>Transportation
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Public transportation" id="transit">
+                                        <label class="form-check-label" for="transit">Public transportation</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Driving/Cars" id="driving">
+                                        <label class="form-check-label" for="driving">Driving/Cars</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Commuting" id="commuting">
+                                        <label class="form-check-label" for="commuting">Commuting</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entertainment & Culture -->
+                        <div class="topic-category mb-4">
+                            <h5 class="category-title">
+                                <i class="fas fa-theater-masks me-2 text-primary"></i>Entertainment & Culture
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Concerts/Live music" id="concerts">
+                                        <label class="form-check-label" for="concerts">Concerts/Live music</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Museums/Galleries" id="museums">
+                                        <label class="form-check-label" for="museums">Museums/Galleries</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check topic-checkbox">
+                                        <input class="form-check-input topic-input" type="checkbox" name="topics" value="Parks/Outdoor activities" id="parks">
+                                        <label class="form-check-label" for="parks">Parks/Outdoor activities</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="topics_list" id="topics_list">
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-5" id="continueBtn" disabled>
+                                Continue <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.topic-category {
+    border-left: 3px solid #0d6efd;
+    padding-left: 15px;
+}
+
+.category-title {
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.topic-checkbox {
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.topic-checkbox:hover {
+    background-color: #f8f9fa;
+}
+
+.topic-checkbox input:checked + label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+</style>
+
+<script>
+const topicInputs = document.querySelectorAll('.topic-input');
+const selectedCount = document.getElementById('selected-count');
+const continueBtn = document.getElementById('continueBtn');
+const topicsList = document.getElementById('topics_list');
+
+function updateSelectedCount() {
+    const checked = document.querySelectorAll('.topic-input:checked');
+    const count = checked.length;
+    selectedCount.textContent = count;
+    
+    // Enable button if 12-15 topics selected
+    if (count >= 12 && count <= 15) {
+        continueBtn.disabled = false;
+        continueBtn.classList.remove('btn-secondary');
+        continueBtn.classList.add('btn-primary');
+    } else {
+        continueBtn.disabled = true;
+        continueBtn.classList.remove('btn-primary');
+        continueBtn.classList.add('btn-secondary');
+    }
+    
+    // Disable unchecked boxes if 15 selected
+    topicInputs.forEach(input => {
+        if (!input.checked && count >= 15) {
+            input.disabled = true;
+            input.closest('.topic-checkbox').style.opacity = '0.5';
+        } else {
+            input.disabled = false;
+            input.closest('.topic-checkbox').style.opacity = '1';
+        }
+    });
+}
+
+topicInputs.forEach(input => {
+    input.addEventListener('change', updateSelectedCount);
+});
+
+// Form submission
+document.getElementById('topicForm').addEventListener('submit', function(e) {
+    const checked = Array.from(document.querySelectorAll('.topic-input:checked'));
+    const topics = checked.map(input => input.value);
+    topicsList.value = topics.join('|||');
+});
+
+// Initial count
+updateSelectedCount();
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,788 @@
+{% extends "base.html" %}
+
+{% block title %}Practice Question - OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 sidebar">
+            <div class="sidebar-content">
+                <h4 class="sidebar-title">Practice Session</h4>
+                
+                <!-- Question Info -->
+                <div class="practice-section">
+                    <h5>Question Details</h5>
+                    <div class="question-info">
+                        <div class="info-item">
+                            <span class="info-label">Topic:</span>
+                            <span class="info-value">{{ question.topic }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Language:</span>
+                            <span class="info-value">{{ question.language.title() if question.language else 'English' }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recording Controls -->
+                <div class="practice-section">
+                    <h5>Recording</h5>
+                    <div class="recording-controls">
+                        <button id="recordBtn" class="btn btn-danger btn-block">
+                            <i class="fas fa-microphone"></i> Start Recording
+                        </button>
+                        <button id="stopBtn" class="btn btn-secondary btn-block" disabled>
+                            <i class="fas fa-stop"></i> Stop Recording
+                        </button>
+                    </div>
+                    
+                    <!-- Recording Timer (2 min countdown) -->
+                    <div class="recording-status" id="recordingStatus" style="display: none;">
+                        <div class="status-indicator">
+                            <i class="fas fa-circle recording-pulse"></i>
+                            <span>Recording...</span>
+                        </div>
+                        <div class="recording-timer" id="recordingTimer">02:00</div>
+                        <small class="text-muted">Time remaining</small>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="practice-section">
+                    <h5>Navigation</h5>
+                    <div class="navigation-controls">
+                        <a href="{{ url_for('practice_mode.index') }}" class="btn btn-outline-secondary btn-block">
+                            <i class="fas fa-arrow-left"></i> Back to Practice
+                        </a>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 main-content">
+            <div class="question-container">
+                <!-- Question Header -->
+                <div class="question-header">
+                    <h2><i class="fas fa-question-circle"></i> Practice Question</h2>
+                    <p class="question-subtitle">Take your time to think and respond</p>
+                </div>
+                
+                <!-- Question Audio with Progress Bar -->
+                <div class="question-audio">
+                    <h4><i class="fas fa-volume-up"></i> Listen to the Question</h4>
+                    <div class="audio-player-container">
+                        <button id="playQuestionBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-play"></i> Play Question
+                        </button>
+                        <div class="audio-progress-wrapper">
+                            <input type="range" id="questionProgress" class="audio-progress-bar" min="0" max="100" value="0">
+                            <div class="audio-time">
+                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Question Text (Hidden by default) -->
+                <div class="question-text">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0"><i class="fas fa-file-text"></i> Question Text</h4>
+                        <button id="toggleTextBtn" class="btn btn-sm btn-outline-secondary" onclick="toggleQuestionText()">
+                            <i class="fas fa-eye"></i> Show Text
+                        </button>
+                    </div>
+                    <div class="alert alert-warning mb-3" id="textWarning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Real Test Simulation:</strong> In the actual OPIc test, you must LISTEN to questions, not read them. The text is hidden by default to simulate real test conditions.
+                    </div>
+                    <div class="text-content" id="questionTextContent" style="display: none;">
+                        {{ question.text }}
+                    </div>
+                </div>
+                
+                <!-- Response Area -->
+                <div class="response-area">
+                    <h4><i class="fas fa-microphone"></i> Your Response</h4>
+                    
+                    <!-- Microphone Permission Alert -->
+                    <div class="alert alert-info" id="micPermissionAlert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Recording Tips:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>You have <strong>2 minutes</strong> to record your response</li>
+                            <li>Recording will auto-stop after 2 minutes</li>
+                            <li>You can playback and download your recording</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Audio Visualization -->
+                    <div class="audio-visualization" id="audioVisualization" style="display: none;">
+                        <canvas id="audioCanvas" width="600" height="100"></canvas>
+                    </div>
+                    
+                    <!-- Playback Controls -->
+                    <div id="playbackSection" style="display: none;">
+                        <h5><i class="fas fa-play-circle"></i> Your Recording</h5>
+                        <div class="playback-controls">
+                            <button id="playBtn" class="btn btn-success">
+                                <i class="fas fa-play"></i> Play
+                            </button>
+                            <button id="pauseBtn" class="btn btn-warning" style="display: none;">
+                                <i class="fas fa-pause"></i> Pause
+                            </button>
+                            <button id="downloadBtn" class="btn btn-info">
+                                <i class="fas fa-download"></i> Download Recording
+                            </button>
+                            <button id="submitBtn" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Submit Response
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> Download saves your recording as a WebM audio file that works in most media players
+                        </small>
+                        
+                        <!-- Playback Progress Bar -->
+                        <div class="playback-progress-wrapper">
+                            <input type="range" id="playbackProgress" class="audio-progress-bar" min="0" max="100" value="0">
+                            <div class="audio-time">
+                                <span id="playbackCurrentTime">0:00</span> / <span id="playbackDuration">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+/* Sidebar Styles */
+.sidebar {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 56px);
+    padding: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar-content {
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-title {
+    color: #495057;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.practice-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.practice-section h5 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.question-info {
+    margin-top: 15px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.btn-block {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.recording-status {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.recording-pulse {
+    color: #dc3545;
+    animation: pulse 1s infinite;
+    margin-right: 8px;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.recording-timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #dc3545;
+    font-family: 'Courier New', monospace;
+}
+
+.navigation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Main Content Styles */
+.main-content {
+    padding: 30px;
+}
+
+.question-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.question-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.question-header h2 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.question-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.question-audio, .question-text, .response-area {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.question-audio h4, .question-text h4, .response-area h4 {
+    color: #495057;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Audio Player Container */
+.audio-player-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.audio-progress-wrapper {
+    width: 100%;
+}
+
+.audio-progress-bar {
+    width: 100%;
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #dee2e6;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.audio-progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.audio-progress-bar::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.audio-time {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.text-content {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #495057;
+}
+
+#toggleTextBtn {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+#toggleTextBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.audio-visualization {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#audioCanvas {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #f8f9fa;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Playback Controls */
+.playback-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.playback-controls button {
+    flex: 1;
+    min-width: 120px;
+}
+
+.playback-progress-wrapper {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .main-content {
+        padding: 20px;
+    }
+    
+    .question-audio, .question-text, .response-area {
+        padding: 20px;
+    }
+    
+    .playback-controls button {
+        min-width: 100%;
+    }
+}
+</style>
+
+<script>
+// Global variables
+let mediaRecorder;
+let audioChunks = [];
+let recordedBlob;
+let recordingStartTime;
+let recordingTimer;
+let recordingTimeLeft = 120; // 2 minutes in seconds
+const MAX_RECORDING_TIME = 120; // 2 minutes
+
+// Audio context for visualization
+let audioContext;
+let analyser;
+let microphone;
+let dataArray;
+
+// Audio elements
+const questionAudio = new Audio('/uploads/{{ question.audio_url or "" }}');
+let playbackAudio;
+
+// DOM elements
+const recordBtn = document.getElementById('recordBtn');
+const stopBtn = document.getElementById('stopBtn');
+const playBtn = document.getElementById('playBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const submitBtn = document.getElementById('submitBtn');
+const playQuestionBtn = document.getElementById('playQuestionBtn');
+const recordingStatus = document.getElementById('recordingStatus');
+const recordingTimerEl = document.getElementById('recordingTimer');
+const audioVisualization = document.getElementById('audioVisualization');
+const audioCanvas = document.getElementById('audioCanvas');
+const playbackSection = document.getElementById('playbackSection');
+
+// Question audio progress
+const questionProgress = document.getElementById('questionProgress');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+
+// Playback progress
+const playbackProgress = document.getElementById('playbackProgress');
+const playbackCurrentTimeEl = document.getElementById('playbackCurrentTime');
+const playbackDurationEl = document.getElementById('playbackDuration');
+
+// Event listeners
+recordBtn.addEventListener('click', startRecording);
+stopBtn.addEventListener('click', stopRecording);
+playBtn.addEventListener('click', playRecording);
+pauseBtn.addEventListener('click', pauseRecording);
+downloadBtn.addEventListener('click', downloadRecording);
+submitBtn.addEventListener('click', submitResponse);
+playQuestionBtn.addEventListener('click', toggleQuestionAudio);
+
+// Question audio events
+questionAudio.addEventListener('loadedmetadata', () => {
+    durationEl.textContent = formatTime(questionAudio.duration);
+    questionProgress.max = questionAudio.duration;
+});
+
+questionAudio.addEventListener('timeupdate', () => {
+    questionProgress.value = questionAudio.currentTime;
+    currentTimeEl.textContent = formatTime(questionAudio.currentTime);
+});
+
+questionAudio.addEventListener('ended', () => {
+    playQuestionBtn.innerHTML = '<i class="fas fa-play"></i> Play Question';
+});
+
+questionProgress.addEventListener('input', () => {
+    questionAudio.currentTime = questionProgress.value;
+});
+
+// Functions
+function toggleQuestionText() {
+    const textContent = document.getElementById('questionTextContent');
+    const toggleBtn = document.getElementById('toggleTextBtn');
+    const textWarning = document.getElementById('textWarning');
+    
+    if (textContent.style.display === 'none') {
+        // Show text
+        textContent.style.display = 'block';
+        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Text';
+        toggleBtn.classList.remove('btn-outline-secondary');
+        toggleBtn.classList.add('btn-secondary');
+        textWarning.style.display = 'none';
+    } else {
+        // Hide text
+        textContent.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Show Text';
+        toggleBtn.classList.remove('btn-secondary');
+        toggleBtn.classList.add('btn-outline-secondary');
+        textWarning.style.display = 'block';
+    }
+}
+
+function toggleQuestionAudio() {
+    if (questionAudio.paused) {
+        questionAudio.play();
+        playQuestionBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Question';
+    } else {
+        questionAudio.pause();
+        playQuestionBtn.innerHTML = '<i class="fas fa-play"></i> Play Question';
+    }
+}
+
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        recordingTimeLeft = MAX_RECORDING_TIME;
+        
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+        
+        mediaRecorder.onstop = () => {
+            recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            showPlaybackControls();
+            
+            // Stop all tracks
+            stream.getTracks().forEach(track => track.stop());
+        };
+        
+        mediaRecorder.start();
+        recordingStartTime = Date.now();
+        
+        // Update UI
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+        recordingStatus.style.display = 'block';
+        audioVisualization.style.display = 'block';
+        
+        // Start countdown timer
+        updateCountdownTimer();
+        recordingTimer = setInterval(updateCountdownTimer, 1000);
+        
+        // Start audio visualization
+        startAudioVisualization(stream);
+        
+    } catch (error) {
+        console.error('Error starting recording:', error);
+        
+        let errorMessage = 'Unable to access microphone.\n\n';
+        
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+            errorMessage += 'Permission denied. Please:\n';
+            errorMessage += '1. Click the lock/camera icon in the address bar\n';
+            errorMessage += '2. Allow microphone access for this site\n';
+            errorMessage += '3. Refresh the page and try again';
+        } else if (error.name === 'NotFoundError') {
+            errorMessage += 'No microphone found. Please connect a microphone and try again.';
+        } else {
+            errorMessage += 'Error: ' + error.message + '\n\n';
+            errorMessage += 'Please check your browser settings and allow microphone access.';
+        }
+        
+        alert(errorMessage);
+    }
+}
+
+function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        
+        // Update UI
+        recordBtn.disabled = false;
+        stopBtn.disabled = true;
+        recordingStatus.style.display = 'none';
+        audioVisualization.style.display = 'none';
+        
+        // Stop timer
+        clearInterval(recordingTimer);
+        
+        // Stop audio visualization
+        if (audioContext) {
+            audioContext.close();
+        }
+    }
+}
+
+function updateCountdownTimer() {
+    recordingTimeLeft--;
+    
+    const minutes = Math.floor(recordingTimeLeft / 60);
+    const seconds = recordingTimeLeft % 60;
+    recordingTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Auto-stop when time is up
+    if (recordingTimeLeft <= 0) {
+        stopRecording();
+        alert('Recording time limit reached (2 minutes). Your response has been saved.');
+    }
+}
+
+function showPlaybackControls() {
+    playbackSection.style.display = 'block';
+    document.getElementById('micPermissionAlert').style.display = 'none';
+    
+    // Create playback audio element
+    playbackAudio = new Audio();
+    playbackAudio.src = URL.createObjectURL(recordedBlob);
+    
+    playbackAudio.addEventListener('loadedmetadata', () => {
+        playbackDurationEl.textContent = formatTime(playbackAudio.duration);
+        playbackProgress.max = playbackAudio.duration;
+    });
+    
+    playbackAudio.addEventListener('timeupdate', () => {
+        playbackProgress.value = playbackAudio.currentTime;
+        playbackCurrentTimeEl.textContent = formatTime(playbackAudio.currentTime);
+    });
+    
+    playbackAudio.addEventListener('ended', () => {
+        playBtn.style.display = 'inline-block';
+        pauseBtn.style.display = 'none';
+    });
+}
+
+function playRecording() {
+    if (playbackAudio) {
+        playbackAudio.play();
+        playBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+    }
+}
+
+function pauseRecording() {
+    if (playbackAudio) {
+        playbackAudio.pause();
+        playBtn.style.display = 'inline-block';
+        pauseBtn.style.display = 'none';
+    }
+}
+
+playbackProgress.addEventListener('input', () => {
+    if (playbackAudio) {
+        playbackAudio.currentTime = playbackProgress.value;
+    }
+});
+
+function downloadRecording() {
+    if (recordedBlob) {
+        // Convert to WAV or MP3 format would be ideal, but browsers support WebM natively
+        // Create a more user-friendly filename
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        const url = URL.createObjectURL(recordedBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `OPIc_Practice_Response_${timestamp}.webm`;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+        
+        // Show confirmation
+        alert('Recording downloaded successfully!\n\nNote: The file is in WebM format, which is compatible with most modern media players.');
+    } else {
+        alert('No recording available to download. Please record your response first.');
+    }
+}
+
+async function submitResponse() {
+    if (!recordedBlob) {
+        alert('Please record your response first.');
+        return;
+    }
+    
+    // Disable submit button to prevent double submission
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    
+    try {
+        const formData = new FormData();
+        const file = new File([recordedBlob], 'response.webm', { type: 'audio/webm' });
+        formData.append('audio', file);
+        
+        const response = await fetch('{{ url_for("practice_mode.record_practice_response", question_id=question.id) }}', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Response submitted successfully! 🎉');
+            // Redirect to practice mode index
+            window.location.href = '{{ url_for("practice_mode.index") }}';
+        } else {
+            throw new Error(data.error || 'Failed to submit response');
+        }
+    } catch (error) {
+        console.error('Error submitting response:', error);
+        alert('Error submitting response: ' + error.message);
+        
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> Submit Response';
+    }
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Audio visualization
+function startAudioVisualization(stream) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    microphone = audioContext.createMediaStreamSource(stream);
+    
+    microphone.connect(analyser);
+    analyser.fftSize = 256;
+    
+    const bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
+    
+    draw();
+}
+
+function draw() {
+    if (!analyser) return;
+    
+    requestAnimationFrame(draw);
+    
+    analyser.getByteFrequencyData(dataArray);
+    
+    const canvas = audioCanvas;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, width, height);
+    
+    const barWidth = (width / dataArray.length) * 2.5;
+    let barHeight;
+    let x = 0;
+    
+    for (let i = 0; i < dataArray.length; i++) {
+        barHeight = (dataArray[i] / 255) * height;
+        
+        ctx.fillStyle = `rgb(${barHeight + 100}, 50, 50)`;
+        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+        
+        x += barWidth + 1;
+    }
+}
+</script>
+{% endblock %}
+

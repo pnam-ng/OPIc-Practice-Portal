@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Register - OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm mt-5">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+                        <h3 class="fw-bold">Create Account</h3>
+                        <p class="text-muted">Join OPIc Practice Portal</p>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" id="toggle-password" title="Show/Hide Password">
+                                    <i class="fas fa-eye" id="password-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">At least 6 characters</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock" id="password-match-icon"></i>
+                                </span>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" id="toggle-confirm-password" title="Show/Hide Password">
+                                    <i class="fas fa-eye" id="confirm-password-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text" id="password-match-message">Re-enter your password</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mb-3" id="submit-btn">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted">Already have an account? 
+                            <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const matchMessage = document.getElementById('password-match-message');
+    const matchIcon = document.getElementById('password-match-icon');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    // Toggle password visibility
+    const togglePassword = document.getElementById('toggle-password');
+    const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+    const passwordEye = document.getElementById('password-eye');
+    const confirmPasswordEye = document.getElementById('confirm-password-eye');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        if (type === 'text') {
+            passwordEye.classList.remove('fa-eye');
+            passwordEye.classList.add('fa-eye-slash');
+        } else {
+            passwordEye.classList.remove('fa-eye-slash');
+            passwordEye.classList.add('fa-eye');
+        }
+    });
+    
+    toggleConfirmPassword.addEventListener('click', function() {
+        const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmPasswordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        if (type === 'text') {
+            confirmPasswordEye.classList.remove('fa-eye');
+            confirmPasswordEye.classList.add('fa-eye-slash');
+        } else {
+            confirmPasswordEye.classList.remove('fa-eye-slash');
+            confirmPasswordEye.classList.add('fa-eye');
+        }
+    });
+    
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        // Only check if confirm password field has content
+        if (confirmPassword.length === 0) {
+            // Reset to default state
+            matchMessage.textContent = 'Re-enter your password';
+            matchMessage.className = 'form-text text-muted';
+            confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
+            matchIcon.className = 'fas fa-lock';
+            return;
+        }
+        
+        // Check if passwords match
+        if (password === confirmPassword && password.length >= 6) {
+            // Passwords match and meet length requirement
+            matchMessage.textContent = '✓ Passwords match';
+            matchMessage.className = 'form-text text-success';
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            matchIcon.className = 'fas fa-check-circle text-success';
+        } else if (password === confirmPassword && password.length < 6) {
+            // Passwords match but too short
+            matchMessage.textContent = '⚠ Passwords match but too short (min 6 characters)';
+            matchMessage.className = 'form-text text-warning';
+            confirmPasswordInput.classList.remove('is-valid');
+            confirmPasswordInput.classList.add('is-invalid');
+            matchIcon.className = 'fas fa-exclamation-circle text-warning';
+        } else {
+            // Passwords don't match
+            matchMessage.textContent = '✗ Passwords do not match';
+            matchMessage.className = 'form-text text-danger';
+            confirmPasswordInput.classList.remove('is-valid');
+            confirmPasswordInput.classList.add('is-invalid');
+            matchIcon.className = 'fas fa-times-circle text-danger';
+        }
+    }
+    
+    // Add event listeners for real-time checking
+    passwordInput.addEventListener('input', checkPasswordMatch);
+    confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+    
+    // Also check on blur (when user leaves the field)
+    confirmPasswordInput.addEventListener('blur', checkPasswordMatch);
+});
+</script>
+
+<style>
+.is-valid {
+    border-color: #198754 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+#password-match-icon {
+    transition: all 0.3s ease;
+}
+
+#confirm_password {
+    transition: border-color 0.3s ease;
+}
+
+/* Password toggle button styles */
+#toggle-password,
+#toggle-confirm-password {
+    border-left: none;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+}
+
+#toggle-password:hover,
+#toggle-confirm-password:hover {
+    background-color: #e9ecef;
+}
+
+#toggle-password:focus,
+#toggle-confirm-password:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.input-group > .form-control:not(:last-child) {
+    border-right: none;
+}
+</style>
+{% endblock %}

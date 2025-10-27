@@ -1,0 +1,39 @@
+# Core Flask Framework
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-Migrate==4.1.0
+Flask-WTF==1.2.2
+Flask-Admin==1.6.1
+Flask-Mail==0.10.0
+
+# Database and ORM
+SQLAlchemy==2.0.44
+Alembic==1.17.0
+
+# Form Handling and Security
+WTForms==3.2.1
+Werkzeug==3.1.3
+itsdangerous==2.2.0
+
+# Environment and Configuration
+python-dotenv==1.1.1
+
+# Background Tasks (Optional)
+Celery==5.5.3
+kombu==5.5.4
+billiard==4.2.2
+vine==5.1.0
+
+# Database Drivers (Optional - for production)
+psycopg2==2.9.11
+
+# Utilities
+click==8.3.0
+blinker==1.9.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+python-dateutil==2.9.0.post0
+pytz==2025.2
+six==1.17.0
+typing-extensions==4.15.0

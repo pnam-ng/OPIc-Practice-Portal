@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Practice Mode - OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 sidebar">
+            <div class="sidebar-content">
+                <h4 class="sidebar-title">Practice Options</h4>
+                
+                <!-- Topic Selection -->
+                <div class="practice-section">
+                    <h5>Choose Practice Settings</h5>
+                    <form method="POST" action="{{ url_for('practice_mode.start_practice') }}">
+                        <div class="form-group">
+                            <label for="level">Difficulty Level:</label>
+                            <select name="level" id="level" class="form-control" required>
+                                <option value="">Choose level...</option>
+                                <option value="IM">IM (Intermediate-Mid)</option>
+                                <option value="IH">IH (Intermediate-High)</option>
+                                <option value="AL">AL (Advanced-Low)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="topic">Select Topic:</label>
+                            <select name="topic" id="topic" class="form-control" required disabled>
+                                <option value="">Choose a level first...</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-play"></i> Start Practice
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Practice Stats -->
+                <div class="practice-section">
+                    <h5>Your Progress</h5>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Practice:</span>
+                            <span class="stat-value">{{ user_stats.total_responses or 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Current Streak:</span>
+                            <span class="stat-value">{{ user_stats.streak_count or 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="practice-section">
+                    <h5>Quick Actions</h5>
+                    <div class="quick-actions">
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="{{ url_for('test_mode.survey') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-clipboard-list"></i> Take Test
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 main-content">
+            <div class="practice-header">
+                <h2><i class="fas fa-dumbbell"></i> Practice Mode</h2>
+                <p class="lead">Improve your speaking skills with targeted practice questions</p>
+            </div>
+            
+            <!-- Practice Features -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h4>Voice Recording</h4>
+                        <p>Record your responses and practice pronunciation. Get instant feedback on your speaking.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Progress Tracking</h4>
+                        <p>Track your improvement over time with detailed statistics and streak counters.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-random"></i>
+                        </div>
+                        <h4>Flexible Practice</h4>
+                        <p>Choose specific topics or get random questions. Practice at your own pace.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4>No Time Pressure</h4>
+                        <p>Take your time to think and respond. Practice mode is about learning, not testing.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Practice Tips -->
+            <div class="practice-tips">
+                <h4><i class="fas fa-lightbulb"></i> Practice Tips</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="tip-item">
+                            <i class="fas fa-volume-up"></i>
+                            <h5>Listen Carefully</h5>
+                            <p>Pay attention to the question audio and understand what's being asked.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="tip-item">
+                            <i class="fas fa-brain"></i>
+                            <h5>Think First</h5>
+                            <p>Take a moment to organize your thoughts before recording your response.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="tip-item">
+                            <i class="fas fa-redo"></i>
+                            <h5>Practice Regularly</h5>
+                            <p>Consistent practice is key to improving your speaking skills.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sidebar {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 56px);
+    padding: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar-content {
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-title {
+    color: #495057;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.practice-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.practice-section h5 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.progress-stats {
+    margin-top: 15px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.stat-value {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main-content {
+    padding: 30px;
+}
+
+.practice-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.practice-header h2 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.practice-header .lead {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.feature-card h4 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+.practice-tips {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-top: 40px;
+}
+
+.practice-tips h4 {
+    color: #495057;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.tip-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.tip-item i {
+    font-size: 2.5rem;
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.tip-item h5 {
+    color: #495057;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.tip-item p {
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .main-content {
+        padding: 20px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const levelSelect = document.getElementById('level');
+    const topicSelect = document.getElementById('topic');
+    
+    // Load topics when level is selected
+    levelSelect.addEventListener('change', function() {
+        const selectedLevel = this.value;
+        
+        if (!selectedLevel) {
+            topicSelect.disabled = true;
+            topicSelect.innerHTML = '<option value="">Choose a level first...</option>';
+            return;
+        }
+        
+        // Show loading state
+        topicSelect.disabled = true;
+        topicSelect.innerHTML = '<option value="">Loading topics...</option>';
+        
+        // Fetch topics for selected level
+        fetch(`/practice/topics/${selectedLevel}`)
+            .then(response => response.json())
+            .then(data => {
+                topicSelect.innerHTML = '<option value="">Choose a topic...</option>';
+                topicSelect.innerHTML += '<option value="random">Random Question</option>';
+                
+                if (data.topics && data.topics.length > 0) {
+                    data.topics.forEach(topic => {
+                        const option = document.createElement('option');
+                        option.value = topic;
+                        option.textContent = topic;
+                        topicSelect.appendChild(option);
+                    });
+                    topicSelect.disabled = false;
+                } else {
+                    topicSelect.innerHTML = '<option value="">No topics available for this level</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading topics:', error);
+                topicSelect.innerHTML = '<option value="">Error loading topics</option>';
+            });
+    });
+});
+</script>
+{% endblock %}
+

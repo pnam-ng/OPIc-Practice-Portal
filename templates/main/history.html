@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Activity History - OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h2><i class="fas fa-history me-2"></i>Activity History</h2>
+                <p class="text-muted">View your practice and test session history</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ user_stats.total_responses or 0 }}</h3>
+                    <p>Total Responses</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-success text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ user_stats.streak_count or 0 }}</h3>
+                    <p>Day Streak</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-info text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ surveys|length }}</h3>
+                    <p>Tests Taken</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-warning text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ responses_by_date|length }}</h3>
+                    <p>Active Days</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Activity Timeline -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-stream me-2"></i>Activity Timeline</h4>
+                </div>
+                <div class="card-body">
+                    {% if responses_by_date %}
+                        {% for date, date_responses in responses_by_date.items()|sort(reverse=True) %}
+                        <div class="timeline-date-group mb-4">
+                            <h5 class="timeline-date">
+                                <i class="fas fa-calendar-day me-2"></i>{{ date }}
+                                <span class="badge bg-secondary ms-2">{{ date_responses|length }} responses</span>
+                            </h5>
+                            
+                            <div class="timeline-items">
+                                {% for response in date_responses %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <i class="fas fa-question-circle text-primary me-1"></i>
+                                                    {{ response.question.topic }}
+                                                </h6>
+                                                <p class="mb-2 text-muted">{{ response.question.text[:150] }}{% if response.question.text|length > 150 %}...{% endif %}</p>
+                                                <div class="response-meta">
+                                                    {% if response.question.language %}
+                                                    <span class="badge bg-info me-2">
+                                                        <i class="fas fa-language"></i> {{ response.question.language.title() }}
+                                                    </span>
+                                                    {% endif %}
+                                                    {% if response.question.difficulty %}
+                                                    <span class="badge bg-secondary me-2">
+                                                        <i class="fas fa-signal"></i> {{ response.question.difficulty.title() }}
+                                                    </span>
+                                                    {% endif %}
+                                                    {% if response.question.difficulty_level %}
+                                                    <span class="badge bg-primary me-2">
+                                                        <i class="fas fa-layer-group"></i> {{ response.question.difficulty_level }}
+                                                    </span>
+                                                    {% endif %}
+                                                    {% if response.duration %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-clock"></i> {{ "%.1f"|format(response.duration) }}s
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock"></i>
+                                                    {{ response.created_at.strftime('%H:%M') }}
+                                                </small>
+                                                {% if response.audio_url %}
+                                                <div class="mt-2">
+                                                    <audio controls class="small-audio">
+                                                        <source src="/{{ response.audio_url }}" type="audio/webm">
+                                                        Your browser does not support the audio element.
+                                                    </audio>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No activity yet</h5>
+                            <p class="text-muted">Start practicing to see your activity history here!</p>
+                            <a href="{{ url_for('main.practice_mode') }}" class="btn btn-primary">
+                                <i class="fas fa-dumbbell me-2"></i>Start Practicing
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Test Surveys History -->
+    {% if surveys %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Test Sessions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>English Level</th>
+                                    <th>Interests</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for survey in surveys %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-calendar me-1"></i>
+                                        {{ survey.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            {{ survey.answers.get('english_level', 'N/A').title() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if survey.answers.get('interests') %}
+                                            {% for interest in survey.answers.get('interests', [])[:3] %}
+                                                <span class="badge bg-info me-1">{{ interest }}</span>
+                                            {% endfor %}
+                                            {% if survey.answers.get('interests')|length > 3 %}
+                                                <span class="badge bg-secondary">+{{ survey.answers.get('interests')|length - 3 }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">No interests recorded</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewSurveyDetails({{ survey.id }})">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.stat-card {
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-right: 15px;
+    opacity: 0.8;
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.stat-info p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.timeline-date-group {
+    border-left: 3px solid #007bff;
+    padding-left: 20px;
+}
+
+.timeline-date {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.timeline-items {
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -23px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #007bff;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.timeline-content:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+}
+
+.response-meta {
+    margin-top: 10px;
+}
+
+.small-audio {
+    width: 200px;
+    height: 30px;
+}
+
+.page-header {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 15px;
+}
+
+.page-header h2 {
+    color: #495057;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .small-audio {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+function viewSurveyDetails(surveyId) {
+    // For now, just show an alert. You can enhance this to show a modal with full details
+    alert('Survey details view - Coming soon!\nSurvey ID: ' + surveyId);
+}
+</script>
+{% endblock %}
+
+
+
+

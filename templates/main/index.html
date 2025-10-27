@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 fw-bold text-primary mb-4">
+                <i class="fas fa-microphone-alt me-3"></i>OPIc Practice Portal
+            </h1>
+            <p class="lead mb-4">
+                Master the OPIc test with AI-powered practice sessions. 
+                Improve your English or Korean speaking skills with personalized questions and instant feedback.
+            </p>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Test Mode</h5>
+                            <p class="card-text">Complete simulated OPIc tests with personalized questions based on your profile.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dumbbell fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Practice Mode</h5>
+                            <p class="card-text">Practice specific topics or random questions to improve your speaking skills.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Track Progress</h5>
+                            <p class="card-text">Monitor your daily streak and track your improvement over time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="fas fa-user-plus me-2"></i>Get Started
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Self-Assessment - OPIc Practice Test{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Progress Indicator -->
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-check me-2"></i>Step 1 of 3: Self-Assessment
+                    </h4>
+                    <p class="mb-0 mt-2 small">This will help us determine the appropriate question difficulty</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('test_mode.self_assessment') }}">
+                        <div class="mb-4">
+                            <h5 class="text-dark mb-3">How would you describe your English speaking ability?</h5>
+                            <p class="text-muted">Select the level that best describes your current ability to speak English.</p>
+                        </div>
+
+                        <div class="assessment-options">
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="novice" value="novice" required>
+                                <label class="form-check-label w-100" for="novice">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Novice</strong>
+                                            <small class="text-muted">I can use memorized words and phrases for basic needs. I can introduce myself and ask simple questions.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-low" value="intermediate-low" required>
+                                <label class="form-check-label w-100" for="intermediate-low">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Intermediate Low</strong>
+                                            <small class="text-muted">I can create simple sentences and handle very basic conversations about familiar topics. I can talk about my daily routine.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-mid" value="intermediate-mid" required>
+                                <label class="form-check-label w-100" for="intermediate-mid">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Intermediate Mid</strong>
+                                            <small class="text-muted">I can have conversations about familiar topics and handle most everyday situations. I can narrate and describe in present, past, and future time.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-high" value="intermediate-high" required>
+                                <label class="form-check-label w-100" for="intermediate-high">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Intermediate High</strong>
+                                            <small class="text-muted">I can handle most social and work situations. I can discuss concrete topics and provide detailed descriptions. I can deal with unexpected complications.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="advanced-low" value="advanced-low" required>
+                                <label class="form-check-label w-100" for="advanced-low">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Advanced Low</strong>
+                                            <small class="text-muted">I can discuss abstract topics and unfamiliar situations with ease. I can support opinions and hypothesize. I can handle professional and social situations.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="advanced-mid" value="advanced-mid" required>
+                                <label class="form-check-label w-100" for="advanced-mid">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">Advanced Mid or Higher</strong>
+                                            <small class="text-muted">I can communicate fluently about complex topics. I can support my viewpoints with sophisticated arguments. I speak with near-native proficiency.</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                Continue <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Not sure which level to choose?</strong> Select the level that best matches your typical speaking ability. Don't worry - the test will adapt to your responses.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.assessment-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.assessment-card:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.assessment-card.selected {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.assessment-card input[type="radio"] {
+    margin-top: 5px;
+}
+
+.assessment-card label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+</style>
+
+<script>
+function selectAssessment(card) {
+    // Remove selected class from all cards
+    document.querySelectorAll('.assessment-card').forEach(function(c) {
+        c.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked card
+    card.classList.add('selected');
+    
+    // Check the radio button
+    const radio = card.querySelector('input[type="radio"]');
+    radio.checked = true;
+}
+
+// Auto-select on radio button click
+document.querySelectorAll('.assessment-card input[type="radio"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        if (this.checked) {
+            selectAssessment(this.closest('.assessment-card'));
+        }
+    });
+});
+</script>
+{% endblock %}
+
+

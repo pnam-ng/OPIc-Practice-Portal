@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Test Mode - OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>Test Mode Survey
+                    </h4>
+                    <p class="mb-0 mt-2">Help us personalize your OPIc practice test</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Coming Soon!</strong> The full test mode with survey and audio recording will be implemented next. 
+                        For now, you can explore the interface.
+                    </div>
+                    
+                    <div class="text-center py-5">
+                        <i class="fas fa-microphone fa-5x text-primary mb-4"></i>
+                        <h3>Test Mode Features</h3>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
+                                        <h6>Survey</h6>
+                                        <small class="text-muted">Personalized questions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-volume-up fa-2x text-warning mb-2"></i>
+                                        <h6>Audio Questions</h6>
+                                        <small class="text-muted">Listen and respond</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-microphone fa-2x text-danger mb-2"></i>
+                                        <h6>Recording</h6>
+                                        <small class="text-muted">Record your answers</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
