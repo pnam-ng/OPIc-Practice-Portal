@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Admin • Users — OPIc Practice Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <h3 class="mb-2">
+      <i class="fas fa-users-cog me-2"></i> Users
+      <small class="text-muted">Admin</small>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.users_csv', q=q, lang=lang) }}">
+        <i class="fas fa-file-csv me-1"></i> Export CSV
+      </a>
+    </div>
+  </div>
+
+  <form class="row g-2 mb-3" method="get" action="{{ url_for('admin.users') }}">
+    <div class="col-md-4">
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search username, email, name…">
+    </div>
+    <div class="col-md-3">
+      <select name="lang" class="form-select">
+        <option value="">All languages</option>
+        <option value="english" {{ 'selected' if lang == 'english' else '' }}>English</option>
+        <option value="korean"  {{ 'selected' if lang == 'korean'  else '' }}>Korean</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <label class="input-group-text" for="sort">Sort</label>
+        <select id="sort" name="sort" class="form-select">
+          <option value="created_at" {{ 'selected' if sort == 'created_at' else '' }}>Created</option>
+          <option value="username"   {{ 'selected' if sort == 'username'   else '' }}>Username</option>
+          <option value="email"      {{ 'selected' if sort == 'email'      else '' }}>Email</option>
+          <option value="responses"  {{ 'selected' if sort == 'responses'  else '' }}>Responses</option>
+        </select>
+        <select name="order" class="form-select">
+          <option value="desc" {{ 'selected' if order == 'desc' else '' }}>Desc</option>
+          <option value="asc"  {{ 'selected' if order == 'asc'  else '' }}>Asc</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100">
+        <i class="fas fa-search me-1"></i> Apply
+      </button>
+    </div>
+  </form>
+
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Lang</th>
+            <th>Streak</th>
+            <th>Responses</th>
+            <th>Surveys</th>
+            <th>Admin</th>
+            <th>Created</th>
+            <th>Last Active</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+          <tr>
+            <td class="text-muted">{{ u.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ u.username }}</div>
+              <small class="text-muted">{{ u.name }}</small>
+            </td>
+            <td><a href="mailto:{{ u.email }}">{{ u.email }}</a></td>
+            <td><span class="badge bg-info">{{ u.target_language|title }}</span></td>
+            <td><span class="badge bg-warning text-dark">{{ u.streak_count or 0 }}</span></td>
+            <td><span class="badge bg-primary">{{ u.responses_count }}</span></td>
+            <td><span class="badge bg-secondary">{{ u.surveys_count }}</span></td>
+            <td>
+              {% if u.is_admin %}
+                <span class="badge bg-success">Yes</span>
+              {% else %}
+                <span class="badge bg-light text-dark">No</span>
+              {% endif %}
+            </td>
+            <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '-' }}</small></td>
+            <td><small class="text-muted">{{ u.last_active_date.strftime('%Y-%m-%d') if u.last_active_date else '-' }}</small></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="10" class="text-center text-muted py-4">No users found.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if pages > 1 %}
+    <div class="card-footer bg-white">
+      <nav>
+        <ul class="pagination mb-0 justify-content-end flex-wrap">
+          <li class="page-item {{ 'disabled' if page == 1 else '' }}">
+            <a class="page-link" href="{{ page_url(1) }}">&laquo;</a>
+          </li>
+          <li class="page-item {{ 'disabled' if page == 1 else '' }}">
+            <a class="page-link" href="{{ page_url(page-1) }}">&lsaquo;</a>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ page }} / {{ pages }}</span>
+          </li>
+          <li class="page-item {{ 'disabled' if page == pages else '' }}">
+            <a class="page-link" href="{{ page_url(page+1) }}">&rsaquo;</a>
+          </li>
+          <li class="page-item {{ 'disabled' if page == pages else '' }}">
+            <a class="page-link" href="{{ page_url(pages) }}">&raquo;</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

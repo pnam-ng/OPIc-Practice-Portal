@@ -91,12 +91,13 @@ def register_blueprints(app):
     from app.blueprints.main import main_bp
     from app.blueprints.test_mode import test_mode_bp
     from app.blueprints.practice_mode import practice_mode_bp
+    from app.blueprints.admin import admin_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(main_bp)
     app.register_blueprint(test_mode_bp, url_prefix='/test')
     app.register_blueprint(practice_mode_bp, url_prefix='/practice')
-
+    app.register_blueprint(admin_bp, url_prefix='/admin')
 
 def create_celery(app=None):
     """Create Celery instance"""
