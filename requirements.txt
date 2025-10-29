@@ -6,6 +6,8 @@ Flask-Migrate==4.1.0
 Flask-WTF==1.2.2
 Flask-Admin==1.6.1
 Flask-Mail==0.10.0
+Flask-Caching==2.1.0
+Flask-Limiter==3.5.0
 
 # Database and ORM
 SQLAlchemy==2.0.44
@@ -27,6 +29,16 @@ vine==5.1.0
 
 # Database Drivers (Optional - for production)
 psycopg2==2.9.11
+
+# Production Servers
+gunicorn==22.0.0
+gevent==24.2.1
+
+# Caching and Session Storage
+redis==5.0.4
+
+# Rate Limiting
+limits==3.8.0
 
 # Utilities
 click==8.3.0

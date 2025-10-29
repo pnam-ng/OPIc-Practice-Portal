@@ -2,6 +2,75 @@
 {% block title %}Admin • Users — OPIc Practice Portal{% endblock %}
 
 {% block content %}
+<style>
+.admin-row {
+    background-color: #fff8e6 !important;
+    border-left: 3px solid #ff9800;
+}
+
+[data-theme="dark"] .admin-row {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+    border-left: 3px solid #ffc107;
+}
+
+[data-theme="dark"] .admin-row td {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table thead th {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .table tbody tr {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background: var(--hover-bg);
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    border-color: var(--border-color);
+}
+
+.admin-badge-large {
+    font-size: 0.9rem;
+    padding: 0.4em 0.8em;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-toggle-admin {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .badge {
+        font-size: 0.65rem;
+    }
+    
+    .btn-toggle-admin {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+</style>
 <div class="container-fluid py-4">
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <h3 class="mb-2">
@@ -61,17 +130,23 @@
             <th>Streak</th>
             <th>Responses</th>
             <th>Surveys</th>
-            <th>Admin</th>
+            <th>Role</th>
             <th>Created</th>
             <th>Last Active</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
         {% for u in users %}
-          <tr>
+          <tr class="{{ 'admin-row' if u.is_admin else '' }}" id="user-row-{{ u.id }}">
             <td class="text-muted">{{ u.id }}</td>
             <td>
-              <div class="fw-semibold">{{ u.username }}</div>
+              <div class="fw-semibold">
+                {{ u.username }}
+                {% if u.is_admin %}
+                <i class="fas fa-crown text-warning ms-1" title="Administrator"></i>
+                {% endif %}
+              </div>
               <small class="text-muted">{{ u.name }}</small>
             </td>
             <td><a href="mailto:{{ u.email }}">{{ u.email }}</a></td>
@@ -79,18 +154,39 @@
             <td><span class="badge bg-warning text-dark">{{ u.streak_count or 0 }}</span></td>
             <td><span class="badge bg-primary">{{ u.responses_count }}</span></td>
             <td><span class="badge bg-secondary">{{ u.surveys_count }}</span></td>
-            <td>
+            <td id="role-badge-{{ u.id }}">
               {% if u.is_admin %}
-                <span class="badge bg-success">Yes</span>
+                <span class="badge bg-success admin-badge-large">
+                  <i class="fas fa-user-shield me-1"></i>Admin
+                </span>
               {% else %}
-                <span class="badge bg-light text-dark">No</span>
+                <span class="badge bg-secondary">
+                  <i class="fas fa-user me-1"></i>User
+                </span>
               {% endif %}
             </td>
             <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '-' }}</small></td>
             <td><small class="text-muted">{{ u.last_active_date.strftime('%Y-%m-%d') if u.last_active_date else '-' }}</small></td>
+            <td>
+              {% if u.id != current_user.id %}
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-toggle-admin {{ 'btn-danger' if u.is_admin else 'btn-success' }}"
+                        onclick="toggleAdmin({{ u.id }}, '{{ u.username }}', {{ 'true' if u.is_admin else 'false' }})"
+                        id="btn-admin-{{ u.id }}">
+                  {% if u.is_admin %}
+                  <i class="fas fa-user-minus me-1"></i>Revoke Admin
+                  {% else %}
+                  <i class="fas fa-user-plus me-1"></i>Grant Admin
+                  {% endif %}
+                </button>
+              </div>
+              {% else %}
+              <small class="text-muted"><i class="fas fa-lock me-1"></i>You</small>
+              {% endif %}
+            </td>
           </tr>
         {% else %}
-          <tr><td colspan="10" class="text-center text-muted py-4">No users found.</td></tr>
+          <tr><td colspan="11" class="text-center text-muted py-4">No users found.</td></tr>
         {% endfor %}
         </tbody>
       </table>
@@ -121,4 +217,107 @@
     {% endif %}
   </div>
 </div>
+
+<script>
+async function toggleAdmin(userId, username, currentIsAdmin) {
+    const action = currentIsAdmin ? 'revoke admin privileges from' : 'grant admin privileges to';
+    const confirmMsg = `Are you sure you want to ${action} user "${username}"?`;
+    
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+    
+    const button = document.getElementById(`btn-admin-${userId}`);
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    
+    try {
+        const response = await fetch(`/admin/users/${userId}/toggle-admin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update the row styling
+            const row = document.getElementById(`user-row-${userId}`);
+            if (data.is_admin) {
+                row.classList.add('admin-row');
+            } else {
+                row.classList.remove('admin-row');
+            }
+            
+            // Update the role badge
+            const roleBadge = document.getElementById(`role-badge-${userId}`);
+            if (data.is_admin) {
+                roleBadge.innerHTML = '<span class="badge bg-success admin-badge-large"><i class="fas fa-user-shield me-1"></i>Admin</span>';
+            } else {
+                roleBadge.innerHTML = '<span class="badge bg-secondary"><i class="fas fa-user me-1"></i>User</span>';
+            }
+            
+            // Update the username with crown icon
+            const userCell = row.querySelector('td:nth-child(2) .fw-semibold');
+            if (data.is_admin) {
+                if (!userCell.querySelector('.fa-crown')) {
+                    userCell.innerHTML += ' <i class="fas fa-crown text-warning ms-1" title="Administrator"></i>';
+                }
+            } else {
+                const crown = userCell.querySelector('.fa-crown');
+                if (crown) {
+                    crown.remove();
+                }
+            }
+            
+            // Update the button
+            if (data.is_admin) {
+                button.className = 'btn btn-sm btn-toggle-admin btn-danger';
+                button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
+                button.onclick = () => toggleAdmin(userId, username, true);
+            } else {
+                button.className = 'btn btn-sm btn-toggle-admin btn-success';
+                button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
+                button.onclick = () => toggleAdmin(userId, username, false);
+            }
+            
+            // Show success message
+            showFlashMessage(data.message, 'success');
+        } else {
+            showFlashMessage(data.message || 'Failed to update admin status', 'danger');
+            button.disabled = false;
+            if (currentIsAdmin) {
+                button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
+            } else {
+                button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showFlashMessage('An error occurred. Please try again.', 'danger');
+        button.disabled = false;
+        if (currentIsAdmin) {
+            button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
+        } else {
+            button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
+        }
+    }
+}
+
+function showFlashMessage(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+</script>
 {% endblock %}

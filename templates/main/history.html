@@ -6,56 +6,48 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <div class="page-header mb-4">
+            <div class="page-header mb-3">
                 <h2><i class="fas fa-history me-2"></i>Activity History</h2>
-                <p class="text-muted">View your practice and test session history</p>
+                <p class="text-muted mb-0">Your practice and test session history</p>
             </div>
         </div>
     </div>
     
     <!-- Statistics Overview -->
-    <div class="row mb-4">
-        <div class="col-md-3">
+    <div class="row mb-3">
+        <div class="col-6 col-md-3 mb-2">
             <div class="stat-card bg-primary text-white">
-                <div class="stat-icon">
                     <i class="fas fa-microphone"></i>
-                </div>
                 <div class="stat-info">
                     <h3>{{ user_stats.total_responses or 0 }}</h3>
-                    <p>Total Responses</p>
+                    <p>Responses</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-2">
             <div class="stat-card bg-success text-white">
-                <div class="stat-icon">
                     <i class="fas fa-fire"></i>
-                </div>
                 <div class="stat-info">
                     <h3>{{ user_stats.streak_count or 0 }}</h3>
-                    <p>Day Streak</p>
+                    <p>Streak</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-2">
             <div class="stat-card bg-info text-white">
-                <div class="stat-icon">
                     <i class="fas fa-clipboard-list"></i>
-                </div>
                 <div class="stat-info">
                     <h3>{{ surveys|length }}</h3>
-                    <p>Tests Taken</p>
+                    <p>Tests</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-2">
             <div class="stat-card bg-warning text-white">
-                <div class="stat-icon">
                     <i class="fas fa-calendar"></i>
-                </div>
                 <div class="stat-info">
                     <h3>{{ responses_by_date|length }}</h3>
-                    <p>Active Days</p>
+                    <p>Days</p>
                 </div>
             </div>
         </div>
@@ -78,36 +70,111 @@
                             </h5>
                             
                             <div class="timeline-items">
-                                {% for response in date_responses %}
+                                {% for item in date_responses %}
+                                    {% if item is mapping and item.get('type') == 'test_session' %}
+                                    <!-- Test Session Entry -->
+                                    <div class="timeline-item test-session-item">
+                                        <div class="timeline-marker test-session-marker"></div>
+                                        <div class="timeline-content test-session-content">
+                                            <div class="test-session-header">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-2">
+                                                            <i class="fas fa-trophy text-warning me-2"></i>
+                                                            <strong>OPIc Test Completed</strong>
+                                                            <span class="badge bg-success ms-2">{{ item.responses|length }} Questions</span>
+                                                        </h6>
+                                                        {% if item.survey %}
+                                                        <div class="test-session-meta mb-2">
+                                                            <span class="badge bg-primary me-2">
+                                                                <i class="fas fa-level-up-alt"></i> {{ item.survey.answers.get('self_assessment', 'N/A')|title }}
+                                                            </span>
+                                                            {% if item.survey.answers.get('activities') %}
+                                                            <span class="badge bg-info me-2">
+                                                                <i class="fas fa-running"></i> {{ item.survey.answers.get('activities')|length }} Activities
+                                                            </span>
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endif %}
+                                                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="toggleTestDetails(this)">
+                                                            <i class="fas fa-chevron-down me-1"></i>
+                                                            View Details
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-clock"></i>
+                                                            {{ item.start_time.strftime('%H:%M') }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="test-session-details" style="display: none;">
+                                                <hr>
+                                                <h6 class="text-muted mb-3">
+                                                    <i class="fas fa-list me-2"></i>Questions Answered:
+                                                </h6>
+                                                {% for response in item.responses %}
+                                                <div class="test-question-item mb-2">
+                                                    <div class="d-flex align-items-start">
+                                                        <span class="badge bg-secondary me-2">{{ loop.index }}</span>
+                                                        <div class="flex-grow-1">
+                                                            <strong>{{ response.question.topic }}</strong>
+                                                            <p class="mb-1 small text-muted">{{ response.question.text[:100] }}...</p>
+                                                            <div class="small">
+                                                                {% if response.question.difficulty_level %}
+                                                                <span class="badge bg-primary me-1">{{ response.question.difficulty_level }}</span>
+                                                                {% endif %}
+                                                                {% if response.duration %}
+                                                                <span class="badge bg-success">{{ "%.1f"|format(response.duration) }}s</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {% if response.audio_url %}
+                                                        <div>
+                                                            <audio controls class="small-audio">
+                                                                <source src="/{{ response.audio_url }}" type="audio/webm">
+                                                            </audio>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <!-- Regular Response Entry -->
                                 <div class="timeline-item">
                                     <div class="timeline-marker"></div>
                                     <div class="timeline-content">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h6 class="mb-1">
-                                                    <i class="fas fa-question-circle text-primary me-1"></i>
-                                                    {{ response.question.topic }}
+                                                        <i class="fas fa-dumbbell text-primary me-1"></i>
+                                                        {{ item.question.topic }}
+                                                        <span class="badge bg-primary ms-2">Practice</span>
                                                 </h6>
-                                                <p class="mb-2 text-muted">{{ response.question.text[:150] }}{% if response.question.text|length > 150 %}...{% endif %}</p>
+                                                    <p class="mb-2 text-muted">{{ item.question.text[:150] }}{% if item.question.text|length > 150 %}...{% endif %}</p>
                                                 <div class="response-meta">
-                                                    {% if response.question.language %}
+                                                        {% if item.question.language %}
                                                     <span class="badge bg-info me-2">
-                                                        <i class="fas fa-language"></i> {{ response.question.language.title() }}
+                                                            <i class="fas fa-language"></i> {{ item.question.language.title() }}
                                                     </span>
                                                     {% endif %}
-                                                    {% if response.question.difficulty %}
+                                                        {% if item.question.difficulty %}
                                                     <span class="badge bg-secondary me-2">
-                                                        <i class="fas fa-signal"></i> {{ response.question.difficulty.title() }}
+                                                            <i class="fas fa-signal"></i> {{ item.question.difficulty.title() }}
                                                     </span>
                                                     {% endif %}
-                                                    {% if response.question.difficulty_level %}
+                                                        {% if item.question.difficulty_level %}
                                                     <span class="badge bg-primary me-2">
-                                                        <i class="fas fa-layer-group"></i> {{ response.question.difficulty_level }}
+                                                            <i class="fas fa-layer-group"></i> {{ item.question.difficulty_level }}
                                                     </span>
                                                     {% endif %}
-                                                    {% if response.duration %}
+                                                        {% if item.duration %}
                                                     <span class="badge bg-success">
-                                                        <i class="fas fa-clock"></i> {{ "%.1f"|format(response.duration) }}s
+                                                            <i class="fas fa-clock"></i> {{ "%.1f"|format(item.duration) }}s
                                                     </span>
                                                     {% endif %}
                                                 </div>
@@ -115,12 +182,12 @@
                                             <div class="text-end">
                                                 <small class="text-muted">
                                                     <i class="fas fa-clock"></i>
-                                                    {{ response.created_at.strftime('%H:%M') }}
+                                                        {{ item.created_at.strftime('%H:%M') }}
                                                 </small>
-                                                {% if response.audio_url %}
+                                                    {% if item.audio_url %}
                                                 <div class="mt-2">
                                                     <audio controls class="small-audio">
-                                                        <source src="/{{ response.audio_url }}" type="audio/webm">
+                                                            <source src="/{{ item.audio_url }}" type="audio/webm">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 </div>
@@ -129,6 +196,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </div>
@@ -210,29 +278,36 @@
 
 <style>
 .stat-card {
-    padding: 20px;
-    border-radius: 10px;
+    padding: 12px 15px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
 }
 
-.stat-icon {
-    font-size: 2.5rem;
-    margin-right: 15px;
-    opacity: 0.8;
+.stat-card i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.stat-info {
+    flex: 1;
 }
 
 .stat-info h3 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    line-height: 1;
 }
 
 .stat-info p {
     margin: 0;
     opacity: 0.9;
+    font-size: 0.75rem;
+    margin-top: 2px;
 }
 
 .timeline-date-group {
@@ -280,6 +355,106 @@
     border-color: #007bff;
 }
 
+/* Dark Mode for Timeline */
+[data-theme="dark"] .timeline-content {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .timeline-content:hover {
+    background: var(--hover-bg);
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .timeline-content h6 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .timeline-content p {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .timeline-marker {
+    background: #58a6ff;
+    box-shadow: 0 0 0 3px #58a6ff;
+}
+
+[data-theme="dark"] .timeline-date-group {
+    border-left-color: #58a6ff;
+}
+
+[data-theme="dark"] .timeline-date {
+    color: var(--text-primary);
+}
+
+.test-mode-marker {
+    background: #28a745 !important;
+    box-shadow: 0 0 0 3px #28a745 !important;
+}
+
+[data-theme="dark"] .test-mode-marker {
+    background: var(--success-color) !important;
+    box-shadow: 0 0 0 3px var(--success-color) !important;
+}
+
+.test-mode-content {
+    border-left: 3px solid #28a745;
+}
+
+[data-theme="dark"] .test-mode-content {
+    border-left-color: var(--success-color);
+}
+
+/* Test Session Styles */
+.test-session-marker {
+    background: #ffc107 !important;
+    box-shadow: 0 0 0 3px #ffc107 !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+[data-theme="dark"] .test-session-marker {
+    background: var(--warning-color) !important;
+    box-shadow: 0 0 0 3px var(--warning-color) !important;
+}
+
+.test-session-content {
+    border-left: 4px solid #ffc107;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, transparent 100%);
+}
+
+[data-theme="dark"] .test-session-content {
+    border-left-color: var(--warning-color);
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.1) 0%, transparent 100%);
+}
+
+.test-session-content:hover {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, transparent 100%);
+}
+
+[data-theme="dark"] .test-session-content:hover {
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.15) 0%, transparent 100%);
+}
+
+.test-question-item {
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.test-question-item:hover {
+    background: var(--hover-bg);
+    border-color: #58a6ff;
+}
+
+.test-session-details {
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
 .response-meta {
     margin-top: 10px;
 }
@@ -291,27 +466,73 @@
 
 .page-header {
     border-bottom: 2px solid #007bff;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .page-header h2 {
     color: #495057;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.page-header h2 i {
+    flex-shrink: 0;
+}
+
+.page-header p {
+    font-size: 0.95rem;
+}
+
+/* Dark Mode for Page Header */
+[data-theme="dark"] .page-header {
+    border-bottom-color: #58a6ff;
+}
+
+[data-theme="dark"] .page-header h2 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .page-header p {
+    color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
     .stat-card {
-        flex-direction: column;
-        text-align: center;
+        padding: 10px 12px;
     }
     
-    .stat-icon {
-        margin-right: 0;
-        margin-bottom: 10px;
+    .stat-card i {
+        font-size: 1.3rem;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.3rem;
+    }
+    
+    .stat-info p {
+        font-size: 0.7rem;
     }
     
     .small-audio {
         width: 100%;
+    }
+    
+    .page-header {
+        padding-bottom: 8px;
+    }
+    
+    .page-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .page-header h2 i {
+        font-size: 1.2rem;
+        margin-right: 8px !important;
+    }
+    
+    .page-header p {
+        font-size: 0.85rem;
     }
 }
 </style>
@@ -320,6 +541,31 @@
 function viewSurveyDetails(surveyId) {
     // For now, just show an alert. You can enhance this to show a modal with full details
     alert('Survey details view - Coming soon!\nSurvey ID: ' + surveyId);
+}
+
+function toggleTestDetails(button) {
+    // Find the parent timeline content
+    const content = button.closest('.test-session-content');
+    const details = content.querySelector('.test-session-details');
+    const icon = button.querySelector('i');
+    
+    // Toggle visibility
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+        button.innerHTML = '<i class="fas fa-chevron-up me-1"></i>Hide Details';
+        
+        // Smooth scroll animation
+        setTimeout(() => {
+            details.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    } else {
+        details.style.display = 'none';
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+        button.innerHTML = '<i class="fas fa-chevron-down me-1"></i>View Details';
+    }
 }
 </script>
 {% endblock %}

@@ -3,6 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
+import pytz
+
+def now_hanoi():
+    tz = pytz.timezone('Asia/Ho_Chi_Minh')
+    return datetime.now(tz)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -16,8 +21,8 @@ class User(UserMixin, db.Model):
     streak_count = db.Column(db.Integer, default=0)
     last_active_date = db.Column(db.Date, default=date.today)
     is_admin = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
     
     # Relationships
     responses = db.relationship('Response', backref='user', lazy='dynamic', cascade='all, delete-orphan')
@@ -35,14 +40,32 @@ class User(UserMixin, db.Model):
         yesterday = date.fromordinal(today.toordinal() - 1)
         
         if self.last_active_date == yesterday:
-            # Consecutive day
+            # Consecutive day - increment streak
             self.streak_count += 1
-        elif self.last_active_date != today:
-            # Streak broken
+        elif self.last_active_date == today:
+            # Already active today - don't change streak
+            return
+        else:
+            # More than 1 day gap - reset streak to 1
             self.streak_count = 1
         
         self.last_active_date = today
         db.session.commit()
+    
+    def check_streak_status(self):
+        """Check if user's streak is at risk"""
+        today = date.today()
+        
+        if self.last_active_date == today:
+            return 'active_today'  # User has practiced today
+        elif self.last_active_date == date.fromordinal(today.toordinal() - 1):
+            return 'at_risk'  # User practiced yesterday but not today
+        else:
+            return 'broken'  # Streak is broken (more than 1 day gap)
+    
+    def is_active_today(self):
+        """Check if user has been active today"""
+        return self.last_active_date == date.today()
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -59,8 +82,8 @@ class Question(db.Model):
     difficulty_level = db.Column(db.String(10))  # New field: IM, IH, AL
     question_type = db.Column(db.String(20), default='question')  # New field: question or answer
     audio_url = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
     
     # Relationships
     responses = db.relationship('Response', backref='question', lazy='dynamic')
@@ -77,7 +100,8 @@ class Response(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     audio_url = db.Column(db.String(200), nullable=False)
     duration = db.Column(db.Float)  # Duration in seconds
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    mode = db.Column(db.String(20), default='practice')  # 'practice' or 'test'
+    created_at = db.Column(db.DateTime, default=now_hanoi)
     
     def __repr__(self):
         return f'<Response {self.id} by User {self.user_id}>'
@@ -88,7 +112,7 @@ class Survey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     answers = db.Column(db.JSON, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_hanoi)
     
     def __repr__(self):
         return f'<Survey {self.id} by User {self.user_id}>'

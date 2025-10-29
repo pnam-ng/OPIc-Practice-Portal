@@ -9,9 +9,9 @@ import sys
 from datetime import datetime, date
 from pathlib import Path
 
-# Add the project root to Python path
-sys.path.insert(0, str(Path(__file__).parent))
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the project root to Python path (parent of scripts folder)
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
 
 from app import create_app, db
 from app.models import User, Question, Response, Survey

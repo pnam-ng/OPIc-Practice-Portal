@@ -19,24 +19,36 @@ A comprehensive web application for practicing OPIc (Oral Proficiency Interview 
 - Dynamic topic filtering by level
 - Audio question playback
 - Voice recording capabilities
+- Real-time progress tracking
 
 ### 📝 Test Mode
 - Survey-based question selection
 - Personalized test experience
 - Audio recording and playback
 - Progress tracking
+- Congratulations page with results
 
 ### 🔐 User Management
 - User registration and authentication
 - Password management
-- Progress tracking and streaks
-- Activity history
+- Daily streak tracking with notifications
+- Activity history and statistics
+- Profile customization
+
+### 🎨 UI/UX Features
+- **Dark Mode** - Full dark theme support with smooth transitions
+- **Responsive Design** - Mobile-first approach with optimized layouts
+- **PWA Support** - Install as native app on mobile devices
+- **Touch-Friendly** - Optimized buttons and interactions for mobile
+- **Notifications** - Daily streak reminders (8 PM)
+- **Loading Animations** - Smooth page transitions
 
 ### 👨‍💼 Admin Features
-- Question management
+- Question management (CRUD operations)
 - User administration
 - Database inspection tools
-- System statistics
+- System statistics and analytics
+- TTS audio generation
 
 ## 🛠️ Technology Stack
 
@@ -52,26 +64,34 @@ A comprehensive web application for practicing OPIc (Oral Proficiency Interview 
 - Python 3.8+
 - Git
 
-### Automated Setup
+### Automated Setup (Recommended)
 
 #### Windows Users
-```bash
-git clone <repository-url>
+   ```bash
+git clone https://github.sec.samsung.net/your-org/OPP.git
 cd OPP
 setup.bat
-```
+   ```
 
-#### Cross-Platform
-```bash
-git clone <repository-url>
+#### macOS/Linux Users
+   ```bash
+git clone https://github.sec.samsung.net/your-org/OPP.git
 cd OPP
 python setup.py
 ```
 
+The setup script will:
+- Create and activate a virtual environment
+- Install all dependencies
+- Copy `.env` configuration file
+- Initialize the database with sample data
+- Create audio directory structure
+- Set up admin and sample users
+
 ### Manual Setup
-```bash
+   ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.sec.samsung.net/your-org/OPP.git
 cd OPP
 
 # Create virtual environment
@@ -84,23 +104,48 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+   pip install -r requirements.txt
 
 # Configure environment
-cp config.env.example .env
-# Edit .env with your configuration
+   cp config.env.example .env
+# Edit .env with your configuration (optional)
 
-# Initialize database
-python init_db.py
+# Initialize database with sample data
+python scripts/init_db_with_samples.py
 
-# Create admin user
-python ensure_admin.py
+# Set up audio directory structure
+python scripts/audio_setup.py
 
 # Run application
 python app.py
 ```
 
+### Running the Application
+
+#### Windows
+   ```bash
+run.bat
+   ```
+
+#### macOS/Linux
+   ```bash
+   python app.py
+   ```
+
 The application will be available at `http://localhost:5000`
+
+## 🌐 Deployment & Access
+
+### Local Development
+The application runs on `http://localhost:5000` by default.
+
+For detailed information about:
+- Network access (LAN/WAN)
+- SSL/HTTPS setup
+- Firewall configuration
+- Production deployment
+
+Please refer to [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
 ## 📋 Configuration
 
@@ -127,61 +172,66 @@ MAX_CONTENT_LENGTH=16777216
 ```
 OPP/
 ├── app/                    # Main application package
-│   ├── blueprints/        # Flask blueprints
+│   ├── blueprints/        # Flask blueprints (routes)
 │   ├── controllers/       # MVC controllers
-│   ├── services/         # Business logic
-│   └── models.py         # Database models
-├── templates/             # HTML templates
-├── static/               # Static assets (CSS, JS, icons)
-├── uploads/              # Audio files and user uploads
-├── instance/             # SQLite database
-├── transcription_backups/ # Transcription backup files
-├── app.py                # Application entry point
-├── init_db.py            # Database initialization
-├── setup.py              # Automated setup script
-├── setup.bat             # Windows setup script
-├── run.bat               # Windows run script
-└── requirements.txt      # Python dependencies
+│   ├── services/          # Business logic
+│   └── models.py          # Database models
+├── templates/             # HTML templates (Jinja2)
+├── static/                # Static assets (CSS, JS, icons)
+├── scripts/               # Utility scripts
+│   ├── init_db_with_samples.py  # Database initialization
+│   ├── audio_setup.py           # Audio directory setup
+│   ├── db_export_import.py      # Database backup/restore
+│   └── ...                      # Other utilities
+├── uploads/               # File uploads (not in git)
+│   ├── questions/         # Audio files (not in git)
+│   └── responses/         # User recordings (not in git)
+├── instance/              # SQLite database (not in git)
+├── app.py                 # Application entry point
+├── setup.py               # Automated setup script
+├── setup.bat              # Windows setup script
+├── run.bat                # Windows run script
+├── requirements.txt       # Python dependencies
+└── README.md              # This file
 ```
 
-## 🎵 Audio Features
+For complete project structure, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 
-### Question Audio
-- Questions include audio files for listening practice
-- Audio files are organized by topic and difficulty level
-- Supports MP3 format
-- **Note**: Audio files are not included in the repository due to size
+## 🎵 Audio Files
 
-### Voice Recording
-- Users can record their responses
-- Web Audio API integration
-- Audio files are stored in `uploads/responses/`
+### Important Note
+Audio files and the database are **not included in the Git repository** due to size constraints.
 
-### Audio Setup
-See [AUDIO_SETUP.md](AUDIO_SETUP.md) for instructions on setting up audio files.
+- **Audio files**: See [AUDIO_SETUP.md](AUDIO_SETUP.md) for setup instructions
+- **Database**: See [DATABASE_SOLUTION.md](DATABASE_SOLUTION.md) for distribution strategy
+
+The setup script creates the necessary directory structure. You'll need to:
+1. Obtain audio files separately (from colleague or shared drive)
+2. Place them in `uploads/questions/english/` following the directory structure
 
 ## 🔧 Development
 
 ### Utility Scripts
-- `scripts/init_db_with_samples.py` - Initialize database with sample data
-- `scripts/ensure_admin.py` - Create admin user if it doesn't exist
-- `scripts/reset_admin.py` - Reset admin password
-- `scripts/inspect_db.py` - Check database status and statistics
-- `scripts/inspect_topics.py` - Analyze topic distribution
-- `scripts/audio_setup.py` - Create audio directory structure
-- `scripts/db_export_import.py` - Export/import database
-- `scripts/tts_generator.py` - Generate text-to-speech audio files
+
+All utility scripts are located in the `scripts/` folder. See [scripts/README.md](scripts/README.md) for detailed documentation.
+
+Key scripts:
+- `init_db_with_samples.py` - Initialize database with sample data
+- `audio_setup.py` - Create audio directory structure
+- `db_export_import.py` - Export/import database for distribution
+- `inspect_db.py` - Check database status and statistics
+- `reset_admin.py` - Reset admin password
 
 ### Database Management
 ```bash
-# Initialize database with sample data
+# Initialize fresh database with sample data
 python scripts/init_db_with_samples.py
 
-# Create admin user
-python scripts/ensure_admin.py
+# Export database for sharing
+python scripts/db_export_import.py export
 
-# Reset admin password
-python scripts/reset_admin.py
+# Import database from SQL file
+python scripts/db_export_import.py import database_backup.sql
 
 # Check database status
 python scripts/inspect_db.py
@@ -195,7 +245,7 @@ python app.py
 ```
 
 ### Production with Docker
-```bash
+   ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
@@ -203,32 +253,45 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ### Common Issues
 
-1. **Database not found**
+1. **ModuleNotFoundError when running scripts**
    ```bash
-   python init_db.py
+   # Make sure you're in the project root directory
+   cd D:\OPP
+   # Activate virtual environment first
+   venv\Scripts\activate
+   # Then run the script
+   python scripts/init_db_with_samples.py
    ```
 
-2. **Admin user not working**
+2. **Database not found**
    ```bash
-   python reset_admin.py
+   python scripts/init_db_with_samples.py
    ```
 
-3. **Audio files not playing**
+3. **Admin user not working**
+   ```bash
+   python scripts/reset_admin.py
+   ```
+
+4. **Audio files not playing**
    - Check file paths in `uploads/questions/`
-   - Verify audio file permissions
+   - Verify audio files are placed correctly (see AUDIO_SETUP.md)
+   - Run `python scripts/audio_setup.py` to create directory structure
 
-4. **Import errors**
+5. **Import errors**
    ```bash
    pip install -r requirements.txt
    ```
 
-### Debug Mode
-Set `FLASK_ENV=development` in `.env` for debug information.
+For more troubleshooting, see [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
 ## 📚 Documentation
 
-- **[Setup Guide](SETUP_GUIDE.md)** - Detailed setup instructions
+- **[Setup Guide](SETUP_GUIDE.md)** - Detailed setup instructions (network, SSL, deployment)
 - **[Project Structure](PROJECT_STRUCTURE.md)** - Complete project documentation
+- **[Audio Setup](AUDIO_SETUP.md)** - Audio file setup instructions
+- **[Database Solution](DATABASE_SOLUTION.md)** - Database distribution strategy
+- **[Scripts README](scripts/README.md)** - Utility scripts documentation
 - **[CI/CD Guide](CI_CD_GUIDE.md)** - Deployment and CI/CD guide
 - **[Future Implementation](FUTURE_IMPLEMENTATION.md)** - Roadmap and future features
 
@@ -246,9 +309,13 @@ Set `FLASK_ENV=development` in `.env` for debug information.
 
 The application includes Progressive Web App features:
 - Service worker for offline functionality
-- Web app manifest
-- Installable on mobile devices
-- Responsive design
+- Web app manifest for installation
+- Installable on mobile devices (iOS & Android)
+- Responsive design optimized for all screen sizes
+- Touch-friendly interface with haptic feedback
+- Native app-like experience
+- Install banner with dismiss functionality
+- Home screen icons and splash screens
 
 ## 🤝 Contributing
 
@@ -272,12 +339,15 @@ For issues and questions:
 ## 🔄 Recent Updates
 
 - ✅ Multi-level question organization (IM, IH, AL)
-- ✅ Dynamic topic filtering
+- ✅ Dynamic topic filtering by level
 - ✅ Enhanced security features
-- ✅ PWA capabilities
+- ✅ PWA capabilities with offline support
 - ✅ Comprehensive admin tools
 - ✅ Automated setup scripts
 - ✅ Complete documentation
+- ✅ Database and audio file distribution solution
+- ✅ Organized utility scripts in `scripts/` folder
+- ✅ Cleaned up unnecessary documentation files
 
 ---
 

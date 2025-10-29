@@ -1,115 +1,87 @@
 {
   "name": "OPIc Practice Portal",
-  "short_name": "OPIc Practice",
-  "description": "Practice English and Korean speaking tests with AI-powered feedback",
+  "short_name": "OPIc Portal",
+  "description": "Practice English speaking tests with AI-powered feedback. Improve your OPIc test scores.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0d6efd",
   "theme_color": "#0d6efd",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "/",
   "lang": "en",
   "categories": ["education", "productivity"],
+  "screenshots": [],
   "icons": [
+    {
+      "src": "/static/icons/icon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/static/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/static/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/static/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/static/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/static/icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/static/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/static/icons/icon-384x384.png",
-      "sizes": "384x384",
+      "src": "/static/icons/icon-256x256.png",
+      "sizes": "256x256",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
       "src": "/static/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/static/screenshots/mobile-screenshot1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
+      "purpose": "any maskable"
     },
     {
-      "src": "/static/screenshots/desktop-screenshot1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Practice Mode",
-      "short_name": "Practice",
-      "description": "Start a practice session",
-      "url": "/practice",
-      "icons": [
-        {
-          "src": "/static/icons/practice-icon.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Test Mode",
-      "short_name": "Test",
-      "description": "Take a practice test",
-      "url": "/test",
-      "icons": [
-        {
-          "src": "/static/icons/test-icon.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your progress",
-      "url": "/dashboard",
-      "icons": [
-        {
-          "src": "/static/icons/dashboard-icon.png",
-          "sizes": "96x96"
-        }
-      ]
+      "src": "/static/favicon.ico",
+      "sizes": "32x32 16x16",
+      "type": "image/x-icon"
     }
   ],
   "related_applications": [],

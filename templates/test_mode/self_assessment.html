@@ -3,20 +3,244 @@
 {% block title %}Self-Assessment - OPIc Practice Test{% endblock %}
 
 {% block content %}
+<style>
+.steps-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.steps-indicator::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.step-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.step-item.active .step-circle {
+    background: #ff6633;
+    color: white;
+}
+
+.step-item.completed .step-circle {
+    background: #28a745;
+    color: white;
+}
+
+.step-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.step-item.active .step-label {
+    color: #ff6633;
+    font-weight: 600;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .steps-indicator {
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+    
+    .step-label {
+        font-size: 10px;
+    }
+    
+    .assessment-card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .assessment-card strong {
+        font-size: 0.95rem;
+    }
+    
+    .assessment-card small {
+        font-size: 0.8rem;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h5 {
+        font-size: 1.1rem;
+    }
+    
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .step-label {
+        font-size: 9px;
+    }
+    
+    .assessment-card {
+        padding: 10px;
+    }
+    
+    .assessment-card strong {
+        font-size: 0.9rem;
+    }
+    
+    .assessment-card small {
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] .card-header {
+    background: var(--bg-secondary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .card-body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] h2,
+[data-theme="dark"] h5 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .assessment-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .assessment-card:hover {
+    background: var(--hover-bg);
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .assessment-card.selected {
+    background: rgba(88, 166, 255, 0.15);
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .assessment-card strong {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .assessment-card small {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .steps-indicator::before {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .step-circle {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="dark"] .step-item.active .step-circle {
+    background: #ff6633;
+    color: white;
+    border-color: #ff6633;
+}
+
+[data-theme="dark"] .step-item.completed .step-circle {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+[data-theme="dark"] .step-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .step-item.active .step-label {
+    color: #ff6633;
+}
+
+[data-theme="dark"] .step-item.completed .step-label {
+    color: var(--success-color);
+}
+
+[data-theme="dark"] .alert-info {
+    background: rgba(88, 166, 255, 0.15);
+    border-color: #58a6ff;
+    color: var(--text-primary);
+}
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Progress Indicator -->
-            <div class="progress mb-4" style="height: 8px;">
-                <div class="progress-bar bg-primary" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            <!-- Step Indicator -->
+            <div class="steps-indicator mb-4">
+                <div class="step-item completed">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Background Survey</div>
+                </div>
+                <div class="step-item active">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Self Assessment</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Setup</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Begin Test</div>
+                </div>
             </div>
             
             <div class="card border-0 shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="fas fa-user-check me-2"></i>Step 1 of 3: Self-Assessment
-                    </h4>
-                    <p class="mb-0 mt-2 small">This will help us determine the appropriate question difficulty</p>
+                <div class="card-header border-bottom">
+                    <h2 class="mb-0">Self Assessment</h2>
+                    <p class="text-muted mb-0 mt-2">This will help us determine the appropriate question difficulty</p>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="{{ url_for('test_mode.self_assessment') }}">
@@ -27,11 +251,11 @@
 
                         <div class="assessment-options">
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="novice" value="novice" required>
-                                <label class="form-check-label w-100" for="novice">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level1" value="level-1" required>
+                                <label class="form-check-label w-100" for="level1">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Novice</strong>
+                                            <strong class="d-block">Level 1 <span class="badge bg-secondary ms-2">12 questions</span></strong>
                                             <small class="text-muted">I can use memorized words and phrases for basic needs. I can introduce myself and ask simple questions.</small>
                                         </div>
                                     </div>
@@ -39,11 +263,11 @@
                             </div>
 
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-low" value="intermediate-low" required>
-                                <label class="form-check-label w-100" for="intermediate-low">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level2" value="level-2" required>
+                                <label class="form-check-label w-100" for="level2">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Intermediate Low</strong>
+                                            <strong class="d-block">Level 2 <span class="badge bg-secondary ms-2">13 questions</span></strong>
                                             <small class="text-muted">I can create simple sentences and handle very basic conversations about familiar topics. I can talk about my daily routine.</small>
                                         </div>
                                     </div>
@@ -51,11 +275,11 @@
                             </div>
 
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-mid" value="intermediate-mid" required>
-                                <label class="form-check-label w-100" for="intermediate-mid">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level3" value="level-3" required>
+                                <label class="form-check-label w-100" for="level3">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Intermediate Mid</strong>
+                                            <strong class="d-block">Level 3 <span class="badge bg-secondary ms-2">13 questions</span></strong>
                                             <small class="text-muted">I can have conversations about familiar topics and handle most everyday situations. I can narrate and describe in present, past, and future time.</small>
                                         </div>
                                     </div>
@@ -63,11 +287,11 @@
                             </div>
 
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="intermediate-high" value="intermediate-high" required>
-                                <label class="form-check-label w-100" for="intermediate-high">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level4" value="level-4" required>
+                                <label class="form-check-label w-100" for="level4">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Intermediate High</strong>
+                                            <strong class="d-block">Level 4 <span class="badge bg-secondary ms-2">14 questions</span></strong>
                                             <small class="text-muted">I can handle most social and work situations. I can discuss concrete topics and provide detailed descriptions. I can deal with unexpected complications.</small>
                                         </div>
                                     </div>
@@ -75,24 +299,24 @@
                             </div>
 
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="advanced-low" value="advanced-low" required>
-                                <label class="form-check-label w-100" for="advanced-low">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level5" value="level-5" required>
+                                <label class="form-check-label w-100" for="level5">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Advanced Low</strong>
-                                            <small class="text-muted">I can discuss abstract topics and unfamiliar situations with ease. I can support opinions and hypothesize. I can handle professional and social situations.</small>
+                                            <strong class="d-block">Level 5 <span class="badge bg-secondary ms-2">14 questions</span></strong>
+                                            <small class="text-muted">I can discuss abstract topics and unfamiliar situations. I can support opinions and hypothesize. I can handle professional and social situations with ease.</small>
                                         </div>
                                     </div>
                                 </label>
                             </div>
 
                             <div class="form-check assessment-card mb-3" onclick="selectAssessment(this)">
-                                <input class="form-check-input" type="radio" name="self_assessment" id="advanced-mid" value="advanced-mid" required>
-                                <label class="form-check-label w-100" for="advanced-mid">
+                                <input class="form-check-input" type="radio" name="self_assessment" id="level6" value="level-6" required>
+                                <label class="form-check-label w-100" for="level6">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-grow-1">
-                                            <strong class="d-block">Advanced Mid or Higher</strong>
-                                            <small class="text-muted">I can communicate fluently about complex topics. I can support my viewpoints with sophisticated arguments. I speak with near-native proficiency.</small>
+                                            <strong class="d-block">Level 6 <span class="badge bg-warning text-dark ms-2">15 questions</span></strong>
+                                            <small class="text-muted">I can communicate fluently about complex topics with near-native proficiency. I can support my viewpoints with sophisticated arguments and handle any situation with confidence.</small>
                                         </div>
                                     </div>
                                 </label>
@@ -111,7 +335,7 @@
             <!-- Help Text -->
             <div class="alert alert-info mt-3">
                 <i class="fas fa-info-circle me-2"></i>
-                <strong>Not sure which level to choose?</strong> Select the level that best matches your typical speaking ability. Don't worry - the test will adapt to your responses.
+                <strong>Not sure which level to choose?</strong> Select the level that best matches your typical speaking ability. The test will contain 12-15 questions depending on your level, just like the real OPIc test.
             </div>
         </div>
     </div>

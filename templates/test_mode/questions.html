@@ -3,9 +3,221 @@
 {% block title %}Test Questions - OPIc Practice Portal{% endblock %}
 
 {% block content %}
+<style>
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
+    .timer-warning {
+        animation: pulse 1s ease-in-out infinite;
+    }
+    
+    .timer-critical {
+        animation: pulse 0.5s ease-in-out infinite;
+    }
+    
+    .steps-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .steps-indicator::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #28a745;
+        z-index: 0;
+    }
+
+    .step-item {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #28a745;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .step-item.active .step-circle {
+        background: #ff6633;
+        color: white;
+    }
+
+    .step-label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .step-item.active .step-label {
+        color: #ff6633;
+        font-weight: 600;
+    }
+    
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 768px) {
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .col-lg-8 {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .steps-indicator {
+            margin-bottom: 1rem;
+        }
+        
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+        
+        .step-label {
+            font-size: 10px;
+        }
+        
+        .card-header h4 {
+            font-size: 1.2rem;
+        }
+        
+        .card-header p {
+            font-size: 0.85rem;
+        }
+        
+        #timer {
+            font-size: 1.5rem !important;
+        }
+        
+        .timer-icon {
+            font-size: 1.2rem;
+        }
+        
+        #recordBtn {
+            width: 70px;
+            height: 70px;
+        }
+        
+        #recordBtn i {
+            font-size: 1.5rem;
+        }
+        
+        #playBtn {
+            padding: 8px 16px;
+        }
+        
+        .btn-lg {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+        
+        #waveform {
+            height: 80px !important;
+        }
+        
+        .card-body {
+            padding: 1rem !important;
+        }
+        
+        #recordingStatus {
+            font-size: 0.9rem;
+        }
+        
+        /* Navigation buttons for mobile */
+        .d-flex.justify-content-between.flex-wrap {
+            flex-direction: column !important;
+        }
+        
+        .d-flex.justify-content-between.flex-wrap > div:last-child {
+            flex-direction: column !important;
+            width: 100%;
+        }
+        
+        .btn-outline-secondary,
+        .btn-primary,
+        .btn-success,
+        .btn-warning {
+            width: 100%;
+        }
+    }
+    
+    /* Desktop navigation button styling */
+    @media (min-width: 769px) {
+        .d-flex.justify-content-between {
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .step-label {
+            font-size: 8px;
+        }
+        
+        .card-header h4 {
+            font-size: 1rem;
+        }
+        
+        #timer {
+            font-size: 1.25rem !important;
+        }
+        
+        #recordBtn {
+            width: 60px;
+            height: 60px;
+        }
+        
+        #recordBtn i {
+            font-size: 1.25rem;
+        }
+    }
+</style>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <!-- Step Indicator -->
+            <div class="steps-indicator mb-3">
+                <div class="step-item">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Background</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Assessment</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Setup</div>
+                </div>
+                <div class="step-item active">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Test</div>
+                </div>
+            </div>
+            
             <!-- Progress Bar -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body">
@@ -24,6 +236,17 @@
                 </div>
             </div>
 
+            <!-- Timer Card -->
+            <div class="card border-0 shadow-sm mb-4" id="timerCard" style="display: none;">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <i class="fas fa-clock me-2" id="timerIcon"></i>
+                        <h4 class="mb-0" id="timer">2:00</h4>
+                    </div>
+                    <small class="text-muted" id="timerLabel">Time Remaining</small>
+                </div>
+            </div>
+
             <!-- Question Card -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-primary text-white">
@@ -33,15 +256,15 @@
                     <p class="mb-0 mt-2">{{ question.topic }}</p>
                 </div>
                 <div class="card-body p-4">
-                    <!-- Question Text -->
-                    <div class="mb-4">
+                    <!-- Question Text - Hidden in test mode -->
+                    <!-- <div class="mb-4">
                         <h5 class="text-dark mb-3">{{ question.text }}</h5>
-                    </div>
+                    </div> -->
 
                     <!-- Audio Player -->
                     {% if question.audio_url %}
                     <div class="mb-4">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-outline-primary me-3" id="playBtn" onclick="toggleAudio()">
                                 <i class="fas fa-play" id="playIcon"></i>
                             </button>
@@ -51,6 +274,11 @@
                                 </div>
                                 <small class="text-muted" id="timeDisplay">0:00 / 0:00</small>
                             </div>
+                        </div>
+                        <div class="alert alert-info py-2 px-3" id="playCountAlert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Plays remaining: <span id="playsRemaining">2</span>/2</strong>
+                            <small class="d-block mt-1">You can listen to the question up to 2 times</small>
                         </div>
                         <audio id="questionAudio" preload="metadata">
                             <source src="/uploads/{{ question.audio_url }}" type="audio/mpeg">
@@ -99,7 +327,7 @@
                     </div>
 
                     <!-- Navigation -->
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: 10px;">
                         {% if current_question_index > 1 %}
                         <button class="btn btn-outline-secondary" onclick="previousQuestion()">
                             <i class="fas fa-arrow-left me-2"></i>Previous
@@ -108,15 +336,23 @@
                         <div></div>
                         {% endif %}
                         
-                        {% if current_question_index < total_questions %}
-                        <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" disabled>
-                            Next<i class="fas fa-arrow-right ms-2"></i>
-                        </button>
-                        {% else %}
-                        <button class="btn btn-success" onclick="finishTest()" id="finishBtn" disabled>
-                            <i class="fas fa-check me-2"></i>Finish Test
-                        </button>
-                        {% endif %}
+                        <div class="d-flex" style="gap: 10px;">
+                            {% if current_question_index < total_questions %}
+                            <button class="btn btn-warning" onclick="skipQuestion()" id="skipBtn">
+                                <i class="fas fa-forward me-2"></i>Skip
+                            </button>
+                            <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" disabled>
+                                Next<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            {% else %}
+                            <button class="btn btn-warning" onclick="skipQuestion()" id="skipBtn">
+                                <i class="fas fa-forward me-2"></i>Skip
+                            </button>
+                            <button class="btn btn-success" onclick="finishTest()" id="finishBtn" disabled>
+                                <i class="fas fa-check me-2"></i>Finish
+                            </button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -133,14 +369,95 @@ let audioContext;
 let analyser;
 let microphone;
 let animationId;
+let timeRemaining = 120; // 2 minutes in seconds
+let timerInterval;
+let timeExpired = false;
+let playCount = 0;
+let maxPlays = 2;
+let timerStarted = false;
+
+// Countdown timer
+function startCountdown() {
+    updateTimerDisplay();
+    
+    timerInterval = setInterval(() => {
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            updateTimerDisplay();
+            
+            // Change color when time is running low
+            const timerCard = document.getElementById('timerCard');
+            const timerIcon = document.getElementById('timerIcon');
+            const timer = document.getElementById('timer');
+            
+            if (timeRemaining <= 30 && timeRemaining > 10) {
+                // Warning: 30 seconds or less
+                timerCard.className = 'card border-0 shadow-sm mb-4 border-warning timer-warning';
+                timerCard.style.borderWidth = '2px';
+                timerCard.style.borderStyle = 'solid';
+                timer.className = 'mb-0 text-warning';
+                timerIcon.className = 'fas fa-clock me-2 text-warning';
+            } else if (timeRemaining <= 10) {
+                // Critical: 10 seconds or less
+                timerCard.className = 'card border-0 shadow-sm mb-4 border-danger timer-critical';
+                timerCard.style.borderWidth = '2px';
+                timerCard.style.borderStyle = 'solid';
+                timer.className = 'mb-0 text-danger';
+                timerIcon.className = 'fas fa-clock me-2 text-danger';
+            }
+        }
+        
+        // Time expired
+        if (timeRemaining === 0) {
+            clearInterval(timerInterval);
+            timeExpired = true;
+            handleTimeExpired();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const mins = Math.floor(timeRemaining / 60);
+    const secs = timeRemaining % 60;
+    document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function handleTimeExpired() {
+    // Stop any ongoing recording
+    if (isRecording) {
+        stopRecording();
+    }
+    
+    // If there's a recorded audio, submit it automatically
+    if (recordedAudio) {
+        alert('Time is up! Your answer will be submitted automatically.');
+        submitAnswer();
+    } else {
+        // No recording made, move to next question
+        alert('Time is up! Moving to the next question.');
+        {% if current_question_index < total_questions %}
+        nextQuestion();
+        {% else %}
+        finishTest();
+        {% endif %}
+    }
+}
 
 // Audio player controls
 function toggleAudio() {
     const audio = document.getElementById('questionAudio');
     const playBtn = document.getElementById('playBtn');
     const playIcon = document.getElementById('playIcon');
+    const playsRemainingEl = document.getElementById('playsRemaining');
+    const playCountAlert = document.getElementById('playCountAlert');
     
     if (audio.paused) {
+        // Check if user has plays remaining
+        if (playCount >= maxPlays) {
+            alert('You have used all your listening attempts (2/2). Please proceed to record your answer.');
+            return;
+        }
+        
         audio.play();
         playIcon.className = 'fas fa-pause';
         updateAudioProgress();
@@ -149,6 +466,38 @@ function toggleAudio() {
         playIcon.className = 'fas fa-play';
     }
 }
+
+// Track when audio starts playing
+document.getElementById('questionAudio').addEventListener('play', function() {
+    if (!this.currentTime || this.currentTime < 1) { // Only count if starting from beginning
+        playCount++;
+        const playsRemainingEl = document.getElementById('playsRemaining');
+        const playCountAlert = document.getElementById('playCountAlert');
+        const remaining = maxPlays - playCount;
+        
+        playsRemainingEl.textContent = remaining;
+        
+        if (remaining === 0) {
+            playCountAlert.classList.remove('alert-info');
+            playCountAlert.classList.add('alert-warning');
+            playBtn.disabled = false; // Keep enabled to allow pause
+        }
+    }
+});
+
+// When audio ends, reset play button
+document.getElementById('questionAudio').addEventListener('ended', function() {
+    const playIcon = document.getElementById('playIcon');
+    playIcon.className = 'fas fa-play';
+    
+    if (playCount >= maxPlays) {
+        const playBtn = document.getElementById('playBtn');
+        playBtn.disabled = true;
+        playBtn.classList.add('btn-secondary');
+        playBtn.classList.remove('btn-outline-primary');
+        playBtn.title = 'No more plays remaining';
+    }
+});
 
 function updateAudioProgress() {
     const audio = document.getElementById('questionAudio');
@@ -209,6 +558,13 @@ async function startRecording() {
         document.getElementById('recordBtn').className = 'btn btn-danger btn-lg rounded-circle';
         document.getElementById('recordIcon').className = 'fas fa-stop';
         document.getElementById('recordingStatus').textContent = 'Recording... Click to stop';
+        
+        // Show and start timer ONLY when recording starts
+        if (!timerStarted) {
+            document.getElementById('timerCard').style.display = 'block';
+            startCountdown();
+            timerStarted = true;
+        }
         
         // Start timer
         startRecordingTimer();
@@ -342,6 +698,11 @@ function rerecord() {
 
 async function submitAnswer() {
     if (recordedAudio) {
+        // Stop the timer
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
         const formData = new FormData();
         formData.append('audio', recordedAudio);
         formData.append('question_id', {{ question.id }});
@@ -353,8 +714,14 @@ async function submitAnswer() {
             });
             
             if (response.ok) {
-                alert('Answer submitted successfully!');
+                if (!timeExpired) {
+                    alert('Answer submitted successfully!');
+                }
+                {% if current_question_index < total_questions %}
                 nextQuestion();
+                {% else %}
+                finishTest();
+                {% endif %}
             } else {
                 alert('Error submitting answer. Please try again.');
             }
@@ -366,15 +733,43 @@ async function submitAnswer() {
 }
 
 function nextQuestion() {
+    // Clear timer before navigation
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
     window.location.href = '/test/questions?q={{ current_question_index + 1 }}';
 }
 
 function previousQuestion() {
+    // Clear timer before navigation
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
     window.location.href = '/test/questions?q={{ current_question_index - 1 }}';
 }
 
+function skipQuestion() {
+    // Clear timer before navigation
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    // Ask for confirmation
+    if (confirm('Are you sure you want to skip this question? No answer will be recorded.')) {
+        {% if current_question_index < total_questions %}
+        window.location.href = '/test/questions?q={{ current_question_index + 1 }}';
+        {% else %}
+        finishTest();
+        {% endif %}
+    }
+}
+
 function finishTest() {
-    window.location.href = '/test/finish';
+    // Clear timer before navigation
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    window.location.href = '{{ url_for("test_mode.finish_test") }}';
 }
 </script>
 {% endblock %}

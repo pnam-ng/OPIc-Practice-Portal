@@ -8,6 +8,7 @@ from flask import Flask, send_from_directory
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_caching import Cache
 from celery import Celery
 from dotenv import load_dotenv
 
@@ -22,22 +23,38 @@ from app import db
 login_manager = LoginManager()
 migrate = Migrate()
 mail = Mail()
+cache = Cache()
 
 
 def create_app():
     """Application factory pattern"""
     app = Flask(__name__)
     
-    # Configuration
+    # Basic Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///opic_portal.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = int(os.environ.get('MAX_CONTENT_LENGTH', 16777216))
     app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
     
-    # Session configuration - Keep user logged in
+    # Database Connection Pooling (for production scalability)
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_size': 20,  # Number of connections to keep open
+        'pool_recycle': 3600,  # Recycle connections after 1 hour
+        'pool_pre_ping': True,  # Check connection health before using
+        'max_overflow': 40,  # Additional connections when pool is full
+        'pool_timeout': 30,  # Timeout for getting connection from pool
+    }
+    
+    # Caching Configuration
+    app.config['CACHE_TYPE'] = os.environ.get('CACHE_TYPE', 'simple')  # Use 'redis' in production
+    app.config['CACHE_REDIS_URL'] = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # 5 minutes
+    
+    # Session configuration - Optimized for concurrent users
+    app.config['SESSION_TYPE'] = 'filesystem'  # Use 'redis' in production
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days in seconds
-    app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+    app.config['SESSION_COOKIE_SECURE'] = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['REMEMBER_COOKIE_DURATION'] = 86400 * 30  # 30 days
@@ -49,11 +66,16 @@ def create_app():
     app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
     app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
     
+    # Performance optimizations
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # Cache static files for 1 year
+    app.config['JSON_SORT_KEYS'] = False  # Don't sort JSON keys (faster)
+    
     # Initialize extensions with app
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+    cache.init_app(app)
     
     # Configure login manager
     login_manager.login_view = 'auth.login'
@@ -81,6 +103,13 @@ def create_app():
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    
+    # Add ngrok-skip-browser-warning header to all responses
+    @app.after_request
+    def add_ngrok_header(response):
+        """Add header to bypass ngrok browser warning on free tier"""
+        response.headers['ngrok-skip-browser-warning'] = 'true'
+        return response
     
     return app
 

@@ -19,6 +19,11 @@ test_mode_controller = TestModeController()
 def survey():
     return test_mode_controller.survey()
 
+@test_mode_bp.route('/self-assessment', methods=['GET', 'POST'])
+@login_required
+def self_assessment():
+    return test_mode_controller.self_assessment()
+
 @test_mode_bp.route('/questions')
 @login_required
 def questions():
@@ -33,3 +38,8 @@ def record_response(question_id):
 @login_required
 def finish_test():
     return test_mode_controller.finish_test()
+
+@test_mode_bp.route('/congratulations')
+@login_required
+def congratulations():
+    return test_mode_controller.congratulations()

@@ -1,163 +1,828 @@
 {% extends "base.html" %}
 
-{% block title %}Test Mode Survey - OPIc Practice Portal{% endblock %}
+{% block title %}Background Survey - OPIc Practice Portal{% endblock %}
 
 {% block content %}
+<style>
+.steps-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.steps-indicator::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.step-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.step-item.active .step-circle {
+    background: #ff6633;
+    color: white;
+}
+
+.step-item.completed .step-circle {
+    background: #28a745;
+    color: white;
+}
+
+.step-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.step-item.active .step-label {
+    color: #ff6633;
+    font-weight: 600;
+}
+
+.survey-part {
+    display: none;
+}
+
+.survey-part.active {
+    display: block;
+}
+
+.form-check {
+    margin-bottom: 12px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.form-check:hover {
+    background-color: #f0f4ff;
+    border-color: #007bff;
+}
+
+.form-check-input {
+    margin-top: 0.35em;
+    cursor: pointer;
+}
+
+.form-check-input:checked + .form-check-label {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.form-check-label {
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    margin-bottom: 0;
+    padding-left: 0.5rem;
+}
+
+.question-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.question-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.selection-counter {
+    float: right;
+    color: #ff6633;
+    font-weight: 600;
+}
+
+.selection-counter.valid {
+    color: #28a745;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.sub-question {
+    display: none;
+    margin-left: 20px;
+    padding-left: 20px;
+    border-left: 3px solid #ff6633;
+}
+
+.sub-question.show {
+    display: block;
+}
+
+.btn-next {
+    background: #6c757d;
+    border: none;
+    padding: 10px 30px;
+    transition: all 0.3s ease;
+}
+
+.btn-next:hover {
+    background: #5a6268;
+}
+
+.btn-next.ready {
+    background: #ff6633;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.btn-next.ready:hover {
+    background: #ff5522;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 102, 51, 0.4);
+}
+
+.btn-next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 102, 51, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(255, 102, 51, 0.2);
+    }
+}
+
+/* Dark Mode Enhancements */
+[data-theme="dark"] .form-check {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .form-check:hover {
+    background-color: var(--hover-bg);
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .form-check-label {
+    color: #e6edf3;
+}
+
+[data-theme="dark"] .form-check-input {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+}
+
+[data-theme="dark"] .form-check-input:checked {
+    background-color: #58a6ff;
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .form-check-input:checked + .form-check-label {
+    color: #79c0ff;
+}
+
+[data-theme="dark"] .question-section {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .question-title {
+    color: #e6edf3;
+}
+
+[data-theme="dark"] .steps-indicator::before {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .step-circle {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="dark"] .step-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .step-item.active .step-circle {
+    background: #ff6633;
+    color: white;
+    border-color: #ff6633;
+}
+
+[data-theme="dark"] .step-item.active .step-label {
+    color: #ff6633;
+}
+
+[data-theme="dark"] .sub-question {
+    border-left-color: #ff6633;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .steps-indicator {
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+    
+    .step-label {
+        font-size: 10px;
+    }
+    
+    .question-section {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .question-title {
+        font-size: 1rem;
+    }
+    
+    .form-check {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .form-check-label {
+        font-size: 14px;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    #partIndicator {
+        font-size: 1.25rem;
+    }
+    
+    .btn-next {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    #prevBtn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+    
+    .selection-counter {
+        float: none !important;
+        display: block;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-md-6 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .step-label {
+        font-size: 9px;
+    }
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] .card-header {
+    background: var(--bg-secondary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .card-body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .question-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .form-check-label {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-check-input:checked ~ .form-check-label {
+    font-weight: 700;
+}
+
+[data-theme="dark"] .form-check:hover {
+    background: var(--hover-bg);
+}
+
+[data-theme="dark"] #partIndicator {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .steps-indicator::before {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .step-circle {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="dark"] .step-item.active .step-circle {
+    background: #ff6633;
+    color: white;
+    border-color: #ff6633;
+}
+
+[data-theme="dark"] .step-item.completed .step-circle {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+[data-theme="dark"] .step-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .step-item.active .step-label {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
+            <!-- Step Indicator -->
+            <div class="steps-indicator mb-4">
+                <div class="step-item active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Background Survey</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Self Assessment</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Setup</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Begin Test</div>
+                </div>
+            </div>
+
+            <!-- Survey Card -->
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="fas fa-clipboard-list me-2"></i>OPIc Test Survey
-                    </h4>
-                    <p class="mb-0 mt-2">Help us personalize your practice test experience</p>
+                <div class="card-header border-bottom">
+                    <h2 class="mb-0">Background Survey</h2>
+                    <p class="text-muted mb-0">Answer as accurately as possible. This test will be based on your responses.</p>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST" id="surveyForm">
-                        <!-- Personal Information -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-user me-2"></i>Personal Information
-                            </h5>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="age" class="form-label">Age Range</label>
-                                    <select class="form-select" id="age" name="age" required>
-                                        <option value="">Select age range</option>
-                                        <option value="18-25">18-25</option>
-                                        <option value="26-35">26-35</option>
-                                        <option value="36-45">36-45</option>
-                                        <option value="46-55">46-55</option>
-                                        <option value="55+">55+</option>
-                                    </select>
+                    <h3 id="partIndicator" class="mb-4">Part 1 of 4</h3>
+                    
+                    <form id="surveyForm" method="POST">
+                        <!-- PART 1: Work Field -->
+                        <div class="survey-part active" data-part="1">
+                            <div class="question-section">
+                                <p class="question-title">What best describes your field of work?</p>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="work_field" id="work_business" value="business" data-subquestion="business-sub">
+                                    <label class="form-check-label" for="work_business">
+                                        Business / Corporation
+                                    </label>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="occupation" class="form-label">Occupation</label>
-                                    <select class="form-select" id="occupation" name="occupation" required>
-                                        <option value="">Select occupation</option>
-                                        <option value="student">Student</option>
-                                        <option value="teacher">Teacher</option>
-                                        <option value="engineer">Engineer</option>
-                                        <option value="business">Business Professional</option>
-                                        <option value="healthcare">Healthcare Worker</option>
-                                        <option value="other">Other</option>
-                                    </select>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="work_field" id="work_home" value="home_business" data-subquestion="home-business-sub">
+                                    <label class="form-check-label" for="work_home">
+                                        Home Business
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="work_field" id="work_teacher" value="teacher" data-subquestion="teacher-sub">
+                                    <label class="form-check-label" for="work_teacher">
+                                        Teacher / Educator
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="work_field" id="work_none" value="none">
+                                    <label class="form-check-label" for="work_none">
+                                        No work experience
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sub-question for Teacher -->
+                            <div class="sub-question" id="teacher-sub">
+                                <p class="question-title">What level do you teach?</p>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="teacher_level" id="teacher_higher" value="higher_education">
+                                    <label class="form-check-label" for="teacher_higher">Higher Education / University</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="teacher_level" id="teacher_secondary" value="secondary">
+                                    <label class="form-check-label" for="teacher_secondary">Secondary / Elementary Education</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="teacher_level" id="teacher_continuing" value="continuing">
+                                    <label class="form-check-label" for="teacher_continuing">Continuing Education</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Language Background -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-language me-2"></i>Language Background
-                            </h5>
-                            
-                            <div class="mb-3">
-                                <label for="native_language" class="form-label">Native Language</label>
-                                <select class="form-select" id="native_language" name="native_language" required>
-                                    <option value="">Select native language</option>
-                                    <option value="korean">Korean</option>
-                                    <option value="chinese">Chinese</option>
-                                    <option value="japanese">Japanese</option>
-                                    <option value="spanish">Spanish</option>
-                                    <option value="other">Other</option>
-                                </select>
+                        <!-- PART 2: School -->
+                        <div class="survey-part" data-part="2">
+                            <div class="question-section">
+                                <p class="question-title">Are you currently going to school?</p>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="going_to_school" id="school_yes" value="yes" data-subquestion="school-type-sub">
+                                    <label class="form-check-label" for="school_yes">
+                                        Yes, Full-time or Part-time
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="going_to_school" id="school_no" value="no" data-subquestion="education-exp-sub">
+                                    <label class="form-check-label" for="school_no">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="english_level" class="form-label">Current English Level</label>
-                                <select class="form-select" id="english_level" name="english_level" required>
-                                    <option value="">Select English level</option>
-                                    <option value="beginner">Beginner (A1-A2)</option>
-                                    <option value="intermediate">Intermediate (B1-B2)</option>
-                                    <option value="advanced">Advanced (C1-C2)</option>
-                                </select>
+                            <!-- Sub-question: Educational Experience -->
+                            <div class="sub-question" id="education-exp-sub">
+                                <p class="question-title">What best describes your last educational experience?</p>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="education_experience" id="edu_college" value="college">
+                                    <label class="form-check-label" for="edu_college">College or university to earn a degree</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="education_experience" id="edu_continuing" value="continuing">
+                                    <label class="form-check-label" for="edu_continuing">Continuing education to improve professional skills</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="education_experience" id="edu_language" value="language">
+                                    <label class="form-check-label" for="edu_language">Language classes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="education_experience" id="edu_long_ago" value="long_ago">
+                                    <label class="form-check-label" for="edu_long_ago">It has been more than 5 years since I took a class.</label>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Interests and Hobbies -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-heart me-2"></i>Interests & Hobbies
-                            </h5>
+                        <!-- PART 3: Living Situation -->
+                        <div class="survey-part" data-part="3">
+                            <div class="question-section">
+                                <p class="question-title">Where do you live?</p>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="living_situation" id="live_alone" value="alone" required>
+                                    <label class="form-check-label" for="live_alone">
+                                        I live alone in a house or an apartment.
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="living_situation" id="live_nonfamily" value="nonfamily" required>
+                                    <label class="form-check-label" for="live_nonfamily">
+                                        I live with non-family members in a house or an apartment.
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="living_situation" id="live_family" value="family" required>
+                                    <label class="form-check-label" for="live_family">
+                                        I live with family members in a house or an apartment.
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="living_situation" id="live_dorm" value="dormitory" required>
+                                    <label class="form-check-label" for="live_dorm">
+                                        I live in a school dormitory.
+                                    </label>
+                            </div>
                             
-                            <div class="mb-3">
-                                <label class="form-label">Select your interests (choose all that apply):</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="living_situation" id="live_military" value="military" required>
+                                    <label class="form-check-label" for="live_military">
+                                        I live in military barracks.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PART 4: Activities & Hobbies -->
+                        <div class="survey-part" data-part="4">
+                            <p class="text-primary mb-3">
+                                <i class="fas fa-info-circle"></i> 
+                                Select a total of at least six (6) options across the various sections below.
+                                <span class="selection-counter" id="totalCounter">0 Items Selected</span>
+                            </p>
+                            
+                            <!-- Activities -->
+                            <div class="question-section">
+                                <p class="question-title">What activities do you do?</p>
+                                <small class="text-muted d-block mb-3">Select at least 1 activity</small>
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="travel" id="travel">
-                                            <label class="form-check-label" for="travel">Travel</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="movies" data-group="activities">
+                                            <label class="form-check-label">go to the movies</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="sports" id="sports">
-                                            <label class="form-check-label" for="sports">Sports</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="clubs" data-group="activities">
+                                            <label class="form-check-label">go to clubs/nightclubs</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="music" id="music">
-                                            <label class="form-check-label" for="music">Music</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="theater" data-group="activities">
+                                            <label class="form-check-label">go to the theater</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="movies" id="movies">
-                                            <label class="form-check-label" for="movies">Movies</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="concerts" data-group="activities">
+                                            <label class="form-check-label">go to concerts</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="museums" data-group="activities">
+                                            <label class="form-check-label">go to museums</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="parks" data-group="activities">
+                                            <label class="form-check-label">go to parks</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="camping" data-group="activities">
+                                            <label class="form-check-label">go camping</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="beach" data-group="activities">
+                                            <label class="form-check-label">go to the beach</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="technology" id="technology">
-                                            <label class="form-check-label" for="technology">Technology</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="watch_sports" data-group="activities">
+                                            <label class="form-check-label">watch professional sports</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="food" id="food">
-                                            <label class="form-check-label" for="food">Food & Cooking</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="children_sports" data-group="activities">
+                                            <label class="form-check-label">watch your children play sports</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="books" id="books">
-                                            <label class="form-check-label" for="books">Reading</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="coach" data-group="activities">
+                                            <label class="form-check-label">coach sports</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="interests" value="art" id="art">
-                                            <label class="form-check-label" for="art">Art & Culture</label>
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="games_solo" data-group="activities">
+                                            <label class="form-check-label">play games by yourself (cards, video games, etc.)</label>
                                         </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="games_adults" data-group="activities">
+                                            <label class="form-check-label">play games with adults (cards, billiards, board games, etc.)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="games_children" data-group="activities">
+                                            <label class="form-check-label">play games with children (cards, board games, etc.)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="homework_help" data-group="activities">
+                                            <label class="form-check-label">help your children with school assignments</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="home_improvement" data-group="activities">
+                                            <label class="form-check-label">do home improvement projects</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="activities" value="car_maintenance" data-group="activities">
+                                            <label class="form-check-label">maintain your car</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Test Preferences -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-cog me-2"></i>Test Preferences
-                            </h5>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="test_duration" class="form-label">Preferred Test Duration</label>
-                                    <select class="form-select" id="test_duration" name="test_duration" required>
-                                        <option value="">Select duration</option>
-                                        <option value="short">Short (15-20 minutes)</option>
-                                        <option value="medium">Medium (25-30 minutes)</option>
-                                        <option value="long">Long (35-40 minutes)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="difficulty_preference" class="form-label">Difficulty Preference</label>
-                                    <select class="form-select" id="difficulty_preference" name="difficulty_preference" required>
-                                        <option value="">Select difficulty</option>
-                                        <option value="easy">Easy - Build confidence</option>
-                                        <option value="medium">Medium - Balanced challenge</option>
-                                        <option value="hard">Hard - Maximum challenge</option>
-                                    </select>
+                            <!-- Hobbies -->
+                            <div class="question-section">
+                                <p class="question-title">What interests or hobbies do you enjoy?</p>
+                                <small class="text-muted d-block mb-3">Select at least 1 interest</small>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="read_to_children" data-group="hobbies">
+                                            <label class="form-check-label">read to children</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="listen_music" data-group="hobbies">
+                                            <label class="form-check-label">listen to music</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="play_instrument" data-group="hobbies">
+                                            <label class="form-check-label">play a musical instrument</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="sing_alone" data-group="hobbies">
+                                            <label class="form-check-label">sing alone</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="sing_group" data-group="hobbies">
+                                            <label class="form-check-label">sing with a group</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="dance_lessons" data-group="hobbies">
+                                            <label class="form-check-label">take dance class/lessons</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="go_dancing" data-group="hobbies">
+                                            <label class="form-check-label">go out dancing</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="write" data-group="hobbies">
+                                            <label class="form-check-label">write creatively (letters, short stories, poetry)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="draw_paint" data-group="hobbies">
+                                            <label class="form-check-label">draw, paint</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="sew" data-group="hobbies">
+                                            <label class="form-check-label">sew, embroider</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="knit" data-group="hobbies">
+                                            <label class="form-check-label">knit, crochet</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="cook" data-group="hobbies">
+                                            <label class="form-check-label">cook</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="garden" data-group="hobbies">
+                                            <label class="form-check-label">garden</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="hobbies" value="pets" data-group="hobbies">
+                                            <label class="form-check-label">have pets</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg px-5">
-                                <i class="fas fa-play me-2"></i>Start Test
+                            <!-- Sports -->
+                            <div class="question-section">
+                                <p class="question-title">What sports or physical activities do you participate in?</p>
+                                <small class="text-muted d-block mb-3">Select at least 1 sport</small>
+                            
+                            <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="basketball" data-group="sports">
+                                            <label class="form-check-label">play basketball</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="baseball" data-group="sports">
+                                            <label class="form-check-label">play baseball/softball</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="soccer" data-group="sports">
+                                            <label class="form-check-label">play soccer</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="football" data-group="sports">
+                                            <label class="form-check-label">play football</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="golf" data-group="sports">
+                                            <label class="form-check-label">play golf</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="volleyball" data-group="sports">
+                                            <label class="form-check-label">play volleyball</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="tennis" data-group="sports">
+                                            <label class="form-check-label">play tennis</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="badminton" data-group="sports">
+                                            <label class="form-check-label">play badminton</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="table_tennis" data-group="sports">
+                                            <label class="form-check-label">play table tennis</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="swim" data-group="sports">
+                                            <label class="form-check-label">swim</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="bike" data-group="sports">
+                                            <label class="form-check-label">bike</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="run" data-group="sports">
+                                            <label class="form-check-label">run / jog</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="gym" data-group="sports">
+                                            <label class="form-check-label">go to the gym</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="yoga" data-group="sports">
+                                            <label class="form-check-label">do yoga / pilates</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="ski" data-group="sports">
+                                            <label class="form-check-label">ski / snowboard</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input count-checkbox" type="checkbox" name="sports" value="hike" data-group="sports">
+                                            <label class="form-check-label">hike</label>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Travel -->
+                            <div class="question-section">
+                                <p class="question-title">What types of vacation or travel do you do?</p>
+                                <small class="text-muted d-block mb-3">Select at least 1 travel type</small>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input count-checkbox" type="checkbox" name="travel" value="business_domestic" data-group="travel">
+                                    <label class="form-check-label">travel for business domestically</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input count-checkbox" type="checkbox" name="travel" value="business_international" data-group="travel">
+                                    <label class="form-check-label">travel for business internationally</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input count-checkbox" type="checkbox" name="travel" value="vacation_domestic" data-group="travel">
+                                    <label class="form-check-label">take vacation domestically</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input count-checkbox" type="checkbox" name="travel" value="vacation_international" data-group="travel">
+                                    <label class="form-check-label">take vacation internationally</label>
+                                </div>
+                            </div>
+
+                            <div class="error-message" id="part4Error">
+                                Please select at least 1 item from each section above.
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousPart()" style="display: none;">
+                                <i class="fas fa-arrow-left me-2"></i>Previous
+                            </button>
+                            <div></div>
+                            <button type="button" class="btn btn-next" id="nextBtn" onclick="nextPart()">
+                                Next<i class="fas fa-arrow-right ms-2"></i>
                             </button>
                         </div>
                     </form>
@@ -168,20 +833,276 @@
 </div>
 
 <script>
-document.getElementById('surveyForm').addEventListener('submit', function(e) {
-    // Collect checkbox values
-    const interests = [];
-    document.querySelectorAll('input[name="interests"]:checked').forEach(function(checkbox) {
-        interests.push(checkbox.value);
+let currentPart = 1;
+const totalParts = 4;
+
+// Update part indicator
+function updatePartIndicator() {
+    document.getElementById('partIndicator').textContent = `Part ${currentPart} of ${totalParts}`;
+}
+
+// Show specific part
+function showPart(partNumber) {
+    document.querySelectorAll('.survey-part').forEach(part => {
+        part.classList.remove('active');
     });
     
-    // Add hidden input for interests
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'interests_list';
-    hiddenInput.value = interests.join(',');
-    this.appendChild(hiddenInput);
+    const activePart = document.querySelector(`.survey-part[data-part="${partNumber}"]`);
+    if (activePart) {
+        activePart.classList.add('active');
+    }
+    
+    // Update navigation buttons
+    document.getElementById('prevBtn').style.display = partNumber === 1 ? 'none' : 'block';
+    
+    const nextBtn = document.getElementById('nextBtn');
+    if (partNumber === totalParts) {
+        nextBtn.textContent = 'Submit';
+        nextBtn.innerHTML = '<i class="fas fa-check me-2"></i>Continue to Self Assessment';
+    } else {
+        nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ms-2"></i>';
+    }
+    
+    updatePartIndicator();
+}
+
+// Validate current part
+function validateCurrentPart() {
+    const activePart = document.querySelector(`.survey-part[data-part="${currentPart}"]`);
+    
+    if (currentPart === 1) {
+        // Must select work field
+        const workField = document.querySelector('input[name="work_field"]:checked');
+        if (!workField) {
+            alert('Please select your field of work.');
+            return false;
+        }
+        
+        // Check sub-questions if teacher selected
+        if (workField.value === 'teacher') {
+            const teacherLevel = document.querySelector('input[name="teacher_level"]:checked');
+            if (!teacherLevel) {
+                alert('Please select your teaching level.');
+                return false;
+            }
+        }
+    }
+    
+    if (currentPart === 2) {
+        // Must select school status
+        const goingToSchool = document.querySelector('input[name="going_to_school"]:checked');
+        if (!goingToSchool) {
+            alert('Please indicate if you are currently going to school.');
+            return false;
+        }
+        
+        // If not going to school, check education experience
+        if (goingToSchool.value === 'no') {
+            const eduExp = document.querySelector('input[name="education_experience"]:checked');
+            if (!eduExp) {
+                alert('Please select your educational experience.');
+                return false;
+            }
+        }
+    }
+    
+    if (currentPart === 3) {
+        // Must select living situation
+        const living = document.querySelector('input[name="living_situation"]:checked');
+        if (!living) {
+            alert('Please select your living situation.');
+            return false;
+        }
+    }
+    
+    if (currentPart === 4) {
+        // Must select at least 1 from each section
+        const activities = document.querySelectorAll('.count-checkbox[data-group="activities"]:checked').length;
+        const hobbies = document.querySelectorAll('.count-checkbox[data-group="hobbies"]:checked').length;
+        const sports = document.querySelectorAll('.count-checkbox[data-group="sports"]:checked').length;
+        const vacation = document.querySelectorAll('.count-checkbox[data-group="travel"]:checked').length;
+        
+        const missingGroups = [];
+        if (activities === 0) missingGroups.push('Activities');
+        if (hobbies === 0) missingGroups.push('Interests/Hobbies');
+        if (sports === 0) missingGroups.push('Sports/Physical Activities');
+        if (vacation === 0) missingGroups.push('Vacation/Travel');
+        
+        if (missingGroups.length > 0) {
+            document.getElementById('part4Error').style.display = 'block';
+            alert('Please select at least 1 item from each section:\n- ' + missingGroups.join('\n- '));
+            return false;
+        }
+        document.getElementById('part4Error').style.display = 'none';
+    }
+    
+    return true;
+}
+
+// Next part
+function nextPart() {
+    if (!validateCurrentPart()) {
+        return;
+    }
+    
+    if (currentPart < totalParts) {
+        currentPart++;
+        showPart(currentPart);
+        window.scrollTo(0, 0);
+    } else {
+        // Submit form
+        document.getElementById('surveyForm').submit();
+    }
+}
+
+// Previous part
+function previousPart() {
+    if (currentPart > 1) {
+        currentPart--;
+        showPart(currentPart);
+        window.scrollTo(0, 0);
+    }
+}
+
+// Handle conditional sub-questions and button state
+// Listen to ALL radio buttons, not just those with data-subquestion
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Check if this radio is inside a sub-question
+        const isInsideSubQuestion = this.closest('.sub-question');
+        
+        // Only handle show/hide logic for main question radios, not sub-question radios
+        if (!isInsideSubQuestion) {
+            const currentSurveyPart = this.closest('.survey-part');
+            
+            if (currentSurveyPart) {
+                // Hide all sub-questions in this part
+                currentSurveyPart.querySelectorAll('.sub-question').forEach(sq => {
+                    sq.classList.remove('show');
+                    // Also clear any selections in the hidden sub-questions
+                    sq.querySelectorAll('input[type="radio"]').forEach(input => {
+                        input.checked = false;
+                    });
+                });
+                
+                // Show the related sub-question if this radio has one
+                if (this.dataset.subquestion) {
+                    const subQuestion = document.getElementById(this.dataset.subquestion);
+                    if (subQuestion) {
+                        subQuestion.classList.add('show');
+                    }
+                }
+            }
+        }
+        
+        // Always check button state when any radio changes
+        checkButtonState();
+    });
 });
+
+// Count checkboxes for Part 4
+function updateCounter() {
+    const totalSelected = document.querySelectorAll('.count-checkbox:checked').length;
+    const counter = document.getElementById('totalCounter');
+    counter.textContent = `${totalSelected} Items Selected`;
+    
+    if (totalSelected >= 6) {
+        counter.classList.add('valid');
+    } else {
+        counter.classList.remove('valid');
+    }
+    
+    // Update button state for Part 4
+    checkButtonState();
+}
+
+document.querySelectorAll('.count-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateCounter);
+});
+
+// Function to check if current part is valid and update button
+function checkButtonState() {
+    const nextBtn = document.getElementById('nextBtn');
+    let isValid = false;
+    
+    if (currentPart === 1) {
+        // Check if work field is selected
+        const workField = document.querySelector('input[name="work_field"]:checked');
+        if (workField) {
+            // If teacher is selected, check if teacher level is also selected
+            if (workField.value === 'teacher') {
+                const teacherLevel = document.querySelector('input[name="teacher_level"]:checked');
+                isValid = teacherLevel !== null;
+            } else {
+                isValid = true;
+            }
+        }
+    } else if (currentPart === 2) {
+        // Check if school status is selected
+        const goingToSchool = document.querySelector('input[name="going_to_school"]:checked');
+        if (goingToSchool) {
+            // If not going to school, check if education experience is selected
+            if (goingToSchool.value === 'no') {
+                const eduExp = document.querySelector('input[name="education_experience"]:checked');
+                isValid = eduExp !== null;
+            } else {
+                isValid = true;
+            }
+        }
+    } else if (currentPart === 3) {
+        // Check if living situation is selected
+        const living = document.querySelector('input[name="living_situation"]:checked');
+        isValid = living !== null;
+    } else if (currentPart === 4) {
+        // Check if at least 6 items are selected
+        const totalSelected = document.querySelectorAll('.count-checkbox:checked').length;
+        isValid = totalSelected >= 6;
+    }
+    
+    // Update button state
+    if (isValid) {
+        nextBtn.classList.add('ready');
+    } else {
+        nextBtn.classList.remove('ready');
+    }
+}
+
+// Initial check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkButtonState();
+    
+    // Make entire form-check div clickable using event delegation
+    // This works for both initially visible and dynamically shown sub-questions
+    document.body.addEventListener('click', function(e) {
+        // Skip if click is directly on an input (let it handle naturally)
+        if (e.target.tagName === 'INPUT') {
+            return;
+        }
+        
+        // Find the closest .form-check ancestor
+        const formCheck = e.target.closest('.form-check');
+        
+        if (formCheck) {
+            // Find the input in this form-check
+            const input = formCheck.querySelector('input[type="radio"], input[type="checkbox"]');
+            
+            if (input && !input.disabled) {
+                // Trigger the input
+                input.click();
+            }
+        }
+    });
+});
+
+// Update button state when changing parts
+const originalShowPart = showPart;
+showPart = function(partNumber) {
+    originalShowPart(partNumber);
+    // Small delay to ensure DOM is updated
+    setTimeout(checkButtonState, 100);
+};
+
+// Initialize
+showPart(1);
 </script>
 {% endblock %}
-

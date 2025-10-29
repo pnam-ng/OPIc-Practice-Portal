@@ -3,38 +3,193 @@
 {% block title %}Dashboard - OPIc Practice Portal{% endblock %}
 
 {% block content %}
+<style>
+/* Ensure heading icons are always visible */
+h2 {
+    display: flex !important;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+h2 i.fas,
+h2 i.far {
+    flex-shrink: 0;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+h2 small {
+    margin-left: 10px;
+}
+
+/* Streak fire animations */
+.streak-active {
+    animation: fireGlow 2s ease-in-out infinite;
+}
+
+.streak-faded {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+@keyframes fireGlow {
+    0%, 100% {
+        text-shadow: 0 0 5px #ff9800, 0 0 10px #ff9800;
+    }
+    50% {
+        text-shadow: 0 0 10px #ff9800, 0 0 20px #ff9800, 0 0 30px #ff5722;
+    }
+}
+
+@media (max-width: 768px) {
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h2 i.fas,
+    h2 i.far {
+        font-size: 1.5rem !important;
+        margin-right: 10px !important;
+        display: inline-block !important;
+        visibility: visible !important;
+    }
+    
+    h2 small {
+        font-size: 0.9rem;
+        display: block;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    h2 i.fas,
+    h2 i.far {
+        font-size: 1.4rem !important;
+        margin-right: 8px !important;
+    }
+}
+</style>
+
+<script>
+// Function to request notification permission manually
+async function requestNotificationPermissionManual() {
+    if (!('Notification' in window)) {
+        alert('Your browser does not support notifications');
+        return;
+    }
+    
+    const button = document.getElementById('enableNotificationsBtn');
+    
+    if (Notification.permission === 'granted') {
+        button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-success');
+        button.disabled = true;
+        return;
+    }
+    
+    try {
+        const permission = await Notification.requestPermission();
+        
+        if (permission === 'granted') {
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+            button.disabled = true;
+            
+            // Show confirmation notification
+            new Notification('Streak Reminders Enabled! 🔥', {
+                body: 'We\'ll remind you at 8 PM if you haven\'t practiced today.',
+                icon: '/static/icons/icon-192x192.png',
+                badge: '/static/icons/icon-96x96.png'
+            });
+            
+            // Start daily reminders
+            if (window.scheduleDailyReminder) {
+                window.scheduleDailyReminder();
+            }
+        } else if (permission === 'denied') {
+            alert('Notifications blocked. Please enable them in your browser settings.');
+        }
+    } catch (error) {
+        console.error('Error requesting notification permission:', error);
+        alert('Failed to enable notifications. Please try again.');
+    }
+}
+
+// Check notification permission on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('enableNotificationsBtn');
+    
+    if (!button) return;
+    
+    if (!('Notification' in window)) {
+        button.style.display = 'none';
+        return;
+    }
+    
+    if (Notification.permission === 'granted') {
+        button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-success');
+        button.disabled = true;
+    } else if (Notification.permission === 'denied') {
+        button.innerHTML = '<i class="fas fa-times me-2"></i>Notifications Blocked';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-secondary');
+        button.disabled = true;
+    }
+});
+</script>
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
-            <h2 class="mb-4">
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            <h2 class="mb-4 dashboard-heading">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="ms-2">Dashboard</span>
                 <small class="text-muted">Welcome back, {{ user_stats.user.name }}!</small>
             </h2>
         </div>
     </div>
 
     <!-- Streak Card -->
-    <div class="row mb-4">
+    <div class="row mb-4" data-streak-status="{{ streak_status }}">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm {% if streak_status == 'at_risk' %}border-warning{% endif %}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title mb-0">
-                            <i class="fas fa-fire text-warning me-2"></i>Daily Streak
+                            <i class="fas fa-fire me-2 {% if is_active_today %}text-warning streak-active{% else %}text-muted streak-faded{% endif %}"></i>Daily Streak
                         </h5>
-                        <span class="badge bg-success fs-6">{{ user_stats.streak_count }} days</span>
+                        <span class="badge {% if is_active_today %}bg-success{% else %}bg-secondary{% endif %} fs-6">
+                            {{ user_stats.streak_count }} days
+                        </span>
                     </div>
                     <div class="progress mb-2" style="height: 20px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: {{ (user_stats.streak_count / 30) * 100 }}%"></div>
+                        <div class="progress-bar {% if is_active_today %}bg-success{% else %}bg-secondary{% endif %}" role="progressbar" 
+                             style="width: {{ (user_stats.streak_count / 30) * 100 if user_stats.streak_count <= 30 else 100 }}%"></div>
                     </div>
-                    <small class="text-muted">
+                    <small class="{% if is_active_today %}text-success{% elif streak_status == 'at_risk' %}text-warning{% else %}text-muted{% endif %}">
                         {% if user_stats.streak_count == 0 %}
-                            Start practicing to build your streak!
+                            <i class="fas fa-exclamation-circle me-1"></i>Start practicing to build your streak!
+                        {% elif is_active_today %}
+                            <i class="fas fa-check-circle me-1"></i>Great! You've practiced today! Keep it up! 🔥
+                        {% elif streak_status == 'at_risk' %}
+                            <i class="fas fa-bell me-1"></i>Practice today to keep your {{ user_stats.streak_count }}-day streak alive!
                         {% else %}
-                            Keep it up! You're on fire! 🔥
+                            <i class="fas fa-info-circle me-1"></i>Keep practicing daily to maintain your streak!
                         {% endif %}
                     </small>
+                    
+                    <!-- Notification permission button (only show on mobile) -->
+                    <div class="mt-3 d-lg-none">
+                        <button id="enableNotificationsBtn" class="btn btn-sm btn-outline-primary w-100" onclick="requestNotificationPermissionManual()">
+                            <i class="fas fa-bell me-2"></i>Enable Streak Reminders
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,12 +218,50 @@
         </div>
     </div>
 
+    <!-- Mode Selection -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-clipboard-list text-primary me-2"></i>Test Mode
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Complete a simulated OPIc test with personalized questions based on your survey responses.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('main.test_mode') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-play me-2"></i>Start Test Mode
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-dumbbell text-success me-2"></i>Practice Mode
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Practice specific topics or random questions to improve your speaking skills.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('main.practice_mode') }}" class="btn btn-success w-100">
+                            <i class="fas fa-play me-2"></i>Start Practice Mode
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     {% if user_stats.recent_responses %}
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
+                <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-history me-2"></i>Recent Activity
                     </h5>
@@ -119,44 +312,6 @@
         </div>
     </div>
     {% endif %}
-
-    <!-- Mode Selection -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fas fa-clipboard-list text-primary me-2"></i>Test Mode
-                    </h5>
-                    <p class="card-text flex-grow-1">
-                        Complete a simulated OPIc test with personalized questions based on your survey responses.
-                    </p>
-                    <div class="mt-auto">
-                        <a href="{{ url_for('main.test_mode') }}" class="btn btn-primary w-100">
-                            <i class="fas fa-play me-2"></i>Start Test Mode
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fas fa-dumbbell text-success me-2"></i>Practice Mode
-                    </h5>
-                    <p class="card-text flex-grow-1">
-                        Practice specific topics or random questions to improve your speaking skills.
-                    </p>
-                    <div class="mt-auto">
-                        <a href="{{ url_for('main.practice_mode') }}" class="btn btn-success w-100">
-                            <i class="fas fa-play me-2"></i>Start Practice Mode
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>

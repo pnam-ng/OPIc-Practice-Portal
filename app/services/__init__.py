@@ -215,14 +215,15 @@ class ResponseService(BaseService):
     """Service class for response-related operations"""
     
     def create_response(self, user_id: int, question_id: int, audio_url: str, 
-                       duration: float = None) -> Optional[Response]:
+                       duration: float = None, mode: str = 'practice') -> Optional[Response]:
         """Create a new response"""
         try:
             response = Response(
                 user_id=user_id,
                 question_id=question_id,
                 audio_url=audio_url,
-                duration=duration
+                duration=duration,
+                mode=mode
             )
             
             self.db.session.add(response)

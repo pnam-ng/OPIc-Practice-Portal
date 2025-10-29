@@ -125,9 +125,33 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
+  let targetUrl = '/';
+  
+  // Handle different notification actions
+  if (event.action === 'practice') {
+    targetUrl = '/practice';
+  } else if (event.action === 'test') {
+    targetUrl = '/test';
+  } else if (event.action === 'explore') {
+    targetUrl = '/';
   }
+
+  event.waitUntil(
+    clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    }).then((clientList) => {
+      // Check if there's already a window open
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        if (client.url === self.location.origin + targetUrl && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // If no window is open, open a new one
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
 });
