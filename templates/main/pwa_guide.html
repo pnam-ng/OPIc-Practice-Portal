@@ -1,0 +1,718 @@
+{% extends "base.html" %}
+
+{% block title %}Install App on Your Phone{% endblock %}
+
+{% block content %}
+<div class="container py-3 py-md-4">
+    <!-- Header -->
+    <div class="text-center mb-3 mb-md-4">
+        <h1 class="fw-bold mb-2 mb-md-3">
+            <i class="fas fa-mobile-alt me-2 text-primary"></i>Install on Your Phone
+        </h1>
+        <p class="text-muted mb-0">Get faster access and offline support!</p>
+    </div>
+
+    <!-- Platform Tabs -->
+    <div class="row justify-content-center mb-3 mb-md-4">
+        <div class="col-lg-8">
+            <div class="btn-group w-100 mb-3 mb-md-4" role="group">
+                <button type="button" class="btn btn-lg btn-outline-primary active" id="ios-tab" onclick="switchTab('ios')">
+                    <i class="fab fa-apple fa-lg me-2"></i>iOS
+                </button>
+                <button type="button" class="btn btn-lg btn-outline-success" id="android-tab" onclick="switchTab('android')">
+                    <i class="fab fa-android fa-lg me-2"></i>Android
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS Guide -->
+    <div id="ios-content" class="guide-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fab fa-apple me-2"></i>iOS Installation</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning mb-4">
+                            <strong>⚠️ Use Safari only!</strong> Chrome doesn't support PWA installation on iOS.
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">1</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Open Safari</h5>
+                                <div class="url-box mb-2">
+                                    <code id="ios-url">bit.ly/srvopic</code>
+                                    <button class="btn btn-sm btn-primary ms-2" onclick="copyUrl('ios-url')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">2</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Tap Share Button <i class="fas fa-share-square text-primary"></i></h5>
+                                <p class="text-muted mb-0">Bottom center (iPhone) or top-right (iPad)</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">3</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Select "Add to Home Screen"</h5>
+                                <p class="text-muted mb-0">Scroll down in the menu if you don't see it</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">4</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Tap "Add"</h5>
+                                <p class="text-muted mb-0">The app icon will appear on your home screen</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mb-0">
+                            <i class="fas fa-check-circle me-2"></i><strong>Done!</strong> Launch the app from your home screen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Android Guide -->
+    <div id="android-content" class="guide-content" style="display: none;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Quick Install Button for Android -->
+                <div id="androidInstallButtonContainer" class="text-center mb-4" style="display: none;">
+                    <div class="card shadow-lg border-success">
+                        <div class="card-body py-4">
+                            <h5 class="text-success mb-3">
+                                <i class="fas fa-rocket me-2"></i>Quick Install Available!
+                            </h5>
+                            <button id="androidInstallButton" class="btn btn-success btn-lg shadow px-5">
+                                <i class="fas fa-download me-2"></i>Install App Now
+                            </button>
+                            <p class="text-muted small mt-3 mb-0">
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                                One-click installation - no manual steps needed!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="fab fa-android me-2"></i>Android Installation</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-4">
+                            <strong>💡 Works with:</strong> Chrome, Edge, Samsung Internet
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">1</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Open Chrome/Edge</h5>
+                                <div class="url-box mb-2">
+                                    <code id="android-url">bit.ly/srvopic</code>
+                                    <button class="btn btn-sm btn-success ms-2" onclick="copyUrl('android-url')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">2</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Look for Install Prompt</h5>
+                                <p class="mb-2">A banner will appear at the bottom: <strong>"Install OPIc Practice Portal?"</strong></p>
+                                <p class="text-muted mb-0">Tap <strong class="text-success">"Install"</strong> or <strong class="text-success">"Add"</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="step-item mb-4">
+                            <div class="step-badge">OR</div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Use Browser Menu</h5>
+                                <p class="text-muted mb-2">If no prompt appears:</p>
+                                <ul class="mb-0">
+                                    <li><strong>Chrome:</strong> Menu (⋮) → "Add to Home screen"</li>
+                                    <li><strong>Edge:</strong> Menu (⋯) → "Add to phone"</li>
+                                    <li><strong>Samsung:</strong> Menu → "Add page to" → "Home screen"</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mb-0">
+                            <i class="fas fa-check-circle me-2"></i><strong>Done!</strong> Find the app in your app drawer or home screen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-3 mt-md-4 mb-2">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    /* Clean, modern styling */
+    .guide-content {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ensure content uses theme variables */
+    .container {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+
+    /* Platform Tabs */
+    .btn-group .btn {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-group .btn.active {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn-group .btn:hover {
+        transform: scale(1.02);
+    }
+
+    /* Step Items */
+    .step-item {
+        display: flex;
+        gap: 1rem;
+        align-items: start;
+        padding: 0.5rem 0;
+    }
+
+    .step-badge {
+        min-width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    /* URL Box */
+    .url-box {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .url-box code {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.95rem;
+        word-break: break-all;
+    }
+
+    /* Install Button Animation */
+    #androidInstallButton {
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    #androidInstallButton:hover {
+        animation: none;
+        transform: scale(1.08);
+    }
+
+    /* Android Install Card */
+    #androidInstallButtonContainer .card {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(32, 201, 151, 0.05) 100%);
+        border-width: 2px;
+    }
+
+    [data-theme="dark"] #androidInstallButtonContainer .card {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+        border-color: #28a745;
+    }
+
+    /* Dark Mode */
+    [data-theme="dark"] .card-header {
+        opacity: 0.95;
+    }
+
+    [data-theme="dark"] .alert {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .alert-warning {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-color: rgba(255, 193, 7, 0.3);
+    }
+
+    [data-theme="dark"] .alert-info {
+        background-color: rgba(13, 110, 253, 0.15);
+        border-color: rgba(13, 110, 253, 0.3);
+    }
+
+    [data-theme="dark"] .alert-success {
+        background-color: rgba(40, 167, 69, 0.15);
+        border-color: rgba(40, 167, 69, 0.3);
+    }
+
+    [data-theme="dark"] .btn-outline-primary:not(.active) {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .btn-outline-success:not(.active) {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .btn-outline-primary:hover:not(.active),
+    [data-theme="dark"] .btn-outline-success:hover:not(.active) {
+        background-color: var(--bg-secondary);
+        border-color: #58a6ff;
+    }
+
+    /* Dark mode - Text and Cards */
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h2,
+    [data-theme="dark"] h3,
+    [data-theme="dark"] h4,
+    [data-theme="dark"] h5,
+    [data-theme="dark"] h6 {
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="dark"] p,
+    [data-theme="dark"] li {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .card {
+        background-color: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .card-body {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .card-header.bg-primary {
+        background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%) !important;
+    }
+
+    [data-theme="dark"] .card-header.bg-success {
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%) !important;
+    }
+
+    [data-theme="dark"] code {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    [data-theme="dark"] .url-box {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .step-item strong {
+        color: var(--text-primary);
+    }
+
+    /* Responsive - Tablet */
+    @media (max-width: 768px) {
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        .step-badge {
+            min-width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .step-item {
+            gap: 0.75rem;
+        }
+
+        .step-item h5 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .url-box {
+            flex-direction: column;
+            padding: 0.5rem;
+        }
+
+        .url-box code {
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .url-box button {
+            width: 100%;
+            padding: 0.5rem;
+        }
+
+        .btn-group .btn {
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .alert {
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+
+        #androidInstallButtonContainer .card-body {
+            padding: 1.5rem 1rem;
+        }
+
+        #androidInstallButton {
+            font-size: 1rem;
+            padding: 0.75rem 2rem;
+        }
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .lead,
+        .text-muted {
+            font-size: 0.9rem;
+        }
+
+        /* Platform Tabs - Stack on very small screens */
+        .btn-group {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-group .btn {
+            width: 100% !important;
+            font-size: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem !important;
+        }
+
+        .btn-group .btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Card styling */
+        .card {
+            margin-bottom: 1rem;
+        }
+
+        .card-header h4 {
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 0.75rem;
+        }
+
+        /* Step items */
+        .step-item {
+            gap: 0.5rem;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .step-badge {
+            min-width: 35px;
+            height: 35px;
+            font-size: 0.9rem;
+        }
+
+        .step-item h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .step-item p,
+        .step-item li {
+            font-size: 0.85rem;
+        }
+
+        /* URL box */
+        .url-box {
+            padding: 0.6rem;
+        }
+
+        .url-box code {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        /* Alerts */
+        .alert {
+            font-size: 0.85rem;
+            padding: 0.6rem;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .alert strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Android install button */
+        #androidInstallButtonContainer .card-body {
+            padding: 1.25rem 0.75rem;
+        }
+
+        #androidInstallButtonContainer h5 {
+            font-size: 1rem;
+            margin-bottom: 1rem !important;
+        }
+
+        #androidInstallButton {
+            font-size: 0.95rem;
+            padding: 0.7rem 2rem;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        #androidInstallButtonContainer p {
+            font-size: 0.8rem;
+        }
+
+        /* Lists in steps */
+        .step-item ul {
+            margin-bottom: 0;
+            padding-left: 1.25rem;
+        }
+
+        .step-item ul li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Back button */
+        .text-center .btn-lg {
+            font-size: 0.9rem;
+            padding: 0.65rem 1.25rem;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        /* Reduce spacing on mobile */
+        .mb-4 {
+            margin-bottom: 1rem !important;
+        }
+
+        .mt-3 {
+            margin-top: 1rem !important;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 375px) {
+        h1 {
+            font-size: 1.2rem;
+        }
+
+        .btn-group .btn {
+            font-size: 0.9rem;
+            padding: 0.65rem;
+        }
+
+        #androidInstallButton {
+            padding: 0.65rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .step-badge {
+            min-width: 32px;
+            height: 32px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab Switching
+    function switchTab(platform) {
+        // Update button states
+        const iosTab = document.getElementById('ios-tab');
+        const androidTab = document.getElementById('android-tab');
+        const iosContent = document.getElementById('ios-content');
+        const androidContent = document.getElementById('android-content');
+
+        if (platform === 'ios') {
+            iosTab.classList.add('active');
+            androidTab.classList.remove('active');
+            iosContent.style.display = 'block';
+            androidContent.style.display = 'none';
+        } else {
+            androidTab.classList.add('active');
+            iosTab.classList.remove('active');
+            androidContent.style.display = 'block';
+            iosContent.style.display = 'none';
+        }
+    }
+
+    // Copy URL function
+    function copyUrl(elementId) {
+        const urlElement = document.getElementById(elementId);
+        const url = urlElement.textContent;
+        
+        navigator.clipboard.writeText(url).then(() => {
+            const button = urlElement.nextElementSibling;
+            const originalHtml = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            
+            setTimeout(() => {
+                button.innerHTML = originalHtml;
+            }, 2000);
+        }).catch(err => {
+            alert('Copy this URL: ' + url);
+        });
+    }
+
+    // PWA Installation (Android one-click)
+    let deferredPrompt;
+    const androidInstallButton = document.getElementById('androidInstallButton');
+    const androidInstallButtonContainer = document.getElementById('androidInstallButtonContainer');
+
+    console.log('✅ PWA Guide loaded - Waiting for install prompt...');
+    console.log('ℹ️ Note: Install button only appears on Android Chrome/Edge when app is installable');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('🎉 Install prompt available! Showing install button...');
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Show install button in Android tab
+        androidInstallButtonContainer.style.display = 'block';
+    });
+
+    // Function to handle installation
+    async function handleInstall(button) {
+        if (!deferredPrompt) {
+            console.log('❌ No install prompt available');
+            alert('Install prompt not available. Please use the manual steps below.');
+            return;
+        }
+        
+        console.log('📱 Showing install prompt...');
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('👤 User response:', outcome);
+        
+        if (outcome === 'accepted') {
+            button.innerHTML = '<i class="fas fa-check-circle me-2"></i>Installing...';
+            button.disabled = true;
+            
+            // Hide install button after installation
+            setTimeout(() => {
+                androidInstallButtonContainer.style.display = 'none';
+            }, 2000);
+        }
+        
+        deferredPrompt = null;
+    }
+
+    // Android tab install button
+    androidInstallButton.addEventListener('click', () => handleInstall(androidInstallButton));
+
+    window.addEventListener('appinstalled', () => {
+        console.log('✅ App installed successfully!');
+        androidInstallButtonContainer.style.display = 'none';
+        
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.style.maxWidth = '500px';
+        alertDiv.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>Success!</strong> App installed! Check your home screen.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    });
+
+    // Auto-detect platform
+    document.addEventListener('DOMContentLoaded', function() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        if (/android/i.test(userAgent)) {
+            switchTab('android');
+        }
+        // iOS is default, so no need to switch
+    });
+</script>
+{% endblock %}

@@ -48,13 +48,13 @@ A comprehensive web application for practicing OPIc (Oral Proficiency Interview 
 ### Installation
 
 1. **Clone the repository**
-```bash
+   ```bash
 git clone https://github.com/yourusername/opic-practice-portal.git
 cd opic-practice-portal
 ```
 
 2. **Create virtual environment**
-```bash
+   ```bash
 python -m venv venv
 
 # Windows

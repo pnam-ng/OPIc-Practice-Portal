@@ -38,6 +38,10 @@ def practice_mode():
 def profile():
     return main_controller.profile()
 
+@main_bp.route('/pwa-guide')
+def pwa_guide():
+    return main_controller.pwa_guide()
+
 @main_bp.route('/change-password', methods=['POST'])
 @login_required
 def change_password():

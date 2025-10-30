@@ -147,6 +147,10 @@ class MainController(BaseController):
         """Handle practice mode request"""
         return redirect(url_for('practice_mode.index'))
     
+    def pwa_guide(self):
+        """Handle PWA installation guide request"""
+        return render_template('main/pwa_guide.html')
+    
     @login_required
     def profile(self):
         """Handle user profile request"""
