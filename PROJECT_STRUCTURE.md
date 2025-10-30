@@ -103,6 +103,8 @@ OPP/
 
 **Note**: Files and folders marked with "not in git" are excluded via `.gitignore` for size or security reasons.
 
+**Note**: GitHub Actions CI/CD workflows have been removed. For deployment, see Docker configurations or manual deployment instructions in [SETUP_GUIDE.md](SETUP_GUIDE.md).
+
 ## Technology Stack
 
 ### Backend
@@ -745,5 +747,3 @@ gunicorn -c gunicorn_config.py app:app
 5. Submit a pull request
 
 ## License
-
-This project is licensed under the MIT License.

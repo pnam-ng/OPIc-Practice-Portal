@@ -14,7 +14,7 @@
                         <p class="text-muted">Join OPIc Practice Portal</p>
                     </div>
 
-                    <form method="POST">
+                    <form method="POST" id="registerForm" data-has-inline-loader="true">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <div class="input-group">
@@ -74,7 +74,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-success w-100 mb-3" id="submit-btn">
-                            <i class="fas fa-user-plus me-2"></i>Create Account
+                            <i class="fas fa-user-plus me-2"></i><span id="submitBtnText">Create Account</span>
                         </button>
                     </form>
 
@@ -96,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const matchMessage = document.getElementById('password-match-message');
     const matchIcon = document.getElementById('password-match-icon');
     const submitBtn = document.getElementById('submit-btn');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const registerForm = document.getElementById('registerForm');
+    let isSubmitting = false;
     
     // Toggle password visibility
     const togglePassword = document.getElementById('toggle-password');
@@ -176,6 +179,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Also check on blur (when user leaves the field)
     confirmPasswordInput.addEventListener('blur', checkPasswordMatch);
+    
+    // Handle form submission - prevent duplicate loaders
+    registerForm.addEventListener('submit', function(e) {
+        // Prevent double submission
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Validate passwords match before submitting
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            checkPasswordMatch();
+            return false;
+        }
+        
+        isSubmitting = true;
+        
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+    });
 });
 </script>
 

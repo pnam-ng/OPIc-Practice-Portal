@@ -121,11 +121,15 @@ def register_blueprints(app):
     from app.blueprints.test_mode import test_mode_bp
     from app.blueprints.practice_mode import practice_mode_bp
     from app.blueprints.admin import admin_bp
+    from app.blueprints.comments import comments_bp
+    from app.blueprints.notifications import notifications_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(main_bp)
     app.register_blueprint(test_mode_bp, url_prefix='/test')
     app.register_blueprint(practice_mode_bp, url_prefix='/practice')
+    app.register_blueprint(comments_bp)
+    app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
 
 def create_celery(app=None):
@@ -161,13 +165,31 @@ if __name__ == '__main__':
     
     if os.path.exists(ssl_cert) and os.path.exists(ssl_key):
         # Run with HTTPS (required for microphone/camera access over network)
+        print("=" * 60)
         print("Starting server with HTTPS...")
-        print("Access at: https://10.84.206.173:5000")
-        print("Or: https://localhost:5000")
-        print("\nNote: You may see a security warning. Click 'Advanced' and 'Proceed' to continue.")
+        print("=" * 60)
+        print()
+        print("Access at: https://localhost:5000")
+        print()
+        print("Note: You may see a security warning.")
+        print("   Click 'Advanced' and 'Proceed' to continue.")
+        print("=" * 60)
+        print()
         app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=(ssl_cert, ssl_key))
     else:
         # Run without HTTPS (localhost only)
-        print("WARNING: Running without HTTPS. Microphone will only work on localhost.")
-        print("To enable HTTPS, run: python generate_ssl_cert.py")
+        print("=" * 60)
+        print("WARNING: Running without HTTPS")
+        print("=" * 60)
+        print()
+        print("Microphone will only work on localhost.")
+        print("To enable HTTPS, generate SSL certificates:")
+        print()
+        print("  mkdir ssl")
+        print("  openssl req -x509 -newkey rsa:4096 -nodes \\")
+        print("          -out ssl/cert.pem -keyout ssl/key.pem -days 365")
+        print()
+        print("Access at: http://localhost:5000")
+        print("=" * 60)
+        print()
         app.run(host='0.0.0.0', port=5000, debug=True)

@@ -39,3 +39,7 @@ def record_practice_response(question_id):
 def get_topics_by_level(level):
     return practice_mode_controller.get_topics_by_level(level)
 
+@practice_mode_bp.route('/congratulations')
+@login_required
+def congratulations():
+    return practice_mode_controller.congratulations()

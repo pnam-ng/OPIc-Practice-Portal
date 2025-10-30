@@ -1,0 +1,4 @@
+# This file ensures the avatars directory exists in Git
+# User-uploaded avatar images are ignored by .gitignore
+# Default avatars are in static/avatars/ directory
+

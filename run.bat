@@ -1,5 +1,7 @@
 @echo off
-echo Starting OPIc Practice Portal...
+echo ============================================================
+echo    OPIc Practice Portal - HTTP Server
+echo ============================================================
 echo.
 
 REM Check if virtual environment exists

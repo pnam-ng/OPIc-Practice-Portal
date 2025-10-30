@@ -30,6 +30,10 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = int(os.environ.get('MAX_CONTENT_LENGTH', 16777216))
     app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
     
+    # Ensure UTF-8 encoding for JSON responses (supports emojis and special characters)
+    app.config['JSON_AS_ASCII'] = False
+    app.config['JSON_SORT_KEYS'] = False
+    
     # Email configuration
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
@@ -52,12 +56,31 @@ def create_app():
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'responses'), exist_ok=True)
     os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'questions'), exist_ok=True)
+    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'avatars'), exist_ok=True)
     
-
-    # Simple route for testing
-    @app.route('/')
-    def index():
-        return '<h1>OPIc Practice Portal</h1><p>Flask app is running!</p>'
+    # Register blueprints
+    from app.blueprints.auth import auth_bp
+    from app.blueprints.main import main_bp
+    from app.blueprints.test_mode import test_mode_bp
+    from app.blueprints.practice_mode import practice_mode_bp
+    from app.blueprints.admin import admin_bp
+    from app.blueprints.comments import comments_bp
+    from app.blueprints.notifications import notifications_bp
+    
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(main_bp)
+    app.register_blueprint(test_mode_bp, url_prefix='/test')
+    app.register_blueprint(practice_mode_bp, url_prefix='/practice')
+    app.register_blueprint(comments_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    
+    # User loader for Flask-Login
+    from app.models import User
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
     
     return app
 

@@ -243,11 +243,78 @@
             color: var(--opic-gray);
             font-weight: 500;
         }
+        
+        /* Page Loading Transition */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--opic-light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+            pointer-events: none;
+        }
+        
+        .page-loader.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        
+        .page-loader.hiding {
+            opacity: 0;
+        }
+        
+        .loader-content {
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .page-loader.hiding .loader-content {
+            transform: scale(0.9);
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--opic-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        .loader-text {
+            color: var(--opic-gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Page Loading Overlay -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Loading...</div>
+        </div>
+    </div>
+    
     <!-- OPIc Header -->
     <header class="opic-header">
         <div class="container">
@@ -388,6 +455,124 @@
                 }
             });
         });
+        
+        // Page Loading Transition - Only show loader if page takes > 1 second
+        (function() {
+            const pageLoader = document.getElementById('pageLoader');
+            let showLoaderTimeout;
+            let loaderStartTime;
+            let isLoaderVisible = false;
+            let pageLoadStartTime = Date.now();
+            const SHOW_LOADER_DELAY = 1000; // Only show if loading takes > 1 second
+            const MINIMUM_DISPLAY_TIME = 600; // Minimum time to show loader once visible
+            
+            // Function to hide loader smoothly
+            function hideLoader() {
+                // Clear the timeout that would show the loader
+                if (showLoaderTimeout) {
+                    clearTimeout(showLoaderTimeout);
+                    showLoaderTimeout = null;
+                }
+                
+                // If loader is not visible, just return
+                if (!isLoaderVisible) {
+                    return;
+                }
+                
+                // Calculate how long the loader has been visible
+                const elapsedTime = Date.now() - loaderStartTime;
+                const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+                
+                // Wait for minimum display time before hiding
+                setTimeout(() => {
+                    // Add hiding class for smooth scale-down animation
+                    pageLoader.classList.add('hiding');
+                    
+                    // After animation completes, remove active class
+                    setTimeout(() => {
+                        pageLoader.classList.remove('active');
+                        pageLoader.classList.remove('hiding');
+                        isLoaderVisible = false;
+                    }, 400); // Match the CSS transition duration
+                }, remainingTime);
+            }
+            
+            // Function to schedule showing the loader (only if page takes > 1 second)
+            function scheduleShowLoader() {
+                pageLoadStartTime = Date.now();
+                
+                // Clear any existing timeout
+                if (showLoaderTimeout) {
+                    clearTimeout(showLoaderTimeout);
+                }
+                
+                // Show loader only if page takes more than 1 second
+                showLoaderTimeout = setTimeout(() => {
+                    if (!isLoaderVisible) {
+                        loaderStartTime = Date.now();
+                        isLoaderVisible = true;
+                        pageLoader.classList.remove('hiding');
+                        pageLoader.classList.add('active');
+                    }
+                }, SHOW_LOADER_DELAY);
+            }
+            
+            // Hide loader when page is fully loaded
+            window.addEventListener('load', function() {
+                hideLoader();
+            });
+            
+            // Show loader on page unload (when navigating away)
+            window.addEventListener('beforeunload', function() {
+                scheduleShowLoader();
+            });
+            
+            // Show loader when clicking navigation links
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all links that lead to different pages
+                const links = document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"]):not([download])');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // Only show loader for internal navigation
+                        const href = this.getAttribute('href');
+                        
+                        // Skip if it's a hash link, external link, or special link
+                        if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                            // Check if it's an internal link
+                            try {
+                                const url = new URL(href, window.location.origin);
+                                if (url.origin === window.location.origin) {
+                                    scheduleShowLoader();
+                                }
+                            } catch (e) {
+                                // If URL parsing fails, assume internal navigation
+                                scheduleShowLoader();
+                            }
+                        }
+                    });
+                });
+                
+                // Also show loader on form submissions
+                const forms = document.querySelectorAll('form:not([target="_blank"])');
+                forms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        // Don't show loader for AJAX forms or forms with inline loaders
+                        if (!this.hasAttribute('data-ajax') && !this.hasAttribute('data-has-inline-loader')) {
+                            scheduleShowLoader();
+                        }
+                    });
+                });
+                
+                // Hide loader if navigation is cancelled (e.g., back button)
+                window.addEventListener('pageshow', function(event) {
+                    if (event.persisted) {
+                        // Page was loaded from cache (back/forward button)
+                        hideLoader();
+                    }
+                });
+            });
+        })();
     </script>
     
     {% block extra_js %}{% endblock %}

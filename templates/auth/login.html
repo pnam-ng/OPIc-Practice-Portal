@@ -14,7 +14,7 @@
                         <p class="text-muted">Sign in to continue practicing</p>
                     </div>
 
-                    <form method="POST">
+                    <form method="POST" id="loginForm" data-has-inline-loader="true">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <div class="input-group">
@@ -45,8 +45,8 @@
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
+                            <i class="fas fa-sign-in-alt me-2"></i><span id="loginBtnText">Sign In</span>
                         </button>
                     </form>
 
@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('toggle-password');
     const passwordEye = document.getElementById('password-eye');
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    let isSubmitting = false;
     
     togglePassword.addEventListener('click', function() {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -79,6 +83,21 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordEye.classList.remove('fa-eye-slash');
             passwordEye.classList.add('fa-eye');
         }
+    });
+    
+    // Handle form submission - prevent duplicate loaders
+    loginForm.addEventListener('submit', function(e) {
+        // Prevent double submission
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        
+        // Disable button and show loading state
+        loginBtn.disabled = true;
+        loginBtnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
     });
 });
 </script>

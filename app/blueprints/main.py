@@ -43,6 +43,11 @@ def profile():
 def change_password():
     return main_controller.change_password()
 
+@main_bp.route('/upload-avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    return main_controller.upload_avatar()
+
 @main_bp.route('/history')
 @login_required
 def history():

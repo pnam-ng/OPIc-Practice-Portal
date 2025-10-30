@@ -49,11 +49,13 @@
 .action-buttons {
     display: flex;
     gap: 5px;
+    flex-wrap: wrap;
 }
 
 .btn-toggle-admin {
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
+    white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -172,12 +174,25 @@
               <div class="action-buttons">
                 <button class="btn btn-sm btn-toggle-admin {{ 'btn-danger' if u.is_admin else 'btn-success' }}"
                         onclick="toggleAdmin({{ u.id }}, '{{ u.username }}', {{ 'true' if u.is_admin else 'false' }})"
-                        id="btn-admin-{{ u.id }}">
+                        id="btn-admin-{{ u.id }}"
+                        title="Toggle admin status">
                   {% if u.is_admin %}
                   <i class="fas fa-user-minus me-1"></i>Revoke Admin
                   {% else %}
                   <i class="fas fa-user-plus me-1"></i>Grant Admin
                   {% endif %}
+                </button>
+                <button class="btn btn-sm btn-warning btn-toggle-admin"
+                        onclick="resetPassword({{ u.id }}, '{{ u.username }}')"
+                        id="btn-reset-{{ u.id }}"
+                        title="Reset password">
+                  <i class="fas fa-key"></i>
+                </button>
+                <button class="btn btn-sm btn-danger btn-toggle-admin"
+                        onclick="deleteUser({{ u.id }}, '{{ u.username }}')"
+                        id="btn-delete-{{ u.id }}"
+                        title="Delete user">
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
               {% else %}
@@ -217,107 +232,4 @@
     {% endif %}
   </div>
 </div>
-
-<script>
-async function toggleAdmin(userId, username, currentIsAdmin) {
-    const action = currentIsAdmin ? 'revoke admin privileges from' : 'grant admin privileges to';
-    const confirmMsg = `Are you sure you want to ${action} user "${username}"?`;
-    
-    if (!confirm(confirmMsg)) {
-        return;
-    }
-    
-    const button = document.getElementById(`btn-admin-${userId}`);
-    button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-    
-    try {
-        const response = await fetch(`/admin/users/${userId}/toggle-admin`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Update the row styling
-            const row = document.getElementById(`user-row-${userId}`);
-            if (data.is_admin) {
-                row.classList.add('admin-row');
-            } else {
-                row.classList.remove('admin-row');
-            }
-            
-            // Update the role badge
-            const roleBadge = document.getElementById(`role-badge-${userId}`);
-            if (data.is_admin) {
-                roleBadge.innerHTML = '<span class="badge bg-success admin-badge-large"><i class="fas fa-user-shield me-1"></i>Admin</span>';
-            } else {
-                roleBadge.innerHTML = '<span class="badge bg-secondary"><i class="fas fa-user me-1"></i>User</span>';
-            }
-            
-            // Update the username with crown icon
-            const userCell = row.querySelector('td:nth-child(2) .fw-semibold');
-            if (data.is_admin) {
-                if (!userCell.querySelector('.fa-crown')) {
-                    userCell.innerHTML += ' <i class="fas fa-crown text-warning ms-1" title="Administrator"></i>';
-                }
-            } else {
-                const crown = userCell.querySelector('.fa-crown');
-                if (crown) {
-                    crown.remove();
-                }
-            }
-            
-            // Update the button
-            if (data.is_admin) {
-                button.className = 'btn btn-sm btn-toggle-admin btn-danger';
-                button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
-                button.onclick = () => toggleAdmin(userId, username, true);
-            } else {
-                button.className = 'btn btn-sm btn-toggle-admin btn-success';
-                button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
-                button.onclick = () => toggleAdmin(userId, username, false);
-            }
-            
-            // Show success message
-            showFlashMessage(data.message, 'success');
-        } else {
-            showFlashMessage(data.message || 'Failed to update admin status', 'danger');
-            button.disabled = false;
-            if (currentIsAdmin) {
-                button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
-            } else {
-                button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
-            }
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showFlashMessage('An error occurred. Please try again.', 'danger');
-        button.disabled = false;
-        if (currentIsAdmin) {
-            button.innerHTML = '<i class="fas fa-user-minus me-1"></i>Revoke Admin';
-        } else {
-            button.innerHTML = '<i class="fas fa-user-plus me-1"></i>Grant Admin';
-        }
-    }
-}
-
-function showFlashMessage(message, type) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-    alertDiv.style.zIndex = '9999';
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 5000);
-}
-</script>
 {% endblock %}

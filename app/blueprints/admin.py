@@ -172,31 +172,3 @@ def users_api():
             "created_at": u.created_at.isoformat() if u.created_at else None,
             "last_active_date": u.last_active_date.isoformat() if u.last_active_date else None,
         })
-    return jsonify({"total": total, "page": page, "per_page": per_page, "items": data})
-
-# --- Toggle Admin Status ---
-@admin_bp.route("/users/<int:user_id>/toggle-admin", methods=["POST"])
-@login_required
-@admin_required
-def toggle_admin(user_id):
-    """Toggle admin status for a user"""
-    from flask import flash
-    
-    # Prevent admin from removing their own admin status
-    if user_id == current_user.id:
-        return jsonify({"success": False, "message": "You cannot change your own admin status"}), 403
-    
-    user = User.query.get_or_404(user_id)
-    
-    # Toggle admin status
-    user.is_admin = not user.is_admin
-    db.session.commit()
-    
-    action = "granted" if user.is_admin else "revoked"
-    flash(f'Admin privileges {action} for user {user.username}', 'success')
-    
-    return jsonify({
-        "success": True, 
-        "is_admin": user.is_admin,
-        "message": f"Admin privileges {action} successfully"
-    })

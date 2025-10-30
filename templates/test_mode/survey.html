@@ -289,17 +289,15 @@
     }
     
     .btn-next {
-        width: 100%;
+        width: 100% !important;
         margin-top: 10px;
+        min-width: unset !important;
     }
     
     #prevBtn {
-        width: 100%;
+        width: 100% !important;
         margin-bottom: 10px;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
+        min-width: unset !important;
     }
     
     .selection-counter {
@@ -554,11 +552,17 @@
 
                         <!-- PART 4: Activities & Hobbies -->
                         <div class="survey-part" data-part="4">
-                            <p class="text-primary mb-3">
+                            <div class="alert alert-info">
                                 <i class="fas fa-info-circle"></i> 
-                                Select a total of at least six (6) options across the various sections below.
-                                <span class="selection-counter" id="totalCounter">0 Items Selected</span>
-                            </p>
+                                <strong>Requirements:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Select <strong>at least 1 item</strong> from each section below</li>
+                                    <li>Select <strong>at least 6 items total</strong> across all sections</li>
+                                </ul>
+                                <div class="mt-2">
+                                    <span class="selection-counter" id="totalCounter">0 Items Selected</span>
+                                </div>
+                            </div>
                             
                             <!-- Activities -->
                             <div class="question-section">
@@ -816,13 +820,12 @@
                         </div>
 
                         <!-- Navigation Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousPart()" style="display: none;">
-                                <i class="fas fa-arrow-left me-2"></i>Previous
-                            </button>
-                            <div></div>
-                            <button type="button" class="btn btn-next" id="nextBtn" onclick="nextPart()">
+                        <div class="d-flex flex-column align-items-end mt-4" style="gap: 10px;">
+                            <button type="button" class="btn btn-next" id="nextBtn" onclick="nextPart()" style="min-width: 200px;">
                                 Next<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousPart()" style="display: none; min-width: 200px;">
+                                <i class="fas fa-arrow-left me-2"></i>Previous
                             </button>
                         </div>
                     </form>
@@ -916,11 +919,12 @@ function validateCurrentPart() {
     }
     
     if (currentPart === 4) {
-        // Must select at least 1 from each section
+        // Must select at least 1 from each section AND at least 6 total
         const activities = document.querySelectorAll('.count-checkbox[data-group="activities"]:checked').length;
         const hobbies = document.querySelectorAll('.count-checkbox[data-group="hobbies"]:checked').length;
         const sports = document.querySelectorAll('.count-checkbox[data-group="sports"]:checked').length;
         const vacation = document.querySelectorAll('.count-checkbox[data-group="travel"]:checked').length;
+        const totalSelected = activities + hobbies + sports + vacation;
         
         const missingGroups = [];
         if (activities === 0) missingGroups.push('Activities');
@@ -930,9 +934,18 @@ function validateCurrentPart() {
         
         if (missingGroups.length > 0) {
             document.getElementById('part4Error').style.display = 'block';
+            document.getElementById('part4Error').textContent = 'Please select at least 1 item from each section: ' + missingGroups.join(', ');
             alert('Please select at least 1 item from each section:\n- ' + missingGroups.join('\n- '));
             return false;
         }
+        
+        if (totalSelected < 6) {
+            document.getElementById('part4Error').style.display = 'block';
+            document.getElementById('part4Error').textContent = `Please select at least 6 total items. You have selected ${totalSelected}.`;
+            alert(`Please select at least 6 total items across all sections. You have selected ${totalSelected}.`);
+            return false;
+        }
+        
         document.getElementById('part4Error').style.display = 'none';
     }
     
@@ -1002,13 +1015,29 @@ document.querySelectorAll('input[type="radio"]').forEach(radio => {
 
 // Count checkboxes for Part 4
 function updateCounter() {
-    const totalSelected = document.querySelectorAll('.count-checkbox:checked').length;
-    const counter = document.getElementById('totalCounter');
-    counter.textContent = `${totalSelected} Items Selected`;
+    const activities = document.querySelectorAll('.count-checkbox[data-group="activities"]:checked').length;
+    const hobbies = document.querySelectorAll('.count-checkbox[data-group="hobbies"]:checked').length;
+    const sports = document.querySelectorAll('.count-checkbox[data-group="sports"]:checked').length;
+    const vacation = document.querySelectorAll('.count-checkbox[data-group="travel"]:checked').length;
+    const totalSelected = activities + hobbies + sports + vacation;
     
-    if (totalSelected >= 6) {
+    const counter = document.getElementById('totalCounter');
+    const allSectionsValid = activities >= 1 && hobbies >= 1 && sports >= 1 && vacation >= 1;
+    const totalValid = totalSelected >= 6;
+    
+    if (allSectionsValid && totalValid) {
+        counter.textContent = `✓ ${totalSelected} Items Selected (All requirements met!)`;
         counter.classList.add('valid');
+    } else if (!allSectionsValid) {
+        const missing = [];
+        if (activities === 0) missing.push('Activities');
+        if (hobbies === 0) missing.push('Hobbies');
+        if (sports === 0) missing.push('Sports');
+        if (vacation === 0) missing.push('Travel');
+        counter.textContent = `${totalSelected} Items Selected - Missing: ${missing.join(', ')}`;
+        counter.classList.remove('valid');
     } else {
+        counter.textContent = `${totalSelected} Items Selected (Need at least 6)`;
         counter.classList.remove('valid');
     }
     
@@ -1054,9 +1083,14 @@ function checkButtonState() {
         const living = document.querySelector('input[name="living_situation"]:checked');
         isValid = living !== null;
     } else if (currentPart === 4) {
-        // Check if at least 6 items are selected
-        const totalSelected = document.querySelectorAll('.count-checkbox:checked').length;
-        isValid = totalSelected >= 6;
+        // Check if at least 6 items are selected AND at least 1 from each section
+        const activities = document.querySelectorAll('.count-checkbox[data-group="activities"]:checked').length;
+        const hobbies = document.querySelectorAll('.count-checkbox[data-group="hobbies"]:checked').length;
+        const sports = document.querySelectorAll('.count-checkbox[data-group="sports"]:checked').length;
+        const vacation = document.querySelectorAll('.count-checkbox[data-group="travel"]:checked').length;
+        const totalSelected = activities + hobbies + sports + vacation;
+        
+        isValid = totalSelected >= 6 && activities >= 1 && hobbies >= 1 && sports >= 1 && vacation >= 1;
     }
     
     // Update button state

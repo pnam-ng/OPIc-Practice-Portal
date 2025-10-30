@@ -1,356 +1,273 @@
-# OPIc Practice Portal
+# OPIc Practice Portal 🎤
 
-A comprehensive web application for practicing OPIc (Oral Proficiency Interview - computer) speaking tests. This portal provides both practice and test modes with multi-level support (IM, IH, AL) and audio recording capabilities.
+A comprehensive web application for practicing OPIc (Oral Proficiency Interview - computer) speaking tests. Built with Flask, featuring audio recording, AI feedback (planned), and a complete practice/test mode system.
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![Flask](https://img.shields.io/badge/Flask-2.3+-green.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 🚀 Features
+## ✨ Features
 
-### 🎯 Multi-Level Support
-- **IM (Intermediate-Mid)** - 20 topics, 400+ questions
-- **IH (Intermediate-High)** - 30 topics, 600+ questions  
-- **AL (Advanced-Low)** - 32 topics, 640+ questions
-
-### 🏃 Practice Mode
-- Topic-based practice sessions
-- Random question mode
-- Dynamic topic filtering by level
-- Audio question playback
-- Voice recording capabilities
-- Real-time progress tracking
-
-### 📝 Test Mode
-- Survey-based question selection
-- Personalized test experience
-- Audio recording and playback
-- Progress tracking
-- Congratulations page with results
-
-### 🔐 User Management
-- User registration and authentication
-- Password management
-- Daily streak tracking with notifications
-- Activity history and statistics
-- Profile customization
-
-### 🎨 UI/UX Features
-- **Dark Mode** - Full dark theme support with smooth transitions
-- **Responsive Design** - Mobile-first approach with optimized layouts
-- **PWA Support** - Install as native app on mobile devices
-- **Touch-Friendly** - Optimized buttons and interactions for mobile
-- **Notifications** - Daily streak reminders (8 PM)
-- **Loading Animations** - Smooth page transitions
+### 🎯 Core Functionality
+- **Practice Mode**: Practice individual questions with immediate feedback
+- **Test Mode**: Full 12-question simulated OPIc test
+- **Audio Recording**: Browser-based audio recording with waveform visualization
+- **Audio Playback**: Listen to questions and your responses
+- **Comment System**: Community feedback and discussion on practice responses
+- **Notification System**: Real-time notifications for comments, replies, and mentions
+- **User Profiles**: Customizable profiles with avatar upload
+- **Activity Tracking**: Track your practice history and streaks
 
 ### 👨‍💼 Admin Features
-- Question management (CRUD operations)
-- User administration
-- Database inspection tools
-- System statistics and analytics
-- TTS audio generation
+- User management
+- Question management
+- Comment moderation (pin, delete)
+- System analytics
+- Database management tools
 
-## 🛠️ Technology Stack
+### 🎨 UI/UX
+- Responsive design (desktop, tablet, mobile)
+- Dark mode support
+- Real-time waveform visualization during recording
+- Progress tracking and streaks
+- Congratulations pages after completion
 
-- **Backend**: Flask 3.1.2, SQLAlchemy 2.0.44
-- **Frontend**: Bootstrap 5, JavaScript, Web Audio API
-- **Database**: SQLite (development), PostgreSQL (production)
-- **Audio**: MP3 playback, Web Audio recording
-- **PWA**: Progressive Web App support
+### 🔒 Security
+- User authentication (register, login, logout)
+- Password reset functionality
+- Session management
+- Admin role-based access control
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
+- pip
 - Git
 
-### Automated Setup (Recommended)
+### Installation
 
-#### Windows Users
-   ```bash
-git clone https://github.sec.samsung.net/your-org/OPP.git
-cd OPP
-setup.bat
-   ```
-
-#### macOS/Linux Users
-   ```bash
-git clone https://github.sec.samsung.net/your-org/OPP.git
-cd OPP
-python setup.py
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/opic-practice-portal.git
+cd opic-practice-portal
 ```
 
-The setup script will:
-- Create and activate a virtual environment
-- Install all dependencies
-- Copy `.env` configuration file
-- Initialize the database with sample data
-- Create audio directory structure
-- Set up admin and sample users
-
-### Manual Setup
-   ```bash
-# Clone repository
-git clone https://github.sec.samsung.net/your-org/OPP.git
-cd OPP
-
-# Create virtual environment
+2. **Create virtual environment**
+```bash
 python -m venv venv
 
-# Activate virtual environment
-# Windows:
+# Windows
 venv\Scripts\activate
-# macOS/Linux:
+
+# Linux/Mac
 source venv/bin/activate
-
-# Install dependencies
-   pip install -r requirements.txt
-
-# Configure environment
-   cp config.env.example .env
-# Edit .env with your configuration (optional)
-
-# Initialize database with sample data
-python scripts/init_db_with_samples.py
-
-# Set up audio directory structure
-python scripts/audio_setup.py
-
-# Run application
-python app.py
 ```
 
-### Running the Application
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
 
-#### Windows
-   ```bash
-run.bat
-   ```
+4. **Set up environment variables**
+```bash
+# Copy example config
+copy config.env.example config.env
 
-#### macOS/Linux
-   ```bash
-   python app.py
-   ```
+# Edit config.env with your settings
+notepad config.env
+```
 
-The application will be available at `http://localhost:5000`
+5. **Initialize database**
+```bash
+python scripts/init_db.py
+python scripts/ensure_admin.py  # Create admin account
+```
+
+6. **Run the application**
+```bash
+# Development
+python app.py
+
+# Production (with Gunicorn)
+gunicorn -c gunicorn_config.py app:app
+```
+
+7. **Access the application**
+
+**Local Development:**
+```
+http://localhost:5000
+```
+
+**Production (Internal Network):**
+```
+https://107.98.150.22:8080/
+```
+
+**Public Access (via ngrok tunnel):**
+```
+https://bit.ly/srvopic
+```
+
+**Default Admin Credentials:**
+- Email: `admin@example.com`
+- Password: `admin123` (change immediately!)
 
 ## 🌐 Deployment & Access
 
+This application is deployed with multiple access points:
+
+### Internal Network Access
+For users within the company network:
+- **URL**: `https://107.98.150.22:8080/`
+- **Use Case**: Direct access for internal users
+- **Protocol**: HTTPS with SSL certificates
+
+### Public Access (ngrok Tunnel)
+For external users and testing:
+- **Short URL**: `https://bit.ly/srvopic`
+- **Full URL**: Via ngrok secure tunnel
+- **Use Case**: Remote access, demos, external testing
+- **Benefits**: 
+  - No firewall configuration needed
+  - HTTPS by default
+  - Easy sharing with QR code or short link
+
 ### Local Development
-The application runs on `http://localhost:5000` by default.
-
-For detailed information about:
-- Network access (LAN/WAN)
-- SSL/HTTPS setup
-- Firewall configuration
-- Production deployment
-
-Please refer to [SETUP_GUIDE.md](SETUP_GUIDE.md)
-
-## 📋 Configuration
-
-### Environment Variables (.env)
-```env
-FLASK_APP=app.py
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=sqlite:///instance/opic_portal.db
-UPLOAD_FOLDER=uploads
-MAX_CONTENT_LENGTH=16777216
-```
-
-### Default Accounts
-- **Admin Account**:
-  - Username: `admin`
-  - Password: `1qaz2wsx`
-- **Sample User Account**:
-  - Username: `testuser`
-  - Password: `test123`
+For developers:
+- **URL**: `http://localhost:5000`
+- **Use Case**: Development and testing
 
 ## 📁 Project Structure
 
 ```
 OPP/
-├── app/                    # Main application package
-│   ├── blueprints/        # Flask blueprints (routes)
-│   ├── controllers/       # MVC controllers
-│   ├── services/          # Business logic
+├── app/                    # Main application code
+│   ├── blueprints/        # Route blueprints
+│   │   ├── admin.py       # Admin routes
+│   │   ├── auth.py        # Authentication
+│   │   ├── comments.py    # Comment system
+│   │   ├── main.py        # Main routes
+│   │   ├── notifications.py # Notifications
+│   │   ├── practice_mode.py # Practice routes
+│   │   └── test_mode.py   # Test routes
+│   ├── controllers/       # Business logic
+│   ├── services/          # Service layer
 │   └── models.py          # Database models
-├── templates/             # HTML templates (Jinja2)
-├── static/                # Static assets (CSS, JS, icons)
+├── templates/             # Jinja2 templates
+│   ├── admin/
+│   ├── auth/
+│   ├── main/
+│   ├── practice_mode/
+│   └── test_mode/
+├── static/                # Static assets
+│   ├── css/              # Stylesheets
+│   ├── js/               # JavaScript
+│   ├── avatars/          # Default avatars
+│   └── icons/            # PWA icons
 ├── scripts/               # Utility scripts
-│   ├── init_db_with_samples.py  # Database initialization
-│   ├── audio_setup.py           # Audio directory setup
-│   ├── db_export_import.py      # Database backup/restore
-│   └── ...                      # Other utilities
-├── uploads/               # File uploads (not in git)
-│   ├── questions/         # Audio files (not in git)
-│   └── responses/         # User recordings (not in git)
-├── instance/              # SQLite database (not in git)
-├── app.py                 # Application entry point
-├── setup.py               # Automated setup script
-├── setup.bat              # Windows setup script
-├── run.bat                # Windows run script
+│   ├── init_db.py        # Initialize database
+│   ├── ensure_admin.py   # Create admin user
+│   └── README.md         # Scripts documentation
+├── docs/                  # Documentation
+│   ├── setup/            # Setup guides
+│   ├── features/         # Feature documentation
+│   ├── development/      # Development docs
+│   └── sessions/         # Session summaries
+├── instance/              # Instance-specific files
+│   └── opic_portal.db    # SQLite database
+├── uploads/               # User uploads
+│   ├── avatars/          # User avatars
+│   ├── questions/        # Question audio
+│   └── responses/        # User responses
+├── config.env.example     # Example configuration
 ├── requirements.txt       # Python dependencies
-└── README.md              # This file
+├── app.py                 # Application entry point
+├── Dockerfile             # Docker configuration
+└── README.md             # This file
 ```
-
-For complete project structure, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
-
-## 🎵 Audio Files
-
-### Important Note
-Audio files and the database are **not included in the Git repository** due to size constraints.
-
-- **Audio files**: See [AUDIO_SETUP.md](AUDIO_SETUP.md) for setup instructions
-- **Database**: See [DATABASE_SOLUTION.md](DATABASE_SOLUTION.md) for distribution strategy
-
-The setup script creates the necessary directory structure. You'll need to:
-1. Obtain audio files separately (from colleague or shared drive)
-2. Place them in `uploads/questions/english/` following the directory structure
-
-## 🔧 Development
-
-### Utility Scripts
-
-All utility scripts are located in the `scripts/` folder. See [scripts/README.md](scripts/README.md) for detailed documentation.
-
-Key scripts:
-- `init_db_with_samples.py` - Initialize database with sample data
-- `audio_setup.py` - Create audio directory structure
-- `db_export_import.py` - Export/import database for distribution
-- `inspect_db.py` - Check database status and statistics
-- `reset_admin.py` - Reset admin password
-
-### Database Management
-```bash
-# Initialize fresh database with sample data
-python scripts/init_db_with_samples.py
-
-# Export database for sharing
-python scripts/db_export_import.py export
-
-# Import database from SQL file
-python scripts/db_export_import.py import database_backup.sql
-
-# Check database status
-python scripts/inspect_db.py
-```
-
-## 🚀 Deployment
-
-### Development
-```bash
-python app.py
-```
-
-### Production with Docker
-   ```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **ModuleNotFoundError when running scripts**
-   ```bash
-   # Make sure you're in the project root directory
-   cd D:\OPP
-   # Activate virtual environment first
-   venv\Scripts\activate
-   # Then run the script
-   python scripts/init_db_with_samples.py
-   ```
-
-2. **Database not found**
-   ```bash
-   python scripts/init_db_with_samples.py
-   ```
-
-3. **Admin user not working**
-   ```bash
-   python scripts/reset_admin.py
-   ```
-
-4. **Audio files not playing**
-   - Check file paths in `uploads/questions/`
-   - Verify audio files are placed correctly (see AUDIO_SETUP.md)
-   - Run `python scripts/audio_setup.py` to create directory structure
-
-5. **Import errors**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-For more troubleshooting, see [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
 ## 📚 Documentation
 
-- **[Setup Guide](SETUP_GUIDE.md)** - Detailed setup instructions (network, SSL, deployment)
-- **[Project Structure](PROJECT_STRUCTURE.md)** - Complete project documentation
-- **[Audio Setup](AUDIO_SETUP.md)** - Audio file setup instructions
-- **[Database Solution](DATABASE_SOLUTION.md)** - Database distribution strategy
-- **[Scripts README](scripts/README.md)** - Utility scripts documentation
-- **[CI/CD Guide](CI_CD_GUIDE.md)** - Deployment and CI/CD guide
-- **[Future Implementation](FUTURE_IMPLEMENTATION.md)** - Roadmap and future features
+- [Setup Guide](docs/setup/SETUP_GUIDE.md) - Detailed installation instructions
+- [Database Solution](docs/setup/DATABASE_SOLUTION.md) - Database architecture
+- [Audio Setup](docs/setup/AUDIO_SETUP.md) - Audio file management
+- [Admin Features](docs/features/ADMIN_FEATURES_GUIDE.md) - Admin panel guide
+- [Comments System](docs/features/COMMENTS_SYSTEM_GUIDE.md) - Comment system documentation
+- [AI Integration Plan](docs/development/AI_INTEGRATION_PLAN_OPENSOURCE.md) - Future AI features
 
-## 🔒 Security Features
+## 🎯 Usage
 
-- Password hashing with Werkzeug
-- CSRF protection
-- SQL injection prevention
-- XSS protection
-- Secure session management
-- File upload validation
-- Direct question access prevention
+### For Students
 
-## 📱 PWA Support
+1. **Register an account**
+2. **Choose Practice Mode** to practice individual questions
+3. **Or Test Mode** for a full simulated test
+4. **Record your response** (must play question first)
+5. **Review your recordings** and get community feedback
+6. **Track your progress** in the activity timeline
 
-The application includes Progressive Web App features:
-- Service worker for offline functionality
-- Web app manifest for installation
-- Installable on mobile devices (iOS & Android)
-- Responsive design optimized for all screen sizes
-- Touch-friendly interface with haptic feedback
-- Native app-like experience
-- Install banner with dismiss functionality
-- Home screen icons and splash screens
+### For Admins
+
+1. Login with admin credentials
+2. Access admin panel from profile dropdown
+3. Manage users, questions, and comments
+4. View system statistics
+5. Moderate community content
+
+## 🛠️ Technology Stack
+
+- **Backend**: Flask 2.3+
+- **Database**: SQLite (development) / PostgreSQL (production)
+- **Frontend**: Bootstrap 5, Vanilla JavaScript
+- **Audio**: Web Audio API, MediaRecorder
+- **Authentication**: Flask-Login
+- **ORM**: SQLAlchemy
+- **Deployment**: Gunicorn, Docker
+- **Public Tunnel**: ngrok (for external access)
+
+## 🔮 Planned Features
+
+- [ ] AI-powered speech scoring (using open-source models)
+- [ ] Pronunciation analysis
+- [ ] Grammar checking
+- [ ] Automated transcript generation
+- [ ] Progress analytics dashboard
+- [ ] Peer review system
+- [ ] Mobile app (PWA)
+
+See [AI Integration Plan](docs/development/AI_INTEGRATION_PLAN_OPENSOURCE.md) for details.
 
 ## 🤝 Contributing
 
+Contributions are welcome! Please:
+
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Support
+## 🙏 Acknowledgments
 
-For issues and questions:
-1. Check the [Setup Guide](SETUP_GUIDE.md)
-2. Review the [troubleshooting section](#-troubleshooting)
-3. Create an issue in the repository
+- OPIc test format by ACTFL
+- Bootstrap for UI components
+- FontAwesome for icons
+- OpenAI Whisper for future AI integration
 
-## 🔄 Recent Updates
+## 📧 Contact
 
-- ✅ Multi-level question organization (IM, IH, AL)
-- ✅ Dynamic topic filtering by level
-- ✅ Enhanced security features
-- ✅ PWA capabilities with offline support
-- ✅ Comprehensive admin tools
-- ✅ Automated setup scripts
-- ✅ Complete documentation
-- ✅ Database and audio file distribution solution
-- ✅ Organized utility scripts in `scripts/` folder
-- ✅ Cleaned up unnecessary documentation files
+For questions or support, please open an issue on GitHub.
+
+## 🔐 Security
+
+If you discover a security vulnerability, please email security@example.com instead of opening a public issue.
 
 ---
 
-**Happy Practicing! 🎤**
-
-> **Note**: For detailed setup instructions, troubleshooting, and advanced configuration, please refer to the [Setup Guide](SETUP_GUIDE.md).
+**Made with ❤️ for OPIc learners**

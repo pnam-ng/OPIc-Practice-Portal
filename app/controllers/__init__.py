@@ -9,6 +9,7 @@ from datetime import date
 import time
 import random
 
+from app import db
 from app.services import AuthService, UserService, QuestionService, ResponseService, SurveyService
 from app.models import Survey
 
@@ -112,6 +113,10 @@ class MainController(BaseController):
     
     def index(self):
         """Handle home page request"""
+        # If user is already logged in, redirect to dashboard
+        if current_user.is_authenticated:
+            return redirect(url_for('main.dashboard'))
+        # Otherwise, show the landing page
         return render_template('main/index.html')
     
     @login_required
@@ -150,6 +155,7 @@ class MainController(BaseController):
             name = request.form.get('name')
             email = request.form.get('email')
             target_language = request.form.get('target_language')
+            avatar = request.form.get('avatar')
             
             # Validate input
             if not name or not email:
@@ -167,6 +173,15 @@ class MainController(BaseController):
             current_user.email = email
             current_user.target_language = target_language
             
+            # Update avatar if provided and different from current
+            if avatar and avatar != current_user.avatar:
+                # Delete old custom avatar if user is switching away from it
+                old_avatar = current_user.avatar
+                if old_avatar and old_avatar.startswith('uploads/avatars/'):
+                    self._delete_old_avatar(old_avatar)
+                
+                current_user.avatar = avatar
+            
             if self.user_service.commit():
                 flash('Profile updated successfully!', 'success')
             else:
@@ -177,6 +192,98 @@ class MainController(BaseController):
         # GET request - show profile form
         user_stats = self.user_service.get_user_statistics(current_user.id)
         return render_template('main/profile.html', user_stats=user_stats)
+    
+    def _delete_old_avatar(self, avatar_path):
+        """Helper function to delete old avatar file"""
+        try:
+            # Only delete uploaded avatars, not default ones
+            if avatar_path and avatar_path.startswith('uploads/avatars/'):
+                import os
+                full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars', os.path.basename(avatar_path))
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+                    current_app.logger.info(f"Deleted old avatar: {full_path}")
+                    return True
+        except Exception as e:
+            current_app.logger.error(f"Error deleting old avatar: {e}")
+        return False
+    
+    @login_required
+    def upload_avatar(self):
+        """Handle avatar file upload"""
+        if request.method == 'POST':
+            try:
+                avatar_file = request.files.get('avatar_file')
+                
+                if not avatar_file:
+                    return jsonify({'success': False, 'error': 'No file provided'})
+                
+                # Validate file
+                import os
+                from werkzeug.utils import secure_filename
+                
+                # Check file extension
+                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                filename = secure_filename(avatar_file.filename)
+                file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+                
+                if file_ext not in allowed_extensions:
+                    return jsonify({'success': False, 'error': 'Invalid file type. Allowed: JPG, PNG, GIF, WEBP'})
+                
+                # Delete old avatar if it exists and is a custom upload
+                old_avatar = current_user.avatar
+                if old_avatar and old_avatar.startswith('uploads/avatars/'):
+                    self._delete_old_avatar(old_avatar)
+                
+                # Generate unique filename
+                import time
+                unique_filename = f"avatar_{current_user.id}_{int(time.time())}.{file_ext}"
+                upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars', unique_filename)
+                
+                # Create avatars directory if it doesn't exist
+                os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+                
+                # Try to use PIL for image processing, fallback to direct save
+                try:
+                    from PIL import Image
+                    
+                    # Save and resize image
+                    image = Image.open(avatar_file)
+                    
+                    # Convert RGBA to RGB if necessary
+                    if image.mode in ('RGBA', 'LA', 'P'):
+                        background = Image.new('RGB', image.size, (255, 255, 255))
+                        if image.mode == 'P':
+                            image = image.convert('RGBA')
+                        background.paste(image, mask=image.split()[-1] if image.mode in ('RGBA', 'LA') else None)
+                        image = background
+                    
+                    # Resize to 500x500 for avatars
+                    image.thumbnail((500, 500), Image.Resampling.LANCZOS)
+                    
+                    # Save the image
+                    image.save(upload_path, quality=85, optimize=True)
+                    
+                except ImportError:
+                    # PIL not installed, just save the file directly
+                    current_app.logger.warning("PIL/Pillow not installed, saving avatar without processing")
+                    avatar_file.seek(0)  # Reset file pointer
+                    avatar_file.save(upload_path)
+                
+                avatar_url = f"uploads/avatars/{unique_filename}"
+                
+                return jsonify({
+                    'success': True,
+                    'avatar_url': avatar_url
+                })
+                
+            except Exception as e:
+                current_app.logger.error(f"Error uploading avatar: {e}")
+                import traceback
+                current_app.logger.error(traceback.format_exc())
+                return jsonify({'success': False, 'error': f'Failed to upload avatar: {str(e)}'})
+        
+        return jsonify({'success': False, 'error': 'Invalid request method'})
     
     @login_required
     def change_password(self):
@@ -226,6 +333,9 @@ class MainController(BaseController):
     @login_required
     def history(self):
         """Handle user history/activity page"""
+        from collections import defaultdict
+        from datetime import datetime, timedelta
+        
         # Get all user responses with related question data
         responses = self.response_service.get_user_responses(current_user.id, limit=None)
         
@@ -236,12 +346,68 @@ class MainController(BaseController):
         # Get user statistics
         user_stats = self.user_service.get_user_statistics(current_user.id)
         
-        # Group responses by date for better organization
-        from collections import defaultdict
+        # Separate practice and test responses
+        practice_responses = [r for r in responses if r.mode == 'practice']
+        test_responses = [r for r in responses if r.mode == 'test']
+        
+        # Group test responses into sessions (responses within 2 hours are considered same session)
+        test_sessions = []
+        if test_responses:
+            # Sort test responses by date
+            test_responses.sort(key=lambda x: x.created_at)
+            
+            current_session = []
+            last_time = None
+            
+            for response in test_responses:
+                if not last_time or (response.created_at - last_time) < timedelta(hours=2):
+                    current_session.append(response)
+                else:
+                    # Start new session
+                    if current_session:
+                        test_sessions.append(current_session)
+                    current_session = [response]
+                last_time = response.created_at
+            
+            # Add the last session
+            if current_session:
+                test_sessions.append(current_session)
+        
+        # Group everything by date for timeline display
         responses_by_date = defaultdict(list)
-        for response in responses:
+        
+        # Add practice responses
+        for response in practice_responses:
             date_key = response.created_at.strftime('%Y-%m-%d')
             responses_by_date[date_key].append(response)
+        
+        # Add test sessions as grouped entries
+        for session in test_sessions:
+            if session:
+                # Use the first response's date as the session date
+                date_key = session[0].created_at.strftime('%Y-%m-%d')
+                
+                # Find the matching survey (closest one by time)
+                session_survey = None
+                for survey in surveys:
+                    if survey.created_at.date() == session[0].created_at.date():
+                        session_survey = survey
+                        break
+                
+                # Create a test session entry
+                test_session_entry = {
+                    'type': 'test_session',
+                    'responses': session,
+                    'start_time': session[0].created_at,
+                    'survey': session_survey
+                }
+                responses_by_date[date_key].append(test_session_entry)
+        
+        # Sort items within each date by time
+        for date_key in responses_by_date:
+            responses_by_date[date_key].sort(key=lambda x: 
+                x.created_at if hasattr(x, 'created_at') else x['start_time'], 
+                reverse=True)
         
         return render_template('main/history.html',
                              responses=responses,
@@ -275,12 +441,53 @@ class TestModeController(BaseController):
             survey = self.survey_service.create_survey(current_user.id, answers)
             
             if survey:
-                flash('Survey completed! Starting your personalized test...', 'success')
-                return redirect(url_for('test_mode.questions', q=1))
+                flash('Survey completed! Please proceed to self-assessment.', 'success')
+                return redirect(url_for('test_mode.self_assessment'))
             else:
                 flash('Error saving survey. Please try again.', 'error')
         
         return render_template('test_mode/survey.html')
+    
+    @login_required
+    def self_assessment(self):
+        """Handle self-assessment level selection"""
+        if request.method == 'POST':
+            # Get selected level
+            level = request.form.get('level')
+            
+            if not level:
+                flash('Please select your English level.', 'error')
+                return redirect(url_for('test_mode.self_assessment'))
+            
+            # Save level to session
+            session['self_assessment_level'] = int(level)
+            
+            # Update the survey record with the level
+            survey = self.survey_service.get_user_survey(current_user.id)
+            if survey:
+                # Update survey answers to include self-assessment level
+                if not survey.answers:
+                    survey.answers = {}
+                survey.answers['self_assessment_level'] = int(level)
+                # Map level to difficulty string for question selection
+                level_map = {
+                    1: 'IM',  # Novice Low -> IM
+                    2: 'IM',  # Novice Mid -> IM
+                    3: 'IM',  # Novice High/Intermediate Low -> IM
+                    4: 'IH',  # Intermediate Mid -> IH
+                    5: 'IH',  # Intermediate High/Advanced Low -> IH
+                    6: 'AL'   # Advanced Mid/High -> AL
+                }
+                survey.answers['english_level'] = level_map.get(int(level), 'IM')
+                db.session.commit()
+                
+                flash('Self-assessment complete! Starting your test...', 'success')
+                return redirect(url_for('test_mode.questions', q=1))
+            else:
+                flash('Please complete the survey first.', 'error')
+                return redirect(url_for('test_mode.survey'))
+        
+        return render_template('test_mode/self_assessment.html')
     
     @login_required
     def questions(self):
@@ -308,31 +515,72 @@ class TestModeController(BaseController):
                              total_questions=len(questions))
     
     def get_personalized_questions(self, survey_answers):
-        """Get personalized questions based on survey answers"""
-        # This is a simplified version - in production, you'd have more sophisticated logic
-        english_level = survey_answers.get('english_level', 'intermediate')
+        """Get personalized questions based on survey answers and self-assessment level"""
+        english_level = survey_answers.get('english_level', 'IM')
+        self_assessment_level = survey_answers.get('self_assessment_level', 3)
         interests = survey_answers.get('interests', [])
+        
+        # Determine number of questions based on self-assessment level
+        # Lower levels: 10-12 questions, Higher levels: 15 questions
+        question_count_map = {
+            1: 10,  # Novice Low
+            2: 10,  # Novice Mid
+            3: 12,  # Novice High / Intermediate Low
+            4: 12,  # Intermediate Mid
+            5: 15,  # Intermediate High / Advanced Low
+            6: 15   # Advanced Mid / Advanced High
+        }
+        target_count = question_count_map.get(self_assessment_level, 12)
         
         # Get questions based on difficulty and interests
         questions = []
         
-        # Add questions based on interests
-        for interest in interests[:3]:  # Limit to 3 interests
-            topic_questions = self.question_service.get_questions_by_topic(interest.title(), 'english')
-            if topic_questions:
-                questions.extend(topic_questions[:2])  # 2 questions per interest
+        # Add questions based on interests from survey
+        # Maximum 3 questions per topic to ensure variety
+        if interests:
+            questions_per_topic = 3  # Maximum 3 questions per topic
+            for interest in interests[:5]:  # Use up to 5 different interests
+                topic_questions = self.question_service.get_questions_by_topic(interest.title(), 'english')
+                if topic_questions:
+                    # Add up to 3 questions from this topic
+                    questions.extend(topic_questions[:questions_per_topic])
         
-        # Add general questions if we don't have enough
-        if len(questions) < 5:
-            general_questions = self.question_service.get_questions_by_difficulty(english_level, 'english')
-            questions.extend(general_questions[:5-len(questions)])
+        # Track how many questions we have per topic
+        topic_count = {}
+        for q in questions:
+            topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
         
-        # Ensure we have at least 5 questions
-        if len(questions) < 5:
-            random_questions = self.question_service.get_random_questions(5-len(questions), 'english')
-            questions.extend(random_questions)
+        # Add level-specific questions if we don't have enough
+        if len(questions) < target_count:
+            level_questions = self.question_service.get_questions_by_difficulty(english_level, 'english')
+            for q in level_questions:
+                if len(questions) >= target_count:
+                    break
+                # Only add if we don't have 3 questions from this topic already
+                if topic_count.get(q.topic, 0) < 3 and q not in questions:
+                    questions.append(q)
+                    topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
         
-        return questions[:5]  # Limit to 5 questions for now
+        # Fill remaining with random questions at appropriate level
+        if len(questions) < target_count:
+            # Request more than needed to account for filtering
+            random_questions = self.question_service.get_random_questions_by_level(
+                (target_count - len(questions)) * 2,  # Request 2x to have buffer
+                'english',
+                level=english_level
+            )
+            for q in random_questions:
+                if len(questions) >= target_count:
+                    break
+                # Only add if we don't have 3 questions from this topic already
+                if topic_count.get(q.topic, 0) < 3 and q not in questions:
+                    questions.append(q)
+                    topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
+        
+        # Shuffle questions for variety
+        random.shuffle(questions)
+        
+        return questions[:target_count]
     
     @login_required
     def record_response(self, question_id):
@@ -355,11 +603,12 @@ class TestModeController(BaseController):
                 os.makedirs(os.path.dirname(upload_path), exist_ok=True)
                 audio_file.save(upload_path)
                 
-                # Save response to database
+                # Save response to database with mode='test'
                 response = self.response_service.create_response(
                     user_id=current_user.id,
                     question_id=question_id,
-                    audio_url=f"uploads/responses/{filename}"
+                    audio_url=f"uploads/responses/{filename}",
+                    mode='test'
                 )
                 
                 if response:
@@ -379,8 +628,33 @@ class TestModeController(BaseController):
         # Update user streak
         self.user_service.update_user_streak(current_user)
         
-        flash('Congratulations! You have completed the test.', 'success')
-        return redirect(url_for('main.dashboard'))
+        # Redirect to congratulations page
+        return redirect(url_for('test_mode.congratulations'))
+    
+    @login_required
+    def congratulations(self):
+        """Show test completion congratulations page"""
+        # Get user statistics
+        user_stats = self.user_service.get_user_statistics(current_user.id)
+        
+        # Get the most recent test session (responses from last 2 hours)
+        from datetime import datetime, timedelta
+        from app.models import Response
+        
+        cutoff_time = datetime.utcnow() - timedelta(hours=2)
+        recent_test_responses = Response.query.filter(
+            Response.user_id == current_user.id,
+            Response.mode == 'test',
+            Response.created_at >= cutoff_time
+        ).count()
+        
+        test_data = {
+            'question_count': recent_test_responses,
+            'streak_count': current_user.streak_count,
+            'total_tests': user_stats.get('test_responses_count', 0)
+        }
+        
+        return render_template('test_mode/congratulations.html', test_data=test_data)
 
 
 class PracticeModeController(BaseController):
@@ -448,18 +722,14 @@ class PracticeModeController(BaseController):
     
     @login_required
     def question(self, question_id):
-        """Handle practice question display with security check"""
-        # Security check: Verify user is authorized to access this question
-        allowed_question_id = session.get('allowed_practice_question')
-        
-        if allowed_question_id != question_id:
-            flash('Unauthorized access. Please start a practice session properly.', 'warning')
-            return redirect(url_for('practice_mode.index'))
-        
+        """Handle practice question display - allows direct access via links"""
         question = self.question_service.get_question_by_id(question_id)
         if not question:
             flash('Question not found.', 'error')
             return redirect(url_for('practice_mode.index'))
+        
+        # Allow direct access - store this as the current practice question
+        session['allowed_practice_question'] = question_id
         
         return render_template('practice_mode/question.html', question=question)
     
@@ -500,7 +770,12 @@ class PracticeModeController(BaseController):
                     self.user_service.update_user_streak(current_user)
                     # Clear the session to prevent reuse of the same question
                     session.pop('allowed_practice_question', None)
-                    return jsonify({'success': True, 'response_id': response.id})
+                    # Return success with redirect URL
+                    return jsonify({
+                        'success': True, 
+                        'response_id': response.id,
+                        'redirect_url': url_for('practice_mode.congratulations', response_id=response.id)
+                    })
                 else:
                     return jsonify({'success': False, 'error': 'Failed to save response'})
                     
@@ -509,3 +784,29 @@ class PracticeModeController(BaseController):
                 return jsonify({'success': False, 'error': 'Internal server error'})
         
         return jsonify({'success': False, 'error': 'Invalid request method'})
+    
+    @login_required
+    def congratulations(self):
+        """Show practice completion congratulations page"""
+        response_id = request.args.get('response_id', type=int)
+        
+        # Get user statistics
+        user_stats = self.user_service.get_user_statistics(current_user.id)
+        
+        # Get the response details if provided
+        from app.models import Response
+        response = None
+        if response_id:
+            response = Response.query.filter_by(
+                id=response_id,
+                user_id=current_user.id
+            ).first()
+        
+        practice_data = {
+            'response': response,
+            'streak_count': current_user.streak_count,
+            'total_practices': user_stats.get('practice_responses_count', 0),
+            'question': response.question if response else None
+        }
+        
+        return render_template('practice_mode/congratulations.html', practice_data=practice_data)
