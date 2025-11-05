@@ -38,6 +38,55 @@
 [data-theme="dark"] .table td,
 [data-theme="dark"] .table th {
     border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table td a {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table td a:hover {
+    color: #58a6ff;
+}
+
+/* Ensure username and name are readable in dark mode */
+[data-theme="dark"] .table td .fw-semibold {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table td small.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .table td.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .card-footer {
+    background-color: var(--bg-card) !important;
+    border-top-color: var(--border-color);
+}
+
+[data-theme="dark"] h3,
+[data-theme="dark"] h3 small.text-muted {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table-light {
+    background-color: var(--bg-secondary) !important;
 }
 
 .admin-badge-large {
@@ -70,6 +119,17 @@
     .btn-toggle-admin {
         font-size: 0.7rem;
         padding: 0.2rem 0.4rem;
+    }
+    
+    /* Stack username and name on mobile if needed */
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        min-width: 100px;
+    }
+    
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        min-width: 100px;
     }
 }
 </style>
@@ -126,7 +186,8 @@
         <thead class="table-light">
           <tr>
             <th>ID</th>
-            <th>User</th>
+            <th>Username</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Lang</th>
             <th>Streak</th>
@@ -149,6 +210,8 @@
                 <i class="fas fa-crown text-warning ms-1" title="Administrator"></i>
                 {% endif %}
               </div>
+            </td>
+            <td>
               <small class="text-muted">{{ u.name }}</small>
             </td>
             <td><a href="mailto:{{ u.email }}">{{ u.email }}</a></td>
@@ -167,7 +230,7 @@
                 </span>
               {% endif %}
             </td>
-            <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '-' }}</small></td>
+            <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d %H:%M:%S') if u.created_at else '-' }}</small></td>
             <td><small class="text-muted">{{ u.last_active_date.strftime('%Y-%m-%d') if u.last_active_date else '-' }}</small></td>
             <td>
               {% if u.id != current_user.id %}
@@ -201,7 +264,7 @@
             </td>
           </tr>
         {% else %}
-          <tr><td colspan="11" class="text-center text-muted py-4">No users found.</td></tr>
+          <tr><td colspan="12" class="text-center text-muted py-4">No users found.</td></tr>
         {% endfor %}
         </tbody>
       </table>

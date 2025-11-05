@@ -3,7 +3,7 @@
 {% block title %}Install App on Your Phone{% endblock %}
 
 {% block content %}
-<div class="container py-3 py-md-4">
+<div class="container py-3 py-md-4 px-3 px-md-4">
     <!-- Header -->
     <div class="text-center mb-3 mb-md-4">
         <h1 class="fw-bold mb-2 mb-md-3">
@@ -14,7 +14,7 @@
 
     <!-- Platform Tabs -->
     <div class="row justify-content-center mb-3 mb-md-4">
-        <div class="col-lg-8">
+        <div class="col-12 col-md-10 col-lg-8">
             <div class="btn-group w-100 mb-3 mb-md-4" role="group">
                 <button type="button" class="btn btn-lg btn-outline-primary active" id="ios-tab" onclick="switchTab('ios')">
                     <i class="fab fa-apple fa-lg me-2"></i>iOS
@@ -29,7 +29,7 @@
     <!-- iOS Guide -->
     <div id="ios-content" class="guide-content">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-12 col-md-10 col-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fab fa-apple me-2"></i>iOS Installation</h4>
@@ -88,7 +88,7 @@
     <!-- Android Guide -->
     <div id="android-content" class="guide-content" style="display: none;">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-12 col-md-10 col-lg-8">
                 <!-- Quick Install Button for Android -->
                 <div id="androidInstallButtonContainer" class="text-center mb-4" style="display: none;">
                     <div class="card shadow-lg border-success">
@@ -211,8 +211,9 @@
     .step-item {
         display: flex;
         gap: 1rem;
-        align-items: start;
-        padding: 0.5rem 0;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        margin-bottom: 0.5rem;
     }
 
     .step-badge {
@@ -366,12 +367,54 @@
     [data-theme="dark"] .step-item strong {
         color: var(--text-primary);
     }
+    
+    /* Additional dark mode fixes for readability */
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h2,
+    [data-theme="dark"] h3,
+    [data-theme="dark"] h4,
+    [data-theme="dark"] h5 {
+        color: var(--text-primary) !important;
+    }
+    
+    [data-theme="dark"] p,
+    [data-theme="dark"] .text-muted {
+        color: var(--text-secondary) !important;
+    }
+    
+    [data-theme="dark"] .card-body {
+        color: var(--text-primary);
+    }
+    
+    [data-theme="dark"] .step-item h5 {
+        color: var(--text-primary) !important;
+    }
+    
+    [data-theme="dark"] .step-item p {
+        color: var(--text-secondary) !important;
+    }
+    
+    [data-theme="dark"] code {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+    }
 
     /* Responsive - Tablet */
     @media (max-width: 768px) {
         .container {
             padding-left: 1rem;
             padding-right: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem 1rem !important;
+        }
+        
+        .alert {
+            padding: 0.875rem !important;
+            font-size: 0.9rem;
         }
 
         h1 {
@@ -386,11 +429,19 @@
 
         .step-item {
             gap: 0.75rem;
+            padding: 0.625rem 0;
+            align-items: flex-start;
         }
 
         .step-item h5 {
             font-size: 0.95rem;
             margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .step-item p {
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
 
         .url-box {
@@ -715,4 +766,6 @@
         // iOS is default, so no need to switch
     });
 </script>
+{% endblock %}
+
 {% endblock %}

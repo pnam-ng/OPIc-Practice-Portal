@@ -3,9 +3,13 @@
 {% block title %}Great Job! - OPIc Practice Portal{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid px-3 px-md-4 px-lg-5">
     <div class="congratulations-wrapper">
         <div class="congratulations-card">
+            <!-- Horizontal Layout Container (Desktop/Tablet) -->
+            <div class="congratulations-layout">
+                <!-- Left Column: Compact Success Info -->
+                <div class="congratulations-left">
             <!-- Success Icon -->
             <div class="success-icon-container">
                 <div class="success-icon">
@@ -59,13 +63,7 @@
                 <p class="text-muted">Keep practicing to improve your speaking confidence!</p>
             </div>
             
-            <!-- Auto-redirect message -->
-            <div class="redirect-message">
-                <i class="fas fa-clock me-2"></i>
-                Redirecting to practice mode in <span id="countdown">5</span> seconds...
-            </div>
-            
-            <!-- Manual buttons -->
+                    <!-- Action Buttons (in left column) -->
             <div class="action-buttons">
                 {% if practice_data.response %}
                 <a href="{{ url_for('practice_mode.question', question_id=practice_data.response.question_id) }}" class="btn btn-outline-success">
@@ -80,6 +78,87 @@
                 </a>
             </div>
         </div>
+                
+                <!-- Right Column: AI Feedback Section (Larger) -->
+                {% if practice_data.response %}
+                <div class="congratulations-right">
+            <div class="ai-feedback-section" id="aiFeedbackSection">
+                <div class="ai-feedback-header">
+                    <h3><i class="fas fa-robot text-info me-2"></i>AI Feedback</h3>
+                    <p class="text-muted">Get instant AI-powered feedback on your response</p>
+            </div>
+                
+                <!-- Transcript Input -->
+                <div class="transcript-input-group mb-3" id="transcriptInputGroup">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="responseTranscript" class="form-label mb-0">Your Response Text:</label>
+                    </div>
+                    <textarea 
+                        id="responseTranscript" 
+                        class="form-control" 
+                        rows="3" 
+                        placeholder="Type or paste your spoken response here...">{{ practice_data.response.transcript or '' }}</textarea>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Type your response text to get AI feedback
+                    </small>
+                    {% if practice_data.response.audio_url %}
+                    <audio id="responseAudio" src="/{{ practice_data.response.audio_url }}" style="display: none;"></audio>
+                    <input type="hidden" id="audioFeatures" value="">
+                    {% endif %}
+                </div>
+                
+                <!-- Get AI Feedback Button -->
+                <div class="ai-feedback-actions mb-3">
+                    <button 
+                        id="getAiFeedbackBtn" 
+                        class="btn btn-info btn-lg"
+                        data-response-id="{{ practice_data.response.id }}"
+                        onclick="getAiFeedback()">
+                        <i class="fas fa-magic me-2"></i>Get AI Feedback
+                    </button>
+                    <div id="aiLoadingSpinner" class="spinner-border text-info d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                
+                <!-- AI Results Display -->
+                <div id="aiResults" class="ai-results d-none">
+                    <div class="ai-score-display">
+                        <h4>AI Score: <span id="aiScoreValue" class="score-badge"></span>/100</h4>
+                    </div>
+                    
+                    <div class="ai-feedback-text">
+                        <h5><i class="fas fa-comment-dots me-2"></i>Feedback:</h5>
+                        <p id="aiFeedbackText"></p>
+                    </div>
+                    
+                    <div class="row mt-3 g-3">
+                        <div class="col-md-6 col-lg-5">
+                            <div class="strengths-box">
+                                <h6><i class="fas fa-check-circle text-success me-2"></i>Strengths:</h6>
+                                <ul id="aiStrengths" class="strengths-list"></ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-5 offset-lg-2">
+                            <div class="suggestions-box">
+                                <h6><i class="fas fa-lightbulb text-warning me-2"></i>Suggestions:</h6>
+                                <ul id="aiSuggestions" class="suggestions-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Message -->
+                <div id="aiError" class="alert alert-danger d-none"></div>
+            </div>
+            <!-- End AI Feedback Section -->
+            </div>
+            <!-- End Right Column -->
+            {% endif %}
+        </div>
+        <!-- End Horizontal Layout Container -->
+        </div>
     </div>
 </div>
 
@@ -87,20 +166,49 @@
 .congratulations-wrapper {
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Start from top to show AI feedback immediately */
     justify-content: center;
-    padding: 2rem 1rem;
+    padding: 1rem 1.5rem; /* Reduced top padding */
+    padding-top: 1.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .congratulations-card {
-    text-align: center;
-    max-width: 800px;
+    max-width: 1400px; /* Increased for horizontal layout */
     width: 100%;
-    padding: 3rem 2rem;
+    padding: 1.5rem 2rem;
     background: var(--bg-card);
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     animation: slideUp 0.6s ease-out;
+}
+
+/* Horizontal Layout Container (Desktop/Tablet) */
+.congratulations-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Left Column: Compact Success Info */
+.congratulations-left {
+    flex: 0 0 35%; /* Fixed width ~35% */
+    min-width: 300px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Right Column: AI Feedback (Larger) */
+.congratulations-right {
+    flex: 1; /* Takes remaining space ~65% */
+    min-width: 0; /* Important for flex shrink */
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -116,7 +224,7 @@
 
 .success-icon-container {
     position: relative;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem; /* Further reduced */
 }
 
 .success-icon {
@@ -125,7 +233,7 @@
 }
 
 .success-icon i {
-    font-size: 6rem;
+    font-size: 2.5rem; /* Further reduced from 3.5rem */
     color: #28a745;
     animation: pulse 2s infinite;
 }
@@ -161,50 +269,75 @@
 }
 
 .congratulations-title {
-    font-size: 2.5rem;
+    font-size: 1.5rem; /* Further reduced from 1.75rem */
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
 }
 
 .congratulations-subtitle {
-    font-size: 1.25rem;
+    font-size: 0.9rem; /* Further reduced from 1rem */
     color: var(--text-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 0.75rem; /* Further reduced from 1rem */
 }
 
 .question-info {
-    margin-bottom: 2rem;
+    margin-bottom: 0.75rem; /* Further reduced */
 }
 
 .question-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.25rem; /* Reduced from 0.75rem 1.5rem */
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 50px;
     border: 2px solid #dee2e6;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    font-size: 0.9rem; /* Make text smaller */
 }
 
 .test-stats {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 2rem 0;
-    flex-wrap: wrap;
+    flex-direction: column; /* Stack vertically in left column */
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+    width: 100%;
+}
+
+/* Desktop: Horizontal stats in left column */
+@media (min-width: 1024px) {
+    .congratulations-left .test-stats {
+        flex-direction: column;
+        gap: 0.625rem;
+    }
 }
 
 .stat-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1.5rem 2rem;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    min-width: 180px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    min-width: auto;
+    width: 100%; /* Full width in left column */
+    max-width: 100%;
     transition: all 0.3s ease;
+    box-sizing: border-box;
+    justify-content: flex-start; /* Align to start in left column */
+}
+
+/* Desktop: better stat item sizing */
+@media (min-width: 1024px) {
+    .stat-item {
+        min-width: 240px;
+        padding: 1.25rem 2rem; /* Reduced from 1.75rem 2.5rem */
+    }
 }
 
 .stat-item:hover {
@@ -213,52 +346,50 @@
 }
 
 .stat-item i {
-    font-size: 2.5rem;
+    font-size: 1.75rem; /* Further reduced from 2rem */
     color: #007bff;
 }
 
 .stat-content h3 {
-    font-size: 2rem;
+    font-size: 1.25rem; /* Further reduced from 1.5rem */
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    line-height: 1.2;
 }
 
 .stat-content p {
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Further reduced from 0.85rem */
     color: var(--text-secondary);
     margin: 0;
+    line-height: 1.3;
 }
 
 .encouragement-message {
-    margin: 2rem 0;
-    padding: 1.5rem;
+    margin: 0.75rem 0; /* Further reduced */
+    padding: 0.75rem 1rem; /* Further reduced */
     background: linear-gradient(135deg, #fff8e1 0%, #fffef7 100%);
-    border-radius: 12px;
-    border-left: 4px solid #ffc107;
+    border-radius: 10px; /* Smaller radius */
+    border-left: 3px solid #ffc107; /* Thinner border */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .encouragement-message p {
-    margin: 0.5rem 0;
-    font-size: 1rem;
+    margin: 0.15rem 0; /* Further reduced */
+    font-size: 0.85rem; /* Further reduced */
     color: #856404;
-}
-
-.redirect-message {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: #e3f2fd;
-    border-radius: 8px;
-    color: #1976d2;
-    font-weight: 500;
+    line-height: 1.4;
 }
 
 .action-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem; /* Reduced from 1rem */
     justify-content: center;
     flex-wrap: wrap;
-    margin-top: 2rem;
+    margin-top: 1rem; /* Reduced from 2rem */
+    margin-bottom: 0.5rem; /* Add small bottom margin */
+    width: 100%;
 }
 
 .action-buttons .btn {
@@ -268,6 +399,10 @@
     border-radius: 50px;
     transition: all 0.3s ease;
     text-decoration: none;
+    min-height: 44px; /* Better touch target for mobile */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-buttons .btn:hover {
@@ -319,101 +454,996 @@
     color: #ffc107;
 }
 
-[data-theme="dark"] .redirect-message {
-    background: rgba(88, 166, 255, 0.1);
-    color: #58a6ff;
+/* AI Feedback Styles */
+.ai-feedback-section {
+    margin: 0; /* No margin in right column */
+    padding: 1.75rem; /* Slightly more padding for larger section */
+    background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
+    border-radius: 15px;
+    border: 2px solid #2196f3;
+    width: 100%;
+    height: 100%; /* Fill available height */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
+.ai-feedback-header {
+    text-align: center;
+    margin-bottom: 1rem; /* Reduced from 1.5rem */
+}
+
+.ai-feedback-header h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.transcript-input-group {
+    margin-top: 1rem;
+}
+
+.transcript-input-group textarea {
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    transition: border-color 0.3s;
+    resize: vertical;
+    min-height: 120px; /* Increased for better visibility */
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.transcript-input-group textarea:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+    outline: none;
+}
+
+.ai-feedback-actions {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.ai-feedback-actions .btn {
+    min-height: 44px; /* Better touch target for mobile */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-results {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ai-score-display {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.score-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: white;
+    border-radius: 25px;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.ai-feedback-text {
+    margin-bottom: 1rem;
+}
+
+.ai-feedback-text p {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #2196f3;
+    color: var(--text-primary);
+}
+
+.strengths-box, .suggestions-box {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 150px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.strengths-list, .suggestions-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.strengths-list li, .suggestions-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.strengths-list li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.suggestions-list li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #ff9800;
+    font-weight: bold;
+}
+
+[data-theme="dark"] .ai-feedback-section {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, var(--bg-secondary) 100%);
+    border-color: #58a6ff;
+}
+
+[data-theme="dark"] .ai-results {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .transcript-input-group textarea {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .strengths-box, 
+[data-theme="dark"] .suggestions-box,
+[data-theme="dark"] .ai-feedback-text p {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Large desktop (1200px+) */
+@media (min-width: 1200px) {
     .congratulations-card {
-        padding: 2rem 1.5rem;
+        max-width: 1600px; /* Even wider for large screens */
+        padding: 2rem 2.5rem;
+    }
+    
+    .congratulations-layout {
+        gap: 2.5rem; /* More space between columns */
+    }
+    
+    .congratulations-left {
+        flex: 0 0 30%; /* Slightly smaller left column */
+    }
+    
+    .congratulations-right {
+        flex: 1; /* AI feedback gets more space */
+    }
+    
+    .ai-feedback-section {
+        padding: 2rem; /* More padding for larger section */
+    }
+    
+    .transcript-input-group textarea {
+        min-height: 150px; /* Larger textarea on big screens */
+    }
+}
+
+/* Desktop (1024px - 1199px) */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .congratulations-card {
+        max-width: 1400px;
+        padding: 1.75rem 2rem;
+    }
+    
+    .congratulations-layout {
+        gap: 2rem;
+    }
+    
+    .congratulations-left {
+        flex: 0 0 35%;
+    }
+}
+
+/* Tablet responsive (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 769px) {
+    .congratulations-wrapper {
+        padding: 1.5rem 1rem;
+    }
+    
+    .congratulations-card {
+        padding: 1.5rem 1.75rem;
+        max-width: 1000px;
+    }
+    
+    .congratulations-layout {
+        gap: 1.5rem;
+        flex-direction: column; /* Stack vertically on tablets */
+    }
+    
+    .congratulations-left {
+        flex: 1;
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .congratulations-right {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .test-stats {
+        flex-direction: row; /* Horizontal stats on tablets */
+        justify-content: space-between;
+    }
+    
+    .stat-item {
+        flex: 1 1 calc(33.333% - 0.5rem);
+        max-width: calc(33.333% - 0.5rem);
+    }
+}
+
+/* Mobile responsive (tablets and phones) */
+@media (max-width: 768px) {
+    .congratulations-wrapper {
+        padding: 1rem 0.5rem;
+        align-items: flex-start;
+        min-height: auto;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .congratulations-card {
+        padding: 1.5rem 1rem;
+        margin: 0;
+        max-width: 100%;
+    }
+    
+    /* Mobile: Always vertical layout */
+    .congratulations-layout {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .congratulations-left {
+        flex: 1;
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .congratulations-right {
+        flex: 1;
+        width: 100%;
     }
     
     .congratulations-title {
         font-size: 2rem;
+        line-height: 1.2;
     }
     
     .congratulations-subtitle {
         font-size: 1.1rem;
+        line-height: 1.4;
+    }
+    
+    .success-icon-container {
+        margin-bottom: 1.5rem;
     }
     
     .success-icon i {
         font-size: 4rem;
     }
     
+    .question-info {
+        margin-bottom: 1.5rem;
+    }
+    
+    .question-badge {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
+        gap: 0.4rem;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .question-badge .badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
     .test-stats {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
+        margin: 1rem 0;
+        justify-content: center;
     }
     
     .stat-item {
         min-width: 100%;
+        width: 100%;
+        max-width: 100%;
         justify-content: center;
+        padding: 1rem 1.25rem;
+        flex-direction: row;
+    }
+    
+    .stat-item i {
+        font-size: 2.5rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.75rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.9rem;
+    }
+    
+    .encouragement-message {
+        margin: 1.5rem 0;
+        padding: 1.25rem 1rem;
+    }
+    
+    .encouragement-message p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .congratulations-left .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        width: 100%;
     }
     
     .action-buttons {
         flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        width: 100%;
     }
     
     .action-buttons .btn {
         width: 100%;
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .ai-feedback-section {
+        padding: 1.25rem 1rem;
+        margin: 1rem 0;
+        border-radius: 12px;
+        height: auto; /* Auto height on mobile */
+    }
+    
+    .ai-feedback-header {
+        margin-bottom: 1.25rem;
+    }
+    
+    .ai-feedback-header h3 {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+    
+    .ai-feedback-header p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .transcript-input-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .transcript-input-group label {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+    
+    .transcript-input-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.75rem;
+        line-height: 1.5;
+    }
+    
+    .transcript-input-group small {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+    
+    .ai-feedback-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .ai-feedback-actions .btn {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .ai-results {
+        padding: 1.25rem 1rem;
+        margin-top: 1.25rem;
+    }
+    
+    .ai-results .row {
+        flex-direction: column;
+        margin: 0;
+    }
+    
+    .ai-results .col-md-6 {
+        width: 100%;
+        margin-bottom: 1rem;
+        padding: 0;
+    }
+    
+    .ai-score-display {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+    }
+    
+    .ai-score-display h4 {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+    
+    .score-badge {
+        font-size: 1.5rem;
+        padding: 0.4rem 1.25rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    
+    .ai-feedback-text {
+        margin-bottom: 1.25rem;
+    }
+    
+    .ai-feedback-text h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .ai-feedback-text p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        padding: 1rem 0.875rem;
+    }
+    
+    .strengths-box, .suggestions-box {
+        padding: 1rem 0.875rem;
+        min-height: 120px;
+    }
+    
+    .strengths-box h6, .suggestions-box h6 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .strengths-list li, .suggestions-list li {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
     }
 }
 
+/* Small mobile devices (phones in portrait) */
 @media (max-width: 480px) {
+    .congratulations-wrapper {
+        padding: 0.75rem 0.5rem;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .congratulations-card {
+        padding: 1.5rem 1rem;
+        border-radius: 15px;
+    }
+    
     .congratulations-title {
         font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
     }
     
     .congratulations-subtitle {
         font-size: 1rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.4;
+    }
+    
+    .success-icon-container {
+        margin-bottom: 1.25rem;
     }
     
     .success-icon i {
         font-size: 3.5rem;
     }
     
+    .question-info {
+        margin-bottom: 1.25rem;
+    }
+    
+    .question-badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    
+    .question-badge .badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .test-stats {
+        gap: 0.75rem;
+        margin: 1.25rem 0;
+    }
+    
     .stat-item {
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.25rem;
+        flex-direction: row;
+        gap: 0.75rem;
     }
     
     .stat-item i {
         font-size: 2rem;
+        flex-shrink: 0;
+    }
+    
+    .stat-content {
+        flex: 1;
+        text-align: left;
     }
     
     .stat-content h3 {
         font-size: 1.5rem;
     }
+    
+    .stat-content p {
+        font-size: 0.875rem;
+    }
+    
+    .encouragement-message {
+        padding: 1.25rem 1rem;
+        margin: 1.25rem 0;
+    }
+    
+    .encouragement-message p {
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+    
+    .action-buttons {
+        gap: 0.625rem;
+        margin-top: 1.25rem;
+    }
+    
+    .action-buttons .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9375rem;
+        min-height: 48px;
+    }
+    
+    .ai-feedback-section {
+        padding: 1.25rem 0.875rem;
+        margin: 1.25rem 0;
+        border-radius: 12px;
+    }
+    
+    .ai-feedback-header {
+        margin-bottom: 1rem;
+    }
+    
+    .ai-feedback-header h3 {
+        font-size: 1.125rem;
+        line-height: 1.3;
+    }
+    
+    .ai-feedback-header p {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    
+    .transcript-input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .transcript-input-group label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .transcript-input-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.625rem;
+        min-height: 100px;
+    }
+    
+    .transcript-input-group small {
+        font-size: 0.75rem;
+        margin-top: 0.375rem;
+    }
+    
+    .ai-feedback-actions {
+        margin-bottom: 1rem;
+        gap: 0.625rem;
+    }
+    
+    .ai-feedback-actions .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9375rem;
+        min-height: 48px;
+    }
+    
+    .ai-results {
+        padding: 1rem 0.875rem;
+        margin-top: 1rem;
+    }
+    
+    .ai-score-display {
+        margin-bottom: 1rem;
+        padding-bottom: 0.875rem;
+    }
+    
+    .ai-score-display h4 {
+        font-size: 1.125rem;
+        line-height: 1.3;
+    }
+    
+    .score-badge {
+        font-size: 1.25rem;
+        padding: 0.35rem 1rem;
+        margin-top: 0.375rem;
+    }
+    
+    .ai-feedback-text {
+        margin-bottom: 1rem;
+    }
+    
+    .ai-feedback-text h5 {
+        font-size: 1rem;
+        margin-bottom: 0.625rem;
+    }
+    
+    .ai-feedback-text p {
+        font-size: 0.875rem;
+        line-height: 1.6;
+        padding: 0.875rem 0.75rem;
+    }
+    
+    .strengths-box, .suggestions-box {
+        padding: 0.875rem 0.75rem;
+        min-height: 100px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .strengths-box h6,
+    .suggestions-box h6 {
+        font-size: 0.9375rem;
+        margin-bottom: 0.625rem;
+    }
+    
+    .strengths-list li,
+    .suggestions-list li {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        padding: 0.4rem 0;
+        padding-left: 1.25rem;
+    }
+}
+
+/* Extra small devices (very small phones) */
+@media (max-width: 360px) {
+    .congratulations-card {
+        padding: 1.25rem 0.875rem;
+    }
+    
+    .congratulations-title {
+        font-size: 1.5rem;
+    }
+    
+    .congratulations-subtitle {
+        font-size: 0.9375rem;
+    }
+    
+    .success-icon i {
+        font-size: 3rem;
+    }
+    
+    .stat-item {
+        padding: 0.875rem 1rem;
+    }
+    
+    .stat-item i {
+        font-size: 1.75rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.375rem;
+    }
+    
+    .action-buttons .btn,
+    .ai-feedback-actions .btn {
+        font-size: 0.875rem;
+        padding: 0.625rem 1rem;
+    }
 }
 </style>
 
 <script>
-// Auto-redirect countdown
-let timeLeft = 5;
-const countdownElement = document.getElementById('countdown');
-
-const countdown = setInterval(() => {
-    timeLeft--;
-    countdownElement.textContent = timeLeft;
+// Audio Analysis Functions (for tone/prosody evaluation)
+async function analyzeAudioFeatures() {
+    const audio = document.getElementById('responseAudio');
+    if (!audio || !audio.src) return null;
     
-    if (timeLeft <= 0) {
-        clearInterval(countdown);
-        window.location.href = "{{ url_for('practice_mode.index') }}";
+    try {
+        // Create audio context for analysis
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const response = await fetch(audio.src);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        
+        // Extract audio data
+        const channelData = audioBuffer.getChannelData(0);
+        const sampleRate = audioBuffer.sampleRate;
+        const duration = audioBuffer.duration;
+        
+        // Calculate pitch (fundamental frequency approximation)
+        const pitchData = calculatePitch(channelData, sampleRate);
+        
+        // Calculate speaking rate (words per minute approximation)
+        const speakingRate = calculateSpeakingRate(channelData, sampleRate, duration);
+        
+        // Calculate pause ratio
+        const pauseRatio = calculatePauseRatio(channelData, sampleRate);
+        
+        // Calculate volume consistency
+        const volumeConsistency = calculateVolumeConsistency(channelData);
+        
+        return {
+            avg_pitch: pitchData.average,
+            pitch_variance: pitchData.variance,
+            speaking_rate: speakingRate,
+            pause_ratio: pauseRatio,
+            volume_consistency: volumeConsistency,
+            duration: duration
+        };
+    } catch (error) {
+        console.error('Audio analysis error:', error);
+        return null;
     }
-}, 1000);
+}
 
-// Allow user to cancel redirect by clicking anywhere
-let redirectCancelled = false;
-document.addEventListener('click', function(e) {
-    // Don't cancel if clicking on buttons
-    if (!e.target.closest('.btn') && !redirectCancelled) {
-        clearInterval(countdown);
-        document.querySelector('.redirect-message').innerHTML = 
-            '<i class="fas fa-check me-2"></i>Auto-redirect cancelled. Use buttons below to navigate.';
-        redirectCancelled = true;
+function calculatePitch(audioData, sampleRate) {
+    // Simplified pitch calculation using zero-crossing rate and autocorrelation
+    const chunkSize = 2048;
+    const pitches = [];
+    
+    for (let i = 0; i < audioData.length - chunkSize; i += chunkSize) {
+        const chunk = audioData.slice(i, i + chunkSize);
+        
+        // Find dominant frequency using autocorrelation
+        const autocorr = autocorrelate(chunk);
+        let maxCorr = 0;
+        let maxIndex = 0;
+        
+        // Look for peak in autocorrelation (fundamental frequency)
+        for (let j = 1; j < autocorr.length / 2; j++) {
+            if (autocorr[j] > maxCorr) {
+                maxCorr = autocorr[j];
+                maxIndex = j;
+            }
+        }
+        
+        if (maxIndex > 0) {
+            const frequency = sampleRate / maxIndex;
+            // Human voice range: 85-300 Hz
+            if (frequency >= 85 && frequency <= 300) {
+                pitches.push(frequency);
+            }
+        }
     }
-});
+    
+    if (pitches.length === 0) return { average: 150, variance: 100 };
+    
+    const avg = pitches.reduce((a, b) => a + b, 0) / pitches.length;
+    const variance = pitches.reduce((sum, p) => sum + Math.pow(p - avg, 2), 0) / pitches.length;
+    
+    return { average: avg, variance: variance };
+}
+
+function autocorrelate(buffer) {
+    const result = new Float32Array(buffer.length);
+    for (let lag = 0; lag < buffer.length; lag++) {
+        let sum = 0;
+        for (let i = 0; i < buffer.length - lag; i++) {
+            sum += buffer[i] * buffer[i + lag];
+        }
+        result[lag] = sum / (buffer.length - lag);
+    }
+    return result;
+}
+
+function calculateSpeakingRate(audioData, sampleRate, duration) {
+    // Estimate speaking rate based on energy and activity
+    const chunkSize = Math.floor(sampleRate * 0.1); // 100ms chunks
+    let activeChunks = 0;
+    
+    for (let i = 0; i < audioData.length - chunkSize; i += chunkSize) {
+        const chunk = audioData.slice(i, i + chunkSize);
+        const energy = chunk.reduce((sum, val) => sum + Math.abs(val), 0) / chunkSize;
+        if (energy > 0.01) { // Threshold for "speaking"
+            activeChunks++;
+        }
+    }
+    
+    // Rough estimate: assume average 2 syllables per word, 1 word per second
+    const wordsEstimated = (activeChunks * 0.1) * 2; // chunks * 0.1s * 2 words/sec estimate
+    const wordsPerMinute = (wordsEstimated / duration) * 60;
+    
+    return Math.max(50, Math.min(250, wordsPerMinute)); // Clamp to reasonable range
+}
+
+function calculatePauseRatio(audioData, sampleRate) {
+    const chunkSize = Math.floor(sampleRate * 0.1); // 100ms chunks
+    let silentChunks = 0;
+    const threshold = 0.01;
+    
+    for (let i = 0; i < audioData.length - chunkSize; i += chunkSize) {
+        const chunk = audioData.slice(i, i + chunkSize);
+        const energy = chunk.reduce((sum, val) => sum + Math.abs(val), 0) / chunkSize;
+        if (energy < threshold) {
+            silentChunks++;
+        }
+    }
+    
+    return silentChunks / Math.floor(audioData.length / chunkSize);
+}
+
+function calculateVolumeConsistency(audioData) {
+    const chunkSize = 4096;
+    const volumes = [];
+    
+    for (let i = 0; i < audioData.length - chunkSize; i += chunkSize) {
+        const chunk = audioData.slice(i, i + chunkSize);
+        const rms = Math.sqrt(chunk.reduce((sum, val) => sum + val * val, 0) / chunkSize);
+        volumes.push(rms);
+    }
+    
+    if (volumes.length === 0) return 1;
+    
+    const avgVolume = volumes.reduce((a, b) => a + b, 0) / volumes.length;
+    const variance = volumes.reduce((sum, v) => sum + Math.pow(v - avgVolume, 2), 0) / volumes.length;
+    const stdDev = Math.sqrt(variance);
+    
+    // Consistency score: 1 = perfect, 0 = very inconsistent
+    const consistency = Math.max(0, 1 - (stdDev / (avgVolume + 0.001)));
+    return consistency;
+}
+
+// AI Feedback Functions
+async function getAiFeedback() {
+    const btn = document.getElementById('getAiFeedbackBtn');
+    const spinner = document.getElementById('aiLoadingSpinner');
+    const resultsDiv = document.getElementById('aiResults');
+    const errorDiv = document.getElementById('aiError');
+    const transcript = document.getElementById('responseTranscript').value.trim();
+    const responseId = btn.getAttribute('data-response-id');
+    
+    // Validate transcript
+    if (!transcript) {
+        errorDiv.textContent = 'Please enter your response text first.';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // Hide previous results/errors
+    resultsDiv.classList.add('d-none');
+    errorDiv.classList.add('d-none');
+    
+    // Show loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+    spinner.classList.remove('d-none');
+    
+    try {
+        // Analyze audio features for tone/prosody evaluation
+        let audioFeatures = null;
+        try {
+            audioFeatures = await analyzeAudioFeatures();
+            if (audioFeatures) {
+                document.getElementById('audioFeatures').value = JSON.stringify(audioFeatures);
+            }
+        } catch (error) {
+            console.log('Audio analysis skipped:', error);
+            // Continue without audio features if analysis fails
+        }
+        
+        // Construct URL for AI scoring endpoint
+        const url = '/practice/ai-score/' + responseId;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                transcript: transcript,
+                audio_features: audioFeatures 
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Display results
+            document.getElementById('aiScoreValue').textContent = data.score;
+            document.getElementById('aiFeedbackText').textContent = data.feedback || 'No feedback provided.';
+            
+            // Display strengths
+            const strengthsUl = document.getElementById('aiStrengths');
+            strengthsUl.innerHTML = '';
+            if (data.data && data.data.strengths && data.data.strengths.length > 0) {
+                data.data.strengths.forEach(strength => {
+                    const li = document.createElement('li');
+                    li.textContent = strength;
+                    strengthsUl.appendChild(li);
+                });
+            } else {
+                strengthsUl.innerHTML = '<li class="text-muted">No specific strengths listed.</li>';
+            }
+            
+            // Display suggestions
+            const suggestionsUl = document.getElementById('aiSuggestions');
+            suggestionsUl.innerHTML = '';
+            if (data.data && data.data.suggestions && data.data.suggestions.length > 0) {
+                data.data.suggestions.forEach(suggestion => {
+                    const li = document.createElement('li');
+                    li.textContent = suggestion;
+                    suggestionsUl.appendChild(li);
+                });
+            } else {
+                suggestionsUl.innerHTML = '<li class="text-muted">No specific suggestions listed.</li>';
+            }
+            
+            resultsDiv.classList.remove('d-none');
+        } else {
+            errorDiv.textContent = data.error || 'Failed to get AI feedback. Please try again.';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        console.error('AI feedback error:', error);
+        errorDiv.textContent = 'Error connecting to AI service. Please try again later.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        // Hide loading
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-magic me-2"></i>Get AI Feedback';
+        spinner.classList.add('d-none');
+    }
+}
 </script>
 {% endblock %}
 

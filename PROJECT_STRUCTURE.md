@@ -11,14 +11,22 @@ OPP/
 │   ├── models.py                    # Database models (User, Question, Response, Survey)
 │   ├── 📁 blueprints/              # Flask blueprints for modular routing
 │   │   ├── auth.py                 # Authentication routes
-│   │   ├── main.py                 # Main application routes
-│   │   ├── admin.py                # Admin routes
+│   │   ├── main.py                 # Main application routes (Dashboard, Tips, etc.)
+│   │   ├── admin.py                # Admin routes (Users, Tips management)
+│   │   ├── chatbot.py              # Chatbot routes
+│   │   ├── comments.py             # Comment system routes
+│   │   ├── notifications.py        # Notification routes
 │   │   ├── test_mode.py            # Test mode routes
 │   │   └── practice_mode.py        # Practice mode routes
 │   ├── 📁 controllers/              # Controller layer (MVC pattern)
 │   │   └── __init__.py             # All controllers (Auth, Main, TestMode, PracticeMode)
-│   └── 📁 services/                 # Service layer (Business logic)
-│       └── __init__.py             # All services (User, Auth, Question, Response, Survey)
+│   ├── 📁 services/                 # Service layer (Business logic)
+│   │   ├── __init__.py             # All services (User, Auth, Question, Response, Survey)
+│   │   ├── ai_service.py           # AI service (Google AI, Ollama integration)
+│   │   └── chatbot_service.py      # Chatbot service logic
+│   └── 📁 utils/                    # Utility functions
+│       ├── __init__.py
+│       └── pdf_thumbnail.py        # PDF thumbnail generation
 ├── 📁 templates/                    # Jinja2 templates
 │   ├── 📁 auth/
 │   │   ├── login.html              # Login page with dark mode support
@@ -27,7 +35,9 @@ OPP/
 │   │   ├── index.html              # Landing page with CTA buttons
 │   │   ├── dashboard.html          # User dashboard with streak tracking
 │   │   ├── history.html            # Practice history timeline
-│   │   └── profile.html            # User profile management
+│   │   ├── profile.html            # User profile management
+│   │   ├── chatbot.html            # Main chatbot page
+│   │   └── tips.html               # Tips & Resources page
 │   ├── 📁 test_mode/
 │   │   ├── survey.html             # Initial survey for personalization
 │   │   ├── survey_topics.html      # Topic selection survey
@@ -39,29 +49,41 @@ OPP/
 │   │   ├── index.html              # Practice mode selection
 │   │   └── question.html           # Practice question interface
 │   ├── 📁 admin/
-│   │   └── user_list.html          # Admin user management
+│   │   ├── user_list.html          # Admin user management
+│   │   └── tips.html               # Admin tips management
+│   ├── 📁 components/
+│   │   └── chatbot_widget.html     # Floating chatbot widget component
 │   ├── base.html                   # Main base template with dark mode
 │   └── opic_base.html              # Alternative base template
 ├── 📁 static/                       # Static files
 │   ├── 📁 css/                     # Stylesheets (Bootstrap, Font Awesome)
 │   ├── 📁 js/                      # JavaScript files (Bootstrap bundle)
 │   ├── 📁 icons/                   # PWA icons (multiple sizes)
+│   ├── 📁 avatars/                 # Default user avatars
+│   ├── 📁 thumbnails/              # PDF thumbnails (auto-generated)
 │   ├── 📁 webfonts/                # Font Awesome webfonts
 │   ├── favicon.ico                 # Browser favicon
 │   ├── microphone.png              # Microphone icon
+│   ├── galaxyAI.png                # Chatbot icon
 │   ├── manifest.json               # PWA manifest
 │   └── sw.js                       # Service worker
 ├── 📁 scripts/                     # Utility scripts (organized)
-│   ├── init_db_with_samples.py    # Initialize database with sample data
 │   ├── init_db.py                  # Basic database initialization
-│   ├── ensure_admin.py             # Create admin user
-│   ├── reset_admin.py              # Reset admin password
+│   ├── init_db_with_samples.py    # Initialize database with sample data
+│   ├── ensure_admin.py             # Create/reset admin user (password prompted)
+│   ├── reset_admin.py              # Reset admin password (password prompted)
 │   ├── inspect_db.py               # Database inspection
 │   ├── inspect_topics.py           # Topic analysis
 │   ├── audio_setup.py              # Audio directory setup
 │   ├── db_export_import.py         # Database export/import
 │   ├── tts_generator.py            # Text-to-speech generator
 │   ├── add_mode_column.py          # Database migration utility
+│   ├── add_comments_table.py       # Add comments table migration
+│   ├── add_notifications_table.py  # Add notifications table migration
+│   ├── add_avatar_column.py        # Add avatar column migration
+│   ├── add_tips_table.py           # Add tips table migration
+│   ├── add_thumbnail_column.py     # Add thumbnail_path column migration
+│   ├── generate_tip_thumbnails.py  # Generate thumbnails for existing tips
 │   └── README.md                   # Scripts documentation
 ├── 📁 instance/                     # Instance folder (not in git)
 │   └── opic_portal.db              # SQLite database (excluded from git)
@@ -72,6 +94,8 @@ OPP/
 │           ├── 📁 IM/              # Intermediate-Mid (20 topic folders)
 │           ├── 📁 IH/              # Intermediate-High (30 topic folders)
 │           └── 📁 AL/              # Advanced-Low (32 topic folders)
+├── 📁 files/                        # PDF resources (Tips)
+│   └── *.pdf                        # Study materials and guides
 ├── 📁 transcription_backups/        # Transcription backup JSON files
 ├── 📁 OPIC Multicampus_AL/          # AL level audio source files (backup)
 ├── 📁 OPIC_Voices/                 # Original audio files (backup)
@@ -80,22 +104,26 @@ OPP/
 ├── 📁 venv/                        # Python virtual environment (not in git)
 ├── 📁 ssl/                          # SSL certificates (optional, not in git)
 ├── 📄 app.py                        # Application entry point
+├── 📁 docs/                         # Documentation (organized)
+│   ├── 📁 setup/                   # Setup guides
+│   ├── 📁 features/               # Feature documentation
+│   ├── 📁 development/             # Development docs (AI setup, etc.)
+│   └── 📁 sessions/                # Session summaries
 ├── 📄 setup.py                      # Automated setup script (cross-platform)
 ├── 📄 setup.bat                     # Windows setup batch file
 ├── 📄 run.bat                       # Windows run batch file
+├── 📄 install_ai.bat               # AI setup for Windows (optional)
+├── 📄 install_ai.sh                # AI setup for Linux/macOS (optional)
 ├── 📄 gunicorn_config.py            # Gunicorn production config
 ├── 📄 requirements.txt              # Python dependencies
-├── 📄 requirements-dev.txt          # Development dependencies
+├── 📄 requirements-ai.txt          # AI/ML dependencies (optional)
+├── 📄 requirements-dev.txt         # Development dependencies (optional)
 ├── 📄 config.env.example            # Environment variables template
 ├── 📄 .env                          # Environment variables (not in git)
 ├── 📄 .gitignore                    # Git ignore rules
 ├── 📄 README.md                     # Project documentation
-├── 📄 SETUP_GUIDE.md               # Detailed setup instructions
 ├── 📄 PROJECT_STRUCTURE.md          # This file
-├── 📄 AUDIO_SETUP.md               # Audio file setup guide
-├── 📄 DATABASE_SOLUTION.md         # Database distribution strategy
-├── 📄 CI_CD_GUIDE.md               # CI/CD setup guide
-├── 📄 FUTURE_IMPLEMENTATION.md     # Future features roadmap
+├── 📄 LICENSE                       # MIT License
 ├── 📄 Dockerfile                    # Docker configuration
 ├── 📄 docker-compose.yml            # Docker Compose for development
 └── 📄 docker-compose.prod.yml       # Docker Compose for production
@@ -116,6 +144,8 @@ OPP/
 - **Flask-Admin 1.6.1** - Admin interface
 - **Flask-Mail 0.10.0** - Email notifications
 - **Celery 5.5.3** - Background task processing (optional)
+- **PyMuPDF 1.24.14** - PDF processing and thumbnail generation
+- **Pillow 11.0.0** - Image processing for thumbnails
 
 ### Database
 - **SQLite** - Development database
@@ -131,6 +161,8 @@ OPP/
 
 ### External Services
 - **LemonFox.ai** - Audio transcription service
+- **Google AI (Gemini)** - AI chatbot service (free tier available)
+- **Ollama** - Local AI models (optional, for offline use)
 - **OpenAI TTS API** - Text-to-speech generation (optional)
 
 ### Development Tools
@@ -177,10 +209,13 @@ OPP/
 - Remember me functionality (30-day sessions)
 
 ### 📊 Database Models
-- **User**: Profile, streak tracking, preferences, admin status
+- **User**: Profile, streak tracking, preferences, admin status, avatar
 - **Question**: Text, audio, difficulty levels (IM/IH/AL), topics, categories
 - **Response**: User audio recordings with duration tracking
 - **Survey**: Test personalization data
+- **Comment**: Community feedback on responses with replies and mentions
+- **Notification**: User notifications for comments, replies, mentions
+- **Tip**: PDF resources with thumbnails, categories, display order, active/inactive status
 
 ### 🎯 Test Mode
 - Survey-based question selection
@@ -188,6 +223,20 @@ OPP/
 - Voice recording capabilities
 - Progress tracking
 - Multi-level support (IM, IH, AL)
+
+### 🤖 AI Chatbot
+- **Floating Widget** - Available on all pages for quick access
+- **Dedicated Page** - Full chatbot interface with chat history
+- **Chat History Persistence** - Stored in localStorage for continuity
+- **AI Providers** - Google AI (Gemini) and Ollama (local models)
+- **Context-Aware** - Provides OPIc-specific guidance and tips
+
+### 📚 Tips & Resources
+- **PDF Viewing** - In-browser PDF viewer with thumbnail previews
+- **Thumbnail Generation** - Automatic thumbnail generation from PDF first page
+- **Manual Upload** - Admin can upload custom thumbnails
+- **Category Organization** - Tips organized by category and display order
+- **Active/Inactive Toggle** - Show/hide tips without deletion
 
 ### 🏃 Practice Mode
 - Topic-based practice sessions
@@ -216,7 +265,8 @@ OPP/
 
 ### 👨‍💼 Admin Dashboard
 - **Question Management** - Full CRUD operations for questions
-- **User Management** - View, edit, delete users
+- **User Management** - View, edit, delete users with activity tracking
+- **Tips & Resources Management** - Upload PDFs, manage thumbnails, organize study materials
 - **TTS Audio Generation** - Generate audio files from text
 - **System Statistics** - User counts, question counts, response analytics
 - **Database Inspection** - Real-time database status and health checks
@@ -460,13 +510,15 @@ uploads/questions/english/
 ### Database Management
 All database scripts are located in the `scripts/` folder:
 - Use `scripts/init_db_with_samples.py` to initialize database with sample data
-- Use `scripts/ensure_admin.py` to create admin user
-- Use `scripts/reset_admin.py` to reset admin password
+- Use `scripts/ensure_admin.py` to create/reset admin user (password prompted)
+- Use `scripts/reset_admin.py` to reset admin password (password prompted)
 - Use `scripts/inspect_db.py` to check database status
 - Use `scripts/inspect_topics.py` to analyze topic distribution
 - Use `scripts/db_export_import.py` to export/import database
 
-**Important**: The database file (`instance/opic_portal.db`) is excluded from Git. See [DATABASE_SOLUTION.md](DATABASE_SOLUTION.md) for distribution strategy.
+**Important**: The database file (`instance/opic_portal.db`) is excluded from Git. See [docs/setup/DATABASE_SOLUTION.md](docs/setup/DATABASE_SOLUTION.md) for distribution strategy.
+
+**Security Note**: Admin passwords are no longer hardcoded. Scripts will prompt for passwords or use the `ADMIN_PASSWORD` environment variable. Never commit passwords to version control.
 
 ### Audio Management
 - Audio files are organized by level and topic in `uploads/questions/english/`
@@ -474,7 +526,7 @@ All database scripts are located in the `scripts/` folder:
 - Original files are preserved in backup folders (`OPIC_Voices/`, `OPIC Multicampus_AL/`, etc.)
 - Active files follow structure: `uploads/questions/english/{level}/{topic}/`
 
-**Important**: Audio files are excluded from Git due to size. See [AUDIO_SETUP.md](AUDIO_SETUP.md) for setup instructions.
+**Important**: Audio files are excluded from Git due to size. See [docs/setup/AUDIO_SETUP.md](docs/setup/AUDIO_SETUP.md) for setup instructions.
 
 ### Multi-Level Support
 - Questions are categorized by OPIc levels (IM, IH, AL)

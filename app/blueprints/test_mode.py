@@ -43,3 +43,8 @@ def finish_test():
 @login_required
 def congratulations():
     return test_mode_controller.congratulations()
+
+@test_mode_bp.route('/ai-score/<int:response_id>', methods=['POST'])
+@login_required
+def ai_score(response_id):
+    return test_mode_controller.ai_score(response_id)

@@ -40,6 +40,14 @@ redis==5.0.4
 # Rate Limiting
 limits==3.8.0
 
+# HTTP Requests (for Hugging Face API)
+requests==2.32.3
+PyPDF2==3.0.1  # For reading OPIc rater PDF guidelines
+
+# PDF Thumbnail Generation
+PyMuPDF==1.24.14  # Fast PDF rendering for thumbnails (fitz)
+Pillow==11.0.0  # Image processing
+
 # Utilities
 click==8.3.0
 blinker==1.9.0

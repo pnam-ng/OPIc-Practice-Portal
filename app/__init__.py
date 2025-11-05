@@ -67,6 +67,16 @@ def create_app():
     from app.blueprints.comments import comments_bp
     from app.blueprints.notifications import notifications_bp
     
+    # Import chatbot blueprint (with error handling)
+    try:
+        from app.blueprints.chatbot import chatbot_bp
+        app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
+        print("[OK] Chatbot blueprint registered successfully")
+    except Exception as e:
+        print(f"[ERROR] Failed to register chatbot blueprint: {e}")
+        import traceback
+        traceback.print_exc()
+    
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(main_bp)
     app.register_blueprint(test_mode_bp, url_prefix='/test')

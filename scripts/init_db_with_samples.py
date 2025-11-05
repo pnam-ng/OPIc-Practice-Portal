@@ -215,14 +215,23 @@ def create_admin_user():
         last_active_date=date.today(),
         is_admin=True
     )
-    admin_user.set_password('1qaz2wsx')
+    # Use environment variable or prompt for password
+    import os
+    import getpass
+    password = os.environ.get('ADMIN_PASSWORD')
+    if not password:
+        password = getpass.getpass('Enter admin password (min 6 characters): ')
+        if len(password) < 6:
+            print('Error: Password must be at least 6 characters long.')
+            return
+    
+    admin_user.set_password(password)
     
     db.session.add(admin_user)
     db.session.commit()
     
     print("✅ Admin user created")
     print("   Username: admin")
-    print("   Password: 1qaz2wsx")
     return admin_user
 
 def create_sample_user():
@@ -245,14 +254,19 @@ def create_sample_user():
         last_active_date=date.today(),
         is_admin=False
     )
-    sample_user.set_password('test123')
+    # Use environment variable or prompt for password
+    import os
+    import getpass
+    password = os.environ.get('SAMPLE_USER_PASSWORD', 'test123')
+    if password == 'test123':
+        print("⚠️  Using default password 'test123' for sample user. Change in production!")
+    sample_user.set_password(password)
     
     db.session.add(sample_user)
     db.session.commit()
     
     print("✅ Sample user created")
     print("   Username: testuser")
-    print("   Password: test123")
     return sample_user
 
 def create_sample_responses():

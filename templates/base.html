@@ -1512,9 +1512,9 @@
                     </li>
                     {% if current_user.is_admin %}
                     <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin.users') }}">
-                    <i class="fas fa-users-cog me-1"></i>Admin
-                </a>
+                        <a class="nav-link" href="{{ url_for('admin.users') }}">
+                            <i class="fas fa-users-cog me-1"></i>Admin
+                        </a>
                     </li>
                 {% endif %}
                     <li class="nav-item">
@@ -1526,6 +1526,11 @@
                 <a class="nav-link" href="{{ url_for('main.practice_mode') }}">
                     <i class="fas fa-dumbbell me-1"></i>Practice
                 </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.tips') }}">
+                            <i class="fas fa-lightbulb me-1"></i>Tips
+                        </a>
                     </li>
                     <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('main.history') }}">
@@ -1795,13 +1800,41 @@
             }
         });
         
-        // For iOS - show manual install button since beforeinstallprompt doesn't fire
+        // For iOS and Android - show install button
         if (isMobile && !isInstalled) {
-            // On iOS, show the navbar button with instructions
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            // On iOS, show the navbar button with instructions (beforeinstallprompt doesn't fire)
             if (isIOS && pwaInstallBtn) {
-                pwaInstallBtn.classList.remove('d-none');
-                pwaInstallBtn.addEventListener('click', showIOSInstructions);
+                // Only show if not already handled by beforeinstallprompt
+                if (!deferredPrompt) {
+                    pwaInstallBtn.classList.remove('d-none');
+                    // Clone button to remove existing listeners
+                    const newBtn = pwaInstallBtn.cloneNode(true);
+                    pwaInstallBtn.parentNode.replaceChild(newBtn, pwaInstallBtn);
+                    const updatedBtn = document.getElementById('pwaInstallBtn');
+                    updatedBtn.addEventListener('click', showIOSInstructions);
+                }
+            }
+            
+            // On Android, show button even if prompt hasn't fired yet (fallback for manual install)
+            if (isAndroid && pwaInstallBtn) {
+                // Wait a bit to see if beforeinstallprompt fires (2 seconds)
+                setTimeout(() => {
+                    if (!deferredPrompt && pwaInstallBtn) {
+                        // If prompt still hasn't fired, show button for manual instructions
+                        if (!pwaInstallBtn.classList.contains('d-none')) {
+                            // Already shown by beforeinstallprompt, do nothing
+                        } else {
+                            pwaInstallBtn.classList.remove('d-none');
+                            const newBtn = pwaInstallBtn.cloneNode(true);
+                            pwaInstallBtn.parentNode.replaceChild(newBtn, pwaInstallBtn);
+                            const updatedBtn = document.getElementById('pwaInstallBtn');
+                            updatedBtn.addEventListener('click', showAndroidInstructions);
+                        }
+                    }
+                }, 2000);
             }
         }
         
@@ -1899,12 +1932,83 @@
                 deferredPrompt = null;
             } else {
                 console.log('PWA: No deferred prompt available');
-                // Show iOS instructions if on iOS
+                // Show instructions based on device
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isAndroid = /Android/.test(navigator.userAgent);
+                
                 if (isIOS) {
                     showIOSInstructions();
+                } else if (isAndroid) {
+                    showAndroidInstructions();
+                } else {
+                    alert('Install prompt not available. Your browser may not support PWA installation, or the app is already installed.');
                 }
             }
+        }
+        
+        function showAndroidInstructions() {
+            // Create modal for Android install instructions
+            const modal = document.createElement('div');
+            modal.className = 'modal fade show';
+            modal.style.display = 'block';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modal.setAttribute('tabindex', '-1');
+            modal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fab fa-android me-2"></i>Install App on Android
+                            </h5>
+                            <button type="button" class="btn-close" onclick="this.closest('.modal').remove()"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-3">To install this app on your Android device:</p>
+                            <ol class="install-steps">
+                                <li class="mb-2">
+                                    <strong>Using Chrome/Edge browser:</strong>
+                                    <ul class="mt-2 mb-0">
+                                        <li>Tap the <strong>menu</strong> icon (three dots) in the top-right corner</li>
+                                        <li>Look for <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></li>
+                                        <li>Tap on it and confirm the installation</li>
+                                    </ul>
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Alternative method:</strong>
+                                    <ul class="mt-2 mb-0">
+                                        <li>Tap the menu (three dots)</li>
+                                        <li>Go to <strong>"Add to Home screen"</strong></li>
+                                        <li>Confirm by tapping <strong>"Add"</strong></li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <div class="alert alert-info mt-3 mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> If you don't see the install option, make sure you're using Chrome or Edge browser on Android. The app must meet PWA requirements.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="this.closest('.modal').remove()">Got it!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+            
+            // Close on Escape key
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    modal.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
         }
         
         function showIOSInstructions() {
@@ -2506,6 +2610,11 @@
     </script>
     
     {% block extra_js %}{% endblock %}
+    
+    <!-- Floating Chatbot Widget (available on all pages) -->
+    {% if current_user.is_authenticated %}
+    {% include 'components/chatbot_widget.html' %}
+    {% endif %}
 </body>
 </html>
 

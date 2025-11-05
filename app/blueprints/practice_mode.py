@@ -43,3 +43,8 @@ def get_topics_by_level(level):
 @login_required
 def congratulations():
     return practice_mode_controller.congratulations()
+
+@practice_mode_bp.route('/ai-score/<int:response_id>', methods=['POST'])
+@login_required
+def ai_score(response_id):
+    return practice_mode_controller.ai_score(response_id)

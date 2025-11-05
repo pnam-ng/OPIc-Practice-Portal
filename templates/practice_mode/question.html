@@ -3,10 +3,10 @@
 {% block title %}Practice Question - OPIc Practice Portal{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid px-3 px-md-4">
+    <div class="row g-3 g-md-4">
         <!-- Sidebar -->
-        <div class="col-md-3 sidebar">
+        <div class="col-12 col-md-3 sidebar">
             <div class="sidebar-content">
                 <h4 class="sidebar-title">Practice Session</h4>
                 
@@ -47,7 +47,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="col-md-9 main-content">
+        <div class="col-12 col-md-9 main-content">
             <div class="question-container">
                 <!-- Mobile Topic Badge (Simple) -->
                 <div class="mobile-topic-badge d-md-none">
@@ -141,6 +141,16 @@
                     
                     <div class="alert alert-warning py-2 px-3 mb-2 small" id="recordWarning" style="display: block;">
                         <i class="fas fa-info-circle me-1"></i>Please play the question audio before recording
+                    </div>
+                    
+                    <!-- Live Transcription Display -->
+                    <div id="transcriptIndicator" class="alert alert-info py-2 px-3 mb-2 small" style="display: none;">
+                        <i class="fas fa-microphone-alt me-1"></i>
+                        <strong>Transcribing...</strong> Your speech is being transcribed automatically.
+                    </div>
+                    <div id="transcriptContainer" class="mb-3" style="display: none;">
+                        <label class="form-label small"><i class="fas fa-file-alt me-1"></i>Live Transcript:</label>
+                        <textarea id="liveTranscript" class="form-control form-control-sm" rows="2" readonly placeholder="Your transcript will appear here as you speak..."></textarea>
                     </div>
                     
                     <div class="response-controls">
@@ -312,8 +322,18 @@
 .sidebar {
     background-color: #f8f9fa;
     min-height: calc(100vh - 56px);
-    padding: 15px;
+    padding: 1rem 1.25rem;
     border-right: 1px solid #dee2e6;
+}
+
+@media (max-width: 991px) {
+    .sidebar {
+        min-height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 1rem;
+    }
 }
 
 [data-theme="dark"] .sidebar {
@@ -323,7 +343,16 @@
 
 .sidebar-content {
     position: sticky;
-    top: 15px;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (max-width: 991px) {
+    .sidebar-content {
+        position: static;
+    }
 }
 
 .sidebar-title {
@@ -334,11 +363,16 @@
 }
 
 .practice-section {
-    margin-bottom: 15px;
-    padding: 12px;
+    margin-bottom: 0;
+    padding: 1rem;
     background: white;
-    border-radius: 6px;
+    border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .practice-section {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
 }
 
 .practice-section h5 {
@@ -441,14 +475,31 @@
 .navigation-controls {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.625rem;
+}
+
+.navigation-controls .btn {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 /* Main Content Styles - Compact */
 .main-content {
-    padding: 15px;
+    padding: 1rem 1.25rem;
     max-height: calc(100vh - 56px);
     overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+        max-height: none;
+    }
 }
 
 .question-container {
@@ -2173,6 +2224,66 @@ let recordingTimer;
 let recordingTimeLeft = 120; // 2 minutes in seconds
 const MAX_RECORDING_TIME = 120; // 2 minutes
 
+// Speech Recognition for automatic transcription
+let recognition = null;
+let transcriptionText = '';
+let isTranscribing = false;
+
+// Initialize Speech Recognition if available
+function initSpeechRecognition() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true; // Keep listening during entire recording
+        recognition.interimResults = true; // Show interim results
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = function(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+            
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript + ' ';
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+            
+            transcriptionText += finalTranscript;
+            
+            // Update transcript display if element exists
+            const transcriptElement = document.getElementById('liveTranscript');
+            if (transcriptElement) {
+                transcriptElement.textContent = transcriptionText + interimTranscript;
+            }
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            if (event.error === 'no-speech') {
+                // Normal - just no speech detected yet
+            } else if (event.error === 'aborted') {
+                // User stopped or navigation
+            } else {
+                console.warn('Transcription error:', event.error);
+            }
+        };
+        
+        recognition.onend = function() {
+            // Auto-restart if we're still recording
+            if (isTranscribing && mediaRecorder && mediaRecorder.state === 'recording') {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log('Could not restart recognition:', e);
+                }
+            }
+        };
+    }
+}
+
 // Audio context for visualization
 let audioContext;
 let analyser;
@@ -2210,6 +2321,9 @@ const playbackCurrentTimeEl = document.getElementById('playbackCurrentTime');
 const playbackDurationEl = document.getElementById('playbackDuration');
 
 // Event listeners
+// Initialize speech recognition on page load
+initSpeechRecognition();
+
 recordBtn.addEventListener('click', startRecording);
 stopBtn.addEventListener('click', stopRecording);
 playBtn.addEventListener('click', playRecording);
@@ -2432,6 +2546,26 @@ async function startRecording() {
         mediaRecorder.start();
         recordingStartTime = Date.now();
         
+        // Start automatic transcription if available
+        if (recognition && !isTranscribing) {
+            transcriptionText = ''; // Reset transcript for new recording
+            isTranscribing = true;
+            try {
+                recognition.start();
+                // Show transcription indicator and container
+                const transcriptIndicator = document.getElementById('transcriptIndicator');
+                const transcriptContainer = document.getElementById('transcriptContainer');
+                if (transcriptIndicator) {
+                    transcriptIndicator.style.display = 'block';
+                }
+                if (transcriptContainer) {
+                    transcriptContainer.style.display = 'block';
+                }
+            } catch (e) {
+                console.log('Could not start transcription:', e);
+            }
+        }
+        
         // Update UI
         recordBtn.disabled = true;
         stopBtn.disabled = false;
@@ -2478,6 +2612,26 @@ async function startRecording() {
 function stopRecording() {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
+        
+        // Stop transcription
+        if (recognition && isTranscribing) {
+            isTranscribing = false;
+            try {
+                recognition.stop();
+            } catch (e) {
+                console.log('Error stopping recognition:', e);
+            }
+            
+            // Hide transcription indicator and container
+            const transcriptIndicator = document.getElementById('transcriptIndicator');
+            const transcriptContainer = document.getElementById('transcriptContainer');
+            if (transcriptIndicator) {
+                transcriptIndicator.style.display = 'none';
+            }
+            if (transcriptContainer) {
+                transcriptContainer.style.display = 'none';
+            }
+        }
         
         // Update UI
         recordBtn.disabled = false;
@@ -2770,6 +2924,18 @@ async function submitResponse() {
         const formData = new FormData();
         const file = new File([recordedBlob], 'response.webm', { type: 'audio/webm' });
         formData.append('audio', file);
+        
+        // Include transcript if available
+        if (transcriptionText && transcriptionText.trim()) {
+            formData.append('transcript', transcriptionText.trim());
+        }
+        
+        // Show loading indicator
+        const submitBtn = document.querySelector('button[onclick*="submitRecording"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+        }
         
         const response = await fetch('{{ url_for("practice_mode.record_practice_response", question_id=question.id) }}', {
             method: 'POST',

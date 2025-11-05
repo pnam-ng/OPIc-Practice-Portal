@@ -1,0 +1,257 @@
+"""
+Chatbot Service for OPIc Practice Portal
+Handles AI-powered chatbot using Google AI Studio (Gemini)
+"""
+import requests
+from typing import Optional, List, Dict
+from flask import current_app
+import os
+import json
+import time
+
+
+class ChatbotService:
+    """Service for AI-powered chatbot"""
+    
+    def __init__(self):
+        # Using Google AI Studio (Gemini) - COMPLETELY FREE!
+        self.api_provider = "google"
+        self.model = "gemini-2.5-flash"
+        self.api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
+        
+        if not self.api_token:
+            try:
+                from flask import has_app_context
+                if has_app_context():
+                    self.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
+            except:
+                pass
+        
+        self.max_retries = 3
+        self.timeout = 90
+        
+        # System prompt for OPIc chatbot
+        self._system_prompt = self._build_system_prompt()
+    
+    def _build_system_prompt(self) -> str:
+        """Build system prompt for OPIc chatbot"""
+        return """You are a helpful AI assistant for the OPIc (Oral Proficiency Interview - Computer) Practice Portal.
+
+**YOUR ROLE**: You help users understand:
+1. OPIc test format, structure, and evaluation criteria
+2. How to use the OPIc Practice Portal app features
+3. Best practices for OPIc test preparation
+4. Speaking tips and strategies for OPIc success
+
+**ABOUT OPIc TEST**:
+- OPIc is a standardized computer-based speaking proficiency assessment
+- Tests are available in multiple proficiency levels (IM, IH, AL)
+- Questions cover various topics (news, technology, travel, food, etc.)
+- Responses are evaluated on grammar, vocabulary, fluency, content relevance, and tone/prosody
+- Scores range from 0-100 points
+
+**ABOUT THIS APP**:
+- Practice Mode: Practice individual questions with immediate AI feedback
+- Test Mode: Complete a full 12-question simulated OPIc test
+- AI Feedback: Get personalized feedback on your responses with scores and suggestions
+- Audio Recording: Record your responses and listen back
+- Progress Tracking: Track your practice history and daily streaks
+
+**RESPONSE GUIDELINES**:
+- Be friendly, encouraging, and helpful
+- Provide clear, concise answers
+- Use examples when helpful
+- If you don't know something specific about the app, admit it but offer general OPIc advice
+- Keep responses conversational and easy to understand
+- Use Vietnamese (Tiếng Việt) if the user asks in Vietnamese, otherwise respond in English
+- For script generation, you could follow P.R.E.P structure: Point, Reason, Example, Point.
+
+**IMPORTANT**: 
+- You can help with general OPIc questions, test preparation tips, and app usage
+- You cannot access specific user data or modify the system
+- Always encourage users to practice regularly for best results
+- If user request script generation, please ensure duration limit maximum is 2 minutes for each question, so you must use less words to generate the script.
+
+Now, answer the user's question about OPIc test or this practice portal:"""
+    
+    def chat(self, message: str, conversation_history: List[Dict] = None) -> Optional[str]:
+        """
+        Get chatbot response
+        
+        Args:
+            message: User's message
+            conversation_history: Optional list of previous messages for context
+                Format: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+        
+        Returns:
+            Chatbot response text or None if failed
+        """
+        try:
+            # Build conversation context
+            prompt = self._system_prompt + "\n\n"
+            
+            # Add conversation history if provided
+            if conversation_history:
+                for msg in conversation_history[-5:]:  # Keep last 5 exchanges for context
+                    role = msg.get("role", "user")
+                    content = msg.get("content", "")
+                    if role == "user":
+                        prompt += f"**User**: {content}\n\n"
+                    elif role == "assistant":
+                        prompt += f"**Assistant**: {content}\n\n"
+            
+            # Add current user message
+            prompt += f"**User**: {message}\n\n**Assistant**:"
+            
+            # Call Gemini API
+            response_text = self._call_gemini_api(prompt)
+            
+            if response_text:
+                current_app.logger.info(f"Chatbot response generated for: {message[:50]}...")
+                return response_text
+            else:
+                return None
+                
+        except Exception as e:
+            current_app.logger.error(f"Error in chatbot: {e}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return None
+    
+    def _call_gemini_api(self, prompt: str) -> Optional[str]:
+        """Call Google Gemini API"""
+        # Refresh API token from config if not set
+        if not self.api_token:
+            self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
+            if not self.api_token:
+                try:
+                    from flask import has_app_context
+                    if has_app_context():
+                        self.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
+                except:
+                    pass
+        
+        if not self.api_token:
+            try:
+                from flask import has_app_context
+                if has_app_context():
+                    current_app.logger.error("GOOGLE_AI_API_KEY not set. Chatbot requires API key.")
+            except:
+                pass
+            return None
+        
+        api_url = f"{self.api_url}?key={self.api_token}"
+        
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "contents": [{
+                "parts": [{
+                    "text": prompt
+                }]
+            }],
+            "generationConfig": {
+                "temperature": 0.7,
+                "topK": 40,
+                "topP": 0.9,
+                "maxOutputTokens": 2048,
+            }
+        }
+        
+        for attempt in range(self.max_retries):
+            try:
+                current_app.logger.debug(f"Calling Gemini API for chatbot (attempt {attempt + 1}/{self.max_retries})...")
+                
+                response = requests.post(
+                    api_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=self.timeout,
+                    stream=False
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    
+                    # Extract text from Gemini response
+                    content = None
+                    if isinstance(result, dict) and 'candidates' in result:
+                        candidates = result.get('candidates', [])
+                        if len(candidates) > 0:
+                            candidate = candidates[0]
+                            content_obj = candidate.get('content', {})
+                            if isinstance(content_obj, dict):
+                                parts = content_obj.get('parts', [])
+                                if len(parts) > 0:
+                                    first_part = parts[0]
+                                    if isinstance(first_part, dict):
+                                        content = first_part.get('text', '')
+                                    elif isinstance(first_part, str):
+                                        content = first_part
+                    
+                    if content:
+                        current_app.logger.debug(f"Chatbot response received: {len(content)} chars")
+                        return content.strip()
+                    else:
+                        # Log full response for debugging
+                        try:
+                            response_debug = json.dumps(result, indent=2)[:500] if isinstance(result, dict) else str(result)[:500]
+                            current_app.logger.warning(f"No content in Gemini response. Response structure: {response_debug}")
+                        except:
+                            current_app.logger.warning(f"No content in Gemini response. Response type: {type(result)}")
+                        return None
+                        
+                elif response.status_code == 429:
+                    # Rate limit - wait and retry
+                    if attempt < self.max_retries - 1:
+                        wait_time = (2 ** attempt) * 2
+                        current_app.logger.warning(f"Rate limited. Waiting {wait_time}s before retry...")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        current_app.logger.error("Rate limit exceeded for chatbot")
+                        return None
+                elif response.status_code == 400:
+                    # Bad request - check if it's an API key issue
+                    error_text = response.text
+                    current_app.logger.error(f"Gemini API bad request: {error_text}")
+                    if 'API_KEY' in error_text or 'key' in error_text.lower():
+                        current_app.logger.error("Invalid or missing API key")
+                    return None
+                else:
+                    current_app.logger.error(f"Gemini API error: {response.status_code} - {response.text[:200]}")
+                    return None
+                    
+            except requests.exceptions.Timeout:
+                if attempt < self.max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                current_app.logger.error("Chatbot API timeout")
+                return None
+            except requests.exceptions.ConnectionError:
+                if attempt < self.max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                current_app.logger.error("Chatbot API connection error")
+                return None
+            except Exception as e:
+                current_app.logger.error(f"Unexpected error in chatbot API call: {e}")
+                return None
+        
+        return None
+    
+    def health_check(self) -> bool:
+        """Check if chatbot service is available"""
+        if not self.api_token:
+            return False
+        # Simple test message
+        test_response = self.chat("Hello")
+        return test_response is not None
+
+
+# Global instance
+chatbot_service = ChatbotService()
+

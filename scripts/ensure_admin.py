@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Ensure an admin user exists with username=admin and password=1qaz2wsx."""
+"""Ensure an admin user exists. Password should be set via environment variable or prompt."""
+import os
+import getpass
 from app import create_app, db
 from app.models import User
 
@@ -8,6 +10,15 @@ def main() -> None:
     app = create_app()
     with app.app_context():
         user = User.query.filter_by(username='admin').first()
+        
+        # Get password from environment or prompt
+        password = os.environ.get('ADMIN_PASSWORD')
+        if not password:
+            password = getpass.getpass('Enter admin password (min 6 characters): ')
+            if len(password) < 6:
+                print('Error: Password must be at least 6 characters long.')
+                return
+        
         if user is None:
             user = User(
                 username='admin',
@@ -16,12 +27,12 @@ def main() -> None:
                 target_language='english',
                 is_admin=True,
             )
-            user.set_password('1qaz2wsx')
+            user.set_password(password)
             db.session.add(user)
             db.session.commit()
             print('CREATED')
         else:
-            user.set_password('1qaz2wsx')
+            user.set_password(password)
             db.session.commit()
             print('RESET')
 

@@ -39,9 +39,18 @@ def insert_sample_data():
                 target_language='english',
                 is_admin=True
             )
-            admin_user.set_password('1qaz2wsx')
+            # Use environment variable or prompt for password
+            import os
+            import getpass
+            password = os.environ.get('ADMIN_PASSWORD')
+            if not password:
+                password = getpass.getpass('Enter admin password (min 6 characters): ')
+                if len(password) < 6:
+                    print('Error: Password must be at least 6 characters long.')
+                    return
+            admin_user.set_password(password)
             db.session.add(admin_user)
-            print("Admin user created (username: admin, password: 1qaz2wsx)")
+            print("Admin user created (username: admin)")
         
         # If there are external mp3 question files, import them first
         external_root = Path('question_data/voices')
@@ -214,7 +223,7 @@ def insert_sample_data():
         print("Sample questions inserted successfully!")
         
         print(f"\nDatabase initialized successfully!")
-        print(f"Admin user: admin / admin123")
+        print(f"Admin user: admin (password set during initialization)")
         print(f"Total questions: {Question.query.count()}")
 
 def main():

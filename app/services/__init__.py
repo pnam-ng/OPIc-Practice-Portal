@@ -38,7 +38,7 @@ class BaseService(ABC):
 class UserService(BaseService):
     """Service class for user-related operations"""
     
-    def create_user(self, username: str, email: str, name: str, password: str, 
+    def create_user(self, username: str, email: str = None, name: str = None, password: str = None, 
                    target_language: str = 'english') -> Optional[User]:
         """Create a new user"""
         try:
@@ -46,13 +46,15 @@ class UserService(BaseService):
             if self.get_user_by_username(username):
                 raise ValueError("Username already exists")
             
-            if self.get_user_by_email(email):
-                raise ValueError("Email already registered")
+            # Check email only if provided (email is optional)
+            if email and email.strip():
+                if self.get_user_by_email(email):
+                    raise ValueError("Email already registered")
             
-            # Create new user
+            # Create new user (email can be None/empty)
             user = User(
                 username=username,
-                email=email,
+                email=email if email and email.strip() else None,
                 name=name,
                 target_language=target_language
             )
@@ -91,7 +93,9 @@ class UserService(BaseService):
         return User.query.filter_by(username=username).first()
     
     def get_user_by_email(self, email: str) -> Optional[User]:
-        """Get user by email"""
+        """Get user by email (only if email is provided)"""
+        if not email or not email.strip():
+            return None
         return User.query.filter_by(email=email).first()
     
     def get_user_by_id(self, user_id: int) -> Optional[User]:

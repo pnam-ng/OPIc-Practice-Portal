@@ -43,8 +43,14 @@ h2 small {
 }
 
 @media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
     h2 {
         font-size: 1.5rem !important;
+        margin-bottom: 1rem !important;
     }
     
     h2 i.fas,
@@ -60,7 +66,32 @@ h2 small {
         display: block;
         width: 100%;
         margin-left: 0;
-        margin-top: 5px;
+        margin-top: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.9375rem;
+    }
+    
+    .h4 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
 }
 
@@ -144,20 +175,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<div class="container-fluid py-4">
+<div class="container-fluid py-3 py-md-4 px-3 px-md-4">
     <div class="row">
         <div class="col-12">
-            <h2 class="mb-4 dashboard-heading">
+            <h2 class="mb-3 mb-md-4 dashboard-heading">
                 <i class="fas fa-tachometer-alt"></i>
                 <span class="ms-2">Dashboard</span>
-                <small class="text-muted">Welcome back, {{ user_stats.user.name }}!</small>
+                <small class="text-muted d-block d-md-inline">Welcome back, {{ user_stats.user.name }}!</small>
             </h2>
         </div>
     </div>
 
     <!-- Streak Card -->
-    <div class="row mb-4" data-streak-status="{{ streak_status }}">
-        <div class="col-md-6">
+    <div class="row mb-3 mb-md-4 g-3" data-streak-status="{{ streak_status }}">
+        <div class="col-12 col-md-6">
             <div class="card border-0 shadow-sm {% if streak_status == 'at_risk' %}border-warning{% endif %}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -193,24 +224,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm">
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">
+                    <h5 class="card-title mb-3">
                         <i class="fas fa-chart-bar text-primary me-2"></i>Statistics
                     </h5>
-                    <div class="row text-center">
+                    <div class="row text-center g-3">
                         <div class="col-4">
-                            <div class="h4 text-primary">{{ user_stats.total_responses }}</div>
-                            <small class="text-muted">Responses</small>
+                            <div class="h4 mb-1 text-primary">{{ user_stats.total_responses }}</div>
+                            <small class="text-muted d-block">Responses</small>
                         </div>
                         <div class="col-4">
-                            <div class="h4 text-success">{{ total_questions }}</div>
-                            <small class="text-muted">Questions</small>
+                            <div class="h4 mb-1 text-success">{{ total_questions }}</div>
+                            <small class="text-muted d-block">Questions</small>
                         </div>
                         <div class="col-4">
-                            <div class="h4 text-warning">{{ user_stats.target_language.title() if user_stats.target_language else 'English' }}</div>
-                            <small class="text-muted">Language</small>
+                            <div class="h4 mb-1 text-warning">{{ user_stats.target_language.title() if user_stats.target_language else 'English' }}</div>
+                            <small class="text-muted d-block">Language</small>
                         </div>
                     </div>
                 </div>
@@ -219,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <!-- Mode Selection -->
-    <div class="row mb-4">
-        <div class="col-md-6">
+    <div class="row mb-3 mb-md-4 g-3">
+        <div class="col-12 col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
@@ -237,13 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-12 col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
+                    <h5 class="card-title mb-3">
                         <i class="fas fa-dumbbell text-success me-2"></i>Practice Mode
                     </h5>
-                    <p class="card-text flex-grow-1">
+                    <p class="card-text flex-grow-1 mb-3">
                         Practice specific topics or random questions to improve your speaking skills.
                     </p>
                     <div class="mt-auto">
@@ -256,9 +287,53 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
+    <!-- Tips & Resources and Chatbot Cards -->
+    <div class="row mb-3 mb-md-4 g-3">
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-lightbulb text-warning me-2" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mb-0">Tips & Resources</h5>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        Access useful study materials, PDF guides, and tips for OPIc test preparation.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('main.tips') }}" class="btn btn-warning w-100">
+                            <i class="fas fa-book me-2"></i>View Resources
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="me-2" style="display:inline-flex; align-items:center;">
+                            <img src="/static/galaxyAI.png" alt="Chatbot Icon" class="chatbot-icon-img" style="width: 32px; height: 32px; object-fit: contain;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                            <i class="fas fa-robot text-info" style="display:none; font-size: 2rem;"></i>
+                        </span>
+                        <h5 class="card-title mb-0">OPIc Chatbot</h5>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        Ask questions about OPIc test format, preparation tips, or how to use this app. Get instant AI-powered answers!
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('main.chatbot') }}" class="btn btn-info w-100">
+                            <i class="fas fa-comments me-2"></i>Open Chatbot
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     {% if user_stats.recent_responses %}
-    <div class="row mb-4">
+    <div class="row mb-3 mb-md-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header">

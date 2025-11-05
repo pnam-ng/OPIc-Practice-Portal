@@ -60,14 +60,19 @@ class AuthController(BaseController):
         
         if request.method == 'POST':
             username = request.form.get('username', '').strip()
-            email = request.form.get('email', '').strip()
+            email = request.form.get('email', '').strip()  # Optional
             name = request.form.get('name', '').strip()
             password = request.form.get('password', '')
             confirm_password = request.form.get('confirm_password', '')
             
-            # Validate input
-            if not username or not email or not name or not password or not confirm_password:
-                flash('All fields are required.', 'error')
+            # Validate required fields (email is optional)
+            if not username or not name or not password or not confirm_password:
+                flash('Username, name, and password are required.', 'error')
+                return redirect(url_for('auth.register'))
+            
+            # Validate username starts with lowercase letter
+            if not username or not username[0].islower():
+                flash('Username must start with a lowercase letter (a-z).', 'error')
                 return redirect(url_for('auth.register'))
             
             # Validate password match
@@ -85,10 +90,11 @@ class AuthController(BaseController):
                 flash('Username can only contain letters, numbers, underscores, and dots.', 'error')
                 return redirect(url_for('auth.register'))
             
-            # Validate email format (basic check)
-            if '@' not in email or '.' not in email:
-                flash('Please enter a valid email address.', 'error')
-                return redirect(url_for('auth.register'))
+            # Validate email format only if provided (email is optional)
+            if email:
+                if '@' not in email or '.' not in email:
+                    flash('Please enter a valid email address or leave it empty.', 'error')
+                    return redirect(url_for('auth.register'))
             
             result = self.auth_service.register_user(username, email, name, password)
             
@@ -147,9 +153,48 @@ class MainController(BaseController):
         """Handle practice mode request"""
         return redirect(url_for('practice_mode.index'))
     
+    @login_required
+    def chatbot(self):
+        """Handle chatbot page request"""
+        return render_template('main/chatbot.html')
+    
     def pwa_guide(self):
         """Handle PWA installation guide request"""
         return render_template('main/pwa_guide.html')
+    
+    @login_required
+    def tips(self):
+        """Render Tips page with useful PDF resources"""
+        from app.models import Tip
+        
+        # Get active tips from database, ordered by display_order
+        db_tips = Tip.query.filter_by(is_active=True).order_by(Tip.display_order, Tip.created_at.desc()).all()
+        
+        # Convert to list of dictionaries for template
+        pdf_resources = []
+        for tip in db_tips:
+            pdf_resources.append({
+                'id': f'tip-{tip.id}',
+                'title': tip.title,
+                'description': tip.description or 'Useful resource for OPIc test preparation.',
+                'filename': tip.filename,
+                'thumbnail_path': tip.thumbnail_path,
+                'category': tip.category or 'Test Preparation'
+            })
+        
+        # Fallback: If no tips in database, show default one
+        if not pdf_resources:
+            pdf_resources = [
+                {
+                    'id': 'opic-rater-guide',
+                    'title': 'OPIc Rater Guidelines',
+                    'description': 'Learn about OPIc test evaluation criteria, scoring guidelines, and what raters look for in responses.',
+                    'filename': 'secrets-from-an-opic-rater.pdf',
+                    'category': 'Test Preparation'
+                }
+            ]
+        
+        return render_template('main/tips.html', pdf_resources=pdf_resources)
     
     @login_required
     def profile(self):
@@ -659,7 +704,101 @@ class TestModeController(BaseController):
         }
         
         return render_template('test_mode/congratulations.html', test_data=test_data)
-
+    
+    @login_required
+    def ai_score(self, response_id):
+        """Get AI scoring for a test response"""
+        if request.method != 'POST':
+            return jsonify({'success': False, 'error': 'Invalid request method'})
+        
+        try:
+            from app.models import Response
+            from app.services.ai_service import ai_service
+            import json
+            
+            # Get the response
+            response = Response.query.filter_by(
+                id=response_id,
+                user_id=current_user.id
+            ).first()
+            
+            if not response:
+                return jsonify({'success': False, 'error': 'Response not found'})
+            
+            # Always re-query AI for fresh feedback (removed cache check - user can request new feedback anytime)
+            # Get transcript from request or from response
+            transcript = request.json.get('transcript', '') if request.is_json else request.form.get('transcript', '')
+            
+            if not transcript:
+                # If no transcript provided, check if response has one
+                if not response.transcript:
+                    return jsonify({
+                        'success': False, 
+                        'error': 'No transcript provided. Please type or speak your response first.'
+                    })
+                transcript = response.transcript
+            
+            # Get audio features for tone/prosody evaluation
+            audio_features = None
+            if request.is_json:
+                audio_features = request.json.get('audio_features')
+            else:
+                audio_features_str = request.form.get('audio_features')
+                if audio_features_str:
+                    try:
+                        import json
+                        audio_features = json.loads(audio_features_str)
+                    except:
+                        audio_features = None
+            
+            # Get question text - prefer full text, fallback to topic
+            question_text = response.question.text
+            if not question_text or question_text.strip() == '':
+                question_text = response.question.topic
+            
+            # Ensure we have question context for evaluation
+            if not question_text:
+                return jsonify({
+                    'success': False,
+                    'error': 'Question context not found. Cannot evaluate response without question.'
+                })
+            
+            # Get AI scoring with audio features
+            ai_result = ai_service.score_response(transcript, question_text, audio_features)
+            
+            if not ai_result:
+                return jsonify({
+                    'success': False,
+                    'error': 'AI scoring failed. Please try again later.'
+                })
+            
+            # Save AI results to database
+            response.transcript = transcript
+            response.ai_score = ai_result.get('score', 50)
+            response.ai_feedback = ai_result.get('feedback', '')
+            response.ai_data = json.dumps({
+                'strengths': ai_result.get('strengths', []),
+                'suggestions': ai_result.get('suggestions', [])
+            })
+            
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'score': response.ai_score,
+                'feedback': response.ai_feedback,
+                'data': json.loads(response.ai_data)
+            })
+            
+        except Exception as e:
+            current_app.logger.error(f"Error in AI scoring: {e}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error': f'Internal error: {str(e)}'
+            })
+    
 
 class PracticeModeController(BaseController):
     """Controller for practice mode routes"""
@@ -763,11 +902,19 @@ class PracticeModeController(BaseController):
                 os.makedirs(os.path.dirname(upload_path), exist_ok=True)
                 audio_file.save(upload_path)
                 
+                # Get transcript if provided
+                transcript = request.form.get('transcript', '').strip()
+                
                 response = self.response_service.create_response(
                     user_id=current_user.id,
                     question_id=question_id,
                     audio_url=f"uploads/responses/{filename}"
                 )
+                
+                # Save transcript if provided
+                if response and transcript:
+                    response.transcript = transcript
+                    db.session.commit()
                 
                 if response:
                     # Update user streak
@@ -814,3 +961,97 @@ class PracticeModeController(BaseController):
         }
         
         return render_template('practice_mode/congratulations.html', practice_data=practice_data)
+    
+    @login_required
+    def ai_score(self, response_id):
+        """Get AI scoring for a response"""
+        if request.method != 'POST':
+            return jsonify({'success': False, 'error': 'Invalid request method'})
+        
+        try:
+            from app.models import Response
+            from app.services.ai_service import ai_service
+            import json
+            
+            # Get the response
+            response = Response.query.filter_by(
+                id=response_id,
+                user_id=current_user.id
+            ).first()
+            
+            if not response:
+                return jsonify({'success': False, 'error': 'Response not found'})
+            
+            # Always re-query AI for fresh feedback (removed cache check - user can request new feedback anytime)
+            # Get transcript from request or from response
+            transcript = request.json.get('transcript', '') if request.is_json else request.form.get('transcript', '')
+            
+            if not transcript:
+                # If no transcript provided, check if response has one
+                if not response.transcript:
+                    return jsonify({
+                        'success': False, 
+                        'error': 'No transcript provided. Please type or speak your response first.'
+                    })
+                transcript = response.transcript
+            
+            # Get audio features for tone/prosody evaluation
+            audio_features = None
+            if request.is_json:
+                audio_features = request.json.get('audio_features')
+            else:
+                audio_features_str = request.form.get('audio_features')
+                if audio_features_str:
+                    try:
+                        import json
+                        audio_features = json.loads(audio_features_str)
+                    except:
+                        audio_features = None
+            
+            # Get question text - prefer full text, fallback to topic
+            question_text = response.question.text
+            if not question_text or question_text.strip() == '':
+                question_text = response.question.topic
+            
+            # Ensure we have question context for evaluation
+            if not question_text:
+                return jsonify({
+                    'success': False,
+                    'error': 'Question context not found. Cannot evaluate response without question.'
+                })
+            
+            # Get AI scoring with audio features
+            ai_result = ai_service.score_response(transcript, question_text, audio_features)
+            
+            if not ai_result:
+                return jsonify({
+                    'success': False,
+                    'error': 'AI scoring failed. Please try again later.'
+                })
+            
+            # Save AI results to database
+            response.transcript = transcript
+            response.ai_score = ai_result.get('score', 50)
+            response.ai_feedback = ai_result.get('feedback', '')
+            response.ai_data = json.dumps({
+                'strengths': ai_result.get('strengths', []),
+                'suggestions': ai_result.get('suggestions', [])
+            })
+            
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'score': response.ai_score,
+                'feedback': response.ai_feedback,
+                'data': json.loads(response.ai_data)
+            })
+            
+        except Exception as e:
+            current_app.logger.error(f"Error in AI scoring: {e}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error': f'Internal error: {str(e)}'
+            })

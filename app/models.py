@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)  # Email is now optional
     password_hash = db.Column(db.String(128))
     name = db.Column(db.String(100), nullable=False)
     target_language = db.Column(db.String(20), default='english')
@@ -106,6 +106,10 @@ class Response(db.Model):
     audio_url = db.Column(db.String(200), nullable=False)
     duration = db.Column(db.Float)  # Duration in seconds
     mode = db.Column(db.String(20), default='practice')  # 'practice' or 'test'
+    transcript = db.Column(db.Text, nullable=True)  # Transcribed text of the response
+    ai_score = db.Column(db.Integer, nullable=True)  # AI score out of 100
+    ai_feedback = db.Column(db.Text, nullable=True)  # AI feedback text
+    ai_data = db.Column(db.JSON, nullable=True)  # Full AI response data (strengths, suggestions, etc.)
     created_at = db.Column(db.DateTime, default=now_hanoi)
     
     def __repr__(self):
@@ -235,4 +239,41 @@ class Notification(db.Model):
             },
             'question_topic': self.question.topic if self.question else None,
             'comment_preview': self.comment.content[:100] if self.comment else None
+        }
+
+class Tip(db.Model):
+    """Model for Tips/Resources (PDF materials)"""
+    __tablename__ = 'tips'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    filename = db.Column(db.String(200), nullable=False)
+    thumbnail_path = db.Column(db.String(300), nullable=True)  # Path to thumbnail image
+    category = db.Column(db.String(100), nullable=False, default='Test Preparation')
+    display_order = db.Column(db.Integer, default=0)  # For ordering tips
+    is_active = db.Column(db.Boolean, default=True)  # Show/hide tip
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Admin who created it
+    
+    # Relationship
+    creator = db.relationship('User', foreign_keys=[created_by])
+    
+    def __repr__(self):
+        return f'<Tip {self.id}: {self.title}>'
+    
+    def to_dict(self):
+        """Convert tip to dictionary for JSON responses"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'filename': self.filename,
+            'thumbnail_path': self.thumbnail_path,
+            'category': self.category,
+            'display_order': self.display_order,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
