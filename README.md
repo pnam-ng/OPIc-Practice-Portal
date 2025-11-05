@@ -103,15 +103,6 @@ gunicorn -c gunicorn_config.py app:app
 http://localhost:5000
 ```
 
-**Production (Internal Network):**
-```
-https://107.98.150.22:8080/
-```
-
-**Public Access (via ngrok tunnel):**
-```
-https://bit.ly/srvopic
-```
 
 **Admin Setup:**
 - Run `python scripts/ensure_admin.py` to create/reset admin user
