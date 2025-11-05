@@ -198,7 +198,7 @@ body:has(#chatbotWidget.active) #pageLoader {
     padding: 16px;
     background: var(--bg-secondary);
     min-height: 0; /* Allow flex shrinking */
-    scroll-behavior: smooth;
+    /* scroll-behavior removed to prevent animation when auto-scrolling */
     /* Ensure scrolling works properly */
     -webkit-overflow-scrolling: touch;
 }
@@ -491,16 +491,21 @@ body:has(#chatbotWidget.active) #pageLoader {
     // Load conversation history
     // NOTE: This widget shares the same conversation history with the main chatbot page
     // Both use the same localStorage key 'opic_chatbot_history' and the same chatbot_service backend
-    const savedHistory = localStorage.getItem('opic_chatbot_history');
-    if (savedHistory) {
-        try {
-            conversationHistory = JSON.parse(savedHistory);
-        } catch (e) {
-            console.error('Failed to load chat history:', e);
+    function loadConversationHistory() {
+        const savedHistory = localStorage.getItem('opic_chatbot_history');
+        if (savedHistory) {
+            try {
+                conversationHistory = JSON.parse(savedHistory);
+            } catch (e) {
+                console.error('Failed to load chat history:', e);
+                conversationHistory = [];
+            }
+        } else {
+            conversationHistory = [];
         }
     }
     
-    // Get elements
+    // Get elements first
     const chatbotWidget = document.getElementById('chatbotWidget');
     const chatbotToggle = document.getElementById('chatbotToggle');
     const chatbotWindow = document.getElementById('chatbotWindow');
@@ -511,16 +516,109 @@ body:has(#chatbotWidget.active) #pageLoader {
     const chatbotMessages = document.getElementById('chatbotMessages');
     const chatbotSendBtn = document.getElementById('chatbotSendBtn');
     
+    // Initial load
+    loadConversationHistory();
+    
+    // Render conversation history to UI
+    function renderConversationHistory() {
+        if (!chatbotMessages) return;
+        
+        // Temporarily disable scrolling during render to prevent jumping
+        const fragment = document.createDocumentFragment();
+        
+        // If there's history, render all messages to fragment first
+        if (conversationHistory.length > 0) {
+            for (const msg of conversationHistory) {
+                if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `chatbot-message ${msg.role === 'user' ? 'user' : 'bot'}-message`;
+                    
+                    const galaxyIconUrl = '/static/galaxyAI.png';
+                    const avatar = msg.role === 'bot' 
+                        ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
+                        : '<i class="fas fa-user"></i>';
+                    
+                    messageDiv.innerHTML = `
+                        <div class="chatbot-avatar">
+                            ${avatar}
+                        </div>
+                        <div class="chatbot-content">
+                            <div class="chatbot-bubble ${msg.role === 'user' ? 'user' : 'bot'}-bubble">
+                                ${formatChatbotMessage(msg.content || '')}
+                            </div>
+                        </div>
+                    `;
+                    fragment.appendChild(messageDiv);
+                }
+            }
+        } else {
+            // Show welcome message if no history
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'chatbot-message bot-message';
+            const galaxyIconUrl = '/static/galaxyAI.png';
+            welcomeDiv.innerHTML = `
+                <div class="chatbot-avatar">
+                    <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
+                </div>
+                <div class="chatbot-content">
+                    <div class="chatbot-bubble bot-bubble">
+                        <p class="mb-0">Hello! 👋 I'm your OPIc test assistant. I can help you with:</p>
+                        <ul class="mb-0 mt-2">
+                            <li>Understanding OPIc test format and structure</li>
+                            <li>Tips for test preparation</li>
+                            <li>How to use this practice portal</li>
+                            <li>Best practices for speaking proficiency</li>
+                        </ul>
+                        <p class="mb-0 mt-2">What would you like to know?</p>
+                    </div>
+                </div>
+            `;
+            fragment.appendChild(welcomeDiv);
+        }
+        
+        // Clear and append fragment in one operation to prevent scroll jumping
+        chatbotMessages.innerHTML = '';
+        chatbotMessages.appendChild(fragment);
+        
+        // Instantly scroll to bottom after rendering (no animation)
+        // Use requestAnimationFrame only to ensure DOM is ready
+        requestAnimationFrame(() => {
+            chatbotMessages.scrollTo({
+                top: chatbotMessages.scrollHeight,
+                behavior: 'auto'
+            });
+        });
+    }
+    
+    // Listen for storage changes from other tabs/components (e.g., main chatbot page)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'opic_chatbot_history') {
+            console.log('[Chatbot Widget] Storage event detected, syncing history');
+            loadConversationHistory();
+            renderConversationHistory();
+        }
+    });
+    
+    // Also listen for custom events (for same-tab sync)
+    window.addEventListener('opic_chatbot_history_updated', function() {
+        console.log('[Chatbot Widget] Custom event detected, syncing history');
+        loadConversationHistory();
+        renderConversationHistory();
+    });
+    
     // Toggle chatbot window
     function toggleChatbot() {
         isChatbotOpen = !isChatbotOpen;
         if (isChatbotOpen) {
             chatbotWidget.classList.add('active');
-            chatbotInput.focus();
-            // Scroll to top when opening to ensure content is visible
+            // Reload and render history when opening (in case it changed from main chatbot page)
+            loadConversationHistory();
+            renderConversationHistory();
+            // Focus input after a short delay to ensure window is fully visible
             setTimeout(() => {
-                chatbotMessages.scrollTop = 0;
-            }, 100);
+                chatbotInput.focus();
+            }, 150);
             // Ensure page loader is hidden when opening chatbot
             const pageLoader = document.getElementById('pageLoader');
             if (pageLoader) {
@@ -540,7 +638,7 @@ body:has(#chatbotWidget.active) #pageLoader {
     }
     
     // Add message to chat
-    function addChatbotMessage(text, role) {
+    function addChatbotMessage(text, role, scrollToBottom = true) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chatbot-message ${role}-message`;
         
@@ -562,8 +660,21 @@ body:has(#chatbotWidget.active) #pageLoader {
         `;
         
         chatbotMessages.appendChild(messageDiv);
-        // Scroll to bottom for new messages, but allow scrolling to top
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        // Scroll to bottom for new messages, but only if user was already at bottom
+        if (scrollToBottom) {
+            // Check if user was at bottom before adding message (with small tolerance)
+            const scrollThreshold = 5; // pixels tolerance
+            const wasAtBottom = chatbotMessages.scrollHeight - chatbotMessages.scrollTop - chatbotMessages.clientHeight <= scrollThreshold;
+            
+            if (wasAtBottom) {
+                // If already at bottom, instantly set scroll position (no animation)
+                // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
+                chatbotMessages.scrollTo({
+                    top: chatbotMessages.scrollHeight,
+                    behavior: 'auto'
+                });
+            }
+        }
         
         return messageDiv;
     }
@@ -598,7 +709,11 @@ body:has(#chatbotWidget.active) #pageLoader {
             </div>
         `;
         chatbotMessages.appendChild(loadingDiv);
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        // Instantly scroll to bottom (no animation) when showing loading indicator
+        chatbotMessages.scrollTo({
+            top: chatbotMessages.scrollHeight,
+            behavior: 'auto'
+        });
     }
     
     // Remove loading indicator
@@ -626,11 +741,14 @@ body:has(#chatbotWidget.active) #pageLoader {
         // Add user message
         addChatbotMessage(message, 'user');
         
-        // Add to history
+        // Add to history and save immediately
         conversationHistory.push({
             role: 'user',
             content: message
         });
+        localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
+        // Dispatch custom event for same-tab sync (main chatbot page)
+        window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
         
         // Disable input
         chatbotInput.disabled = true;
@@ -688,6 +806,8 @@ body:has(#chatbotWidget.active) #pageLoader {
                     content: data.response
                 });
                 localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
+                // Dispatch custom event for same-tab sync (main chatbot page)
+                window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
             } else {
                 const errorMsg = data.error || 'Sorry, I encountered an error.';
                 addChatbotMessage(errorMsg, 'bot');
@@ -701,6 +821,11 @@ body:has(#chatbotWidget.active) #pageLoader {
             let errorMessage = 'Sorry, I encountered an error.';
             if (error.name === 'AbortError') {
                 errorMessage = 'Request timed out. Please try again.';
+            } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
+                errorMessage = 'Connection error. Please check your internet connection and try again.';
+            } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
+                errorMessage = 'Connection was reset. Please try again.';
             } else if (error.message && error.message.includes('404')) {
                 errorMessage = 'Chatbot service not available.';
             } else if (error.message && !error.message.includes('HTTP error')) {
@@ -720,6 +845,9 @@ body:has(#chatbotWidget.active) #pageLoader {
         if (confirm('Are you sure you want to clear the chat history?')) {
             conversationHistory = [];
             localStorage.removeItem('opic_chatbot_history');
+            
+            // Dispatch custom event for same-tab sync (main chatbot page)
+            window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
             
             // Keep only welcome message
             const welcomeMessage = chatbotMessages.querySelector('.bot-message');

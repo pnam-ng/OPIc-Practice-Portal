@@ -118,15 +118,24 @@
     }
     
     .progress-bar {
-        background-color: #0d6efd;
+        background-color: #0d6efd !important;
         transition: width 0.6s ease;
         border-radius: 5px;
-        min-height: 10px;
+        min-height: 10px !important;
+        height: 10px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     /* Ensure progress bar shows at least minimum width when present */
-    .progress-bar[style*="width: 0"] {
-        min-width: 2%;
+    .progress-bar[style*="width: 0%"] {
+        min-width: 0% !important;
+    }
+    
+    /* Remove animation for static progress bars */
+    .progress-bar:not(.progress-bar-animated) {
+        animation: none !important;
     }
     
     /* Dark mode support */
@@ -319,13 +328,24 @@
                         <span class="badge bg-primary">{{ question.difficulty.title() }}</span>
                         {% endif %}
                     </div>
-                    <div class="progress" style="height: 10px; background-color: #e9ecef; border-radius: 5px;">
-                        <div class="progress-bar" role="progressbar" 
-                             style="width: {% if current_question_index >= total_questions %}100{% else %}{{ ((current_question_index|float / total_questions|float) * 100)|round(1) }}{% endif %}%; background-color: #0d6efd; min-width: 2%;"
+                    <div class="progress" style="height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden;">
+                        {% if total_questions > 0 %}
+                            {% set progress_percent = (current_question_index|int / total_questions|int * 100)|round(1) %}
+                            {% if current_question_index >= total_questions %}
+                                {% set progress_percent = 100 %}
+                            {% endif %}
+                        {% else %}
+                            {% set progress_percent = 0 %}
+                        {% endif %}
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: {{ progress_percent }}% !important; background-color: #0d6efd !important; min-width: {% if progress_percent > 0 %}2%{% else %}0%{% endif %} !important; display: block !important; visibility: visible !important; opacity: 1 !important;"
                              aria-valuenow="{{ current_question_index }}" 
                              aria-valuemin="0" 
                              aria-valuemax="{{ total_questions }}"
-                             aria-label="Question {{ current_question_index }} of {{ total_questions }}"></div>
+                             aria-label="Question {{ current_question_index }} of {{ total_questions }}">
+                             <span style="display: none;">{{ progress_percent }}%</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -820,17 +840,42 @@ async function submitAnswer() {
 
 // Handle Next button - submits if recorded, skips if not (like real OPIc)
 async function handleNext() {
-    // Clear timer before navigation
-    if (timerInterval) {
-        clearInterval(timerInterval);
+    // Disable button to prevent double-clicks
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
     }
     
-    // If there's a recording, submit it first
-    if (recordedAudio) {
-        await submitAnswer();
+    try {
+        // Clear timer before navigation
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        // If there's a recording, submit it first
+        if (recordedAudio) {
+            try {
+                await submitAnswer();
+                // Wait a moment for the submission to complete
+                await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (error) {
+                console.error('Error submitting answer:', error);
+                // Continue to next question even if submission fails
+            }
+        }
+        
+        // Then move to next question (whether submitted or skipped)
+        const nextQuestionIndex = {{ current_question_index }} + 1;
+        window.location.href = `/test/questions?q=${nextQuestionIndex}`;
+    } catch (error) {
+        console.error('Error in handleNext:', error);
+        // Re-enable button on error
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ms-2"></i>';
+        }
     }
-    // Then move to next question (whether submitted or skipped)
-    window.location.href = '/test/questions?q={{ current_question_index + 1 }}';
 }
 
 // Handle Finish button - submits if recorded, skips if not

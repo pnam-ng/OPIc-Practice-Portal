@@ -21,8 +21,28 @@ class AIService:
         # Free tier: 60 requests/minute, generous limits
         # Model: gemini-2.5-flash (free, fast, good for instruction following)
         self.api_provider = "google"
-        self.model = "gemini-2.5-flash"  # Free Gemini model
-        self.api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        
+        # Model configuration with fallback support
+        # Based on available models and rate limits:
+        # - gemini-2.5-flash: RPD 250 (currently exceeded)
+        # - gemini-2.5-flash-lite: RPD 1000 (best fallback)
+        # - gemini-2.0-flash: RPD 200
+        # - gemini-2.0-flash-lite: RPD 200
+        # - gemini-2.5-pro: RPD 50
+        self.default_model = "gemini-2.5-flash"
+        self.fallback_models = [
+            "gemini-2.5-flash-lite",  # First fallback (RPD: 1000 - highest limit)
+            "gemini-2.0-flash",       # Second fallback (RPD: 200)
+            "gemini-2.0-flash-lite",   # Third fallback (RPD: 200)
+            "gemini-2.5-pro",          # Fourth fallback (RPD: 50)
+        ]
+        self.model = self.default_model
+        self.current_model_index = 0  # 0 = default, 1+ = fallback index
+        self.last_model_check = 0  # Timestamp of last model availability check
+        self.model_check_interval = 3600  # Check default model availability every hour
+        
+        self._update_api_url()
+        
         self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
         
         if not self.api_token:
@@ -39,6 +59,81 @@ class AIService:
         self._rater_summary = None  # Cache for PDF summary (concise version)
         self._system_prompt_base = None  # Cached system prompt with PDF summary
         self._pdf_loaded = False  # Flag to track if PDF has been loaded
+    
+    def _update_api_url(self):
+        """Update API URL based on current model"""
+        self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+    
+    def _switch_to_fallback_model(self):
+        """Switch to next fallback model if available"""
+        if self.current_model_index < len(self.fallback_models):
+            self.current_model_index += 1
+            self.model = self.fallback_models[self.current_model_index - 1]
+            self._update_api_url()
+            try:
+                from flask import has_app_context
+                if has_app_context():
+                    current_app.logger.warning(f"[AI Service] Switched to fallback model: {self.model}")
+            except:
+                pass
+            return True
+        return False
+    
+    def _try_switch_back_to_default(self):
+        """Try to switch back to default model if it's available again"""
+        import time
+        current_time = time.time()
+        
+        # Only check periodically to avoid too many API calls
+        if current_time - self.last_model_check < self.model_check_interval:
+            return False
+        
+        self.last_model_check = current_time
+        
+        # Test if default model is available
+        if self._test_model_availability(self.default_model):
+            self.model = self.default_model
+            self.current_model_index = 0
+            self._update_api_url()
+            try:
+                from flask import has_app_context
+                if has_app_context():
+                    current_app.logger.info(f"[AI Service] Switched back to default model: {self.model}")
+            except:
+                pass
+            return True
+        return False
+    
+    def _test_model_availability(self, model_name: str) -> bool:
+        """Test if a model is available by making a simple API call"""
+        if not self.api_token:
+            return False
+        
+        test_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={self.api_token}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{"parts": [{"text": "test"}]}],
+            "generationConfig": {"maxOutputTokens": 5}
+        }
+        
+        try:
+            response = requests.post(test_url, headers=headers, json=payload, timeout=10)
+            # If we get 200 or 429 (rate limit but model works), model is available
+            # If we get 403 with quota exceeded, model is not available
+            if response.status_code == 200:
+                return True
+            elif response.status_code == 429:
+                return True  # Rate limited but model works
+            elif response.status_code == 403:
+                error_info = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
+                error_msg = error_info.get('error', {}).get('message', '')
+                # Check if it's quota exceeded (not just invalid key)
+                if 'quota' in error_msg.lower() or 'exceeded' in error_msg.lower() or 'RPD' in error_msg:
+                    return False
+                return True  # Other 403 might be temporary
+            return False
+        except:
+            return False
         
         # Check API token (only log if we have app context)
         if not self.api_token:
@@ -647,20 +742,52 @@ Respond in JSON format (personalized feedback in Vietnamese): {{"score": number,
                         content = '\n'.join(lines).strip()
                     
                     current_app.logger.debug(f"✅ Google AI (Gemini) API call successful. Content length: {len(content)}")
+                    # Try to switch back to default model if we're on fallback
+                    if self.current_model_index > 0:
+                        self._try_switch_back_to_default()
                     return content
                     
                 elif response.status_code == 429:
-                    current_app.logger.warning("Rate limit exceeded. Waiting before retry...")
-                    time.sleep(5)
-                    continue
+                    # Rate limit - try fallback model if available
+                    if self.current_model_index == 0:  # Currently using default model
+                        if self._switch_to_fallback_model():
+                            # Retry with fallback model
+                            api_url = f"{self.api_url}?key={self.api_token}"
+                            current_app.logger.warning(f"Rate limited on {self.default_model}, switching to {self.model}")
+                            continue
+                    
+                    # If already on fallback or no fallback available, wait and retry
+                    current_app.logger.warning(f"Rate limit exceeded on {self.model}. Waiting before retry...")
+                    if attempt < self.max_retries - 1:
+                        time.sleep(5)
+                        continue
+                    return None
                 elif response.status_code == 403:
                     error_info = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
                     error_msg = error_info.get('error', {}).get('message', 'API key invalid or quota exceeded')
-                    current_app.logger.error(f"Google AI API error (403): {error_msg}")
-                    if attempt < self.max_retries - 1:
-                        time.sleep(2 ** attempt)
-                        continue
-                    return None
+                    
+                    # Check if it's quota exceeded (not just invalid key)
+                    if 'quota' in error_msg.lower() or 'exceeded' in error_msg.lower() or 'RPD' in error_msg:
+                        # Quota exceeded - try fallback model
+                        if self.current_model_index == 0:  # Currently using default model
+                            if self._switch_to_fallback_model():
+                                # Retry with fallback model
+                                api_url = f"{self.api_url}?key={self.api_token}"
+                                current_app.logger.warning(f"Quota exceeded on {self.default_model}, switching to {self.model}")
+                                continue
+                        else:
+                            current_app.logger.error(f"Quota exceeded on fallback model {self.model}: {error_msg}")
+                            if attempt < self.max_retries - 1:
+                                time.sleep(2 ** attempt)
+                                continue
+                            return None
+                    else:
+                        # Other 403 error (invalid key, etc.)
+                        current_app.logger.error(f"Google AI API error (403): {error_msg}")
+                        if attempt < self.max_retries - 1:
+                            time.sleep(2 ** attempt)
+                            continue
+                        return None
                 else:
                     current_app.logger.error(f"Google AI API error: {response.status_code} - {response.text[:200]}")
                     if attempt < self.max_retries - 1:

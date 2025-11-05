@@ -46,20 +46,32 @@ def chat():
                 'error': 'Chatbot API key not configured. Please contact administrator.'
             }), 500
         
-        # Get chatbot response
+        # Get chatbot response with timeout protection
+        from flask import current_app
+        current_app.logger.info(f"Chatbot request received: {message[:50]}...")
+        
         response = chatbot_service.chat(message, conversation_history)
         
         if response:
+            current_app.logger.info(f"Chatbot response generated successfully: {len(response)} chars")
             return jsonify({
                 'success': True,
                 'response': response
             })
         else:
+            current_app.logger.warning("Chatbot service returned None - API may be rate limited or unavailable")
             return jsonify({
                 'success': False,
-                'error': 'Failed to get chatbot response. Please check if GOOGLE_AI_API_KEY is set correctly.'
+                'error': 'Failed to get chatbot response. The AI service may be temporarily unavailable. Please try again in a moment.'
             }), 500
         
+    except TimeoutError as e:
+        from flask import current_app
+        current_app.logger.error(f"Chatbot request timed out: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Request timed out. The AI service is taking too long to respond. Please try again with a shorter question.'
+        }), 504
     except Exception as e:
         from flask import current_app
         current_app.logger.error(f"Error in chatbot route: {e}")

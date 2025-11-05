@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <tbody>
                                 {% for response in user_stats.recent_responses %}
                                 <tr>
-                                    <td>{{ response.question.text[:50] if response.question.text else 'No text available' }}...</td>
+                                    <td>{{ (response.question.text|unescape_html)[:50] if response.question.text else 'No text available' }}...</td>
                                     <td><span class="badge bg-secondary">{{ response.question.topic if response.question.topic else 'N/A' }}</span></td>
                                     <td>
                                         {% if response.question.difficulty_level %}

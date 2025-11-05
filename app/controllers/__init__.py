@@ -515,9 +515,9 @@ class TestModeController(BaseController):
             survey = self.survey_service.get_user_survey(current_user.id)
             if survey:
                 # Update survey answers to include self-assessment level
-                if not survey.answers:
-                    survey.answers = {}
-                survey.answers['self_assessment_level'] = int(level)
+                # Create a new dict to ensure SQLAlchemy detects the change
+                updated_answers = dict(survey.answers) if survey.answers else {}
+                updated_answers['self_assessment_level'] = int(level)
                 # Map level to difficulty string for question selection
                 level_map = {
                     1: 'IM',  # Novice Low -> IM
@@ -527,8 +527,12 @@ class TestModeController(BaseController):
                     5: 'IH',  # Intermediate High/Advanced Low -> IH
                     6: 'AL'   # Advanced Mid/High -> AL
                 }
-                survey.answers['english_level'] = level_map.get(int(level), 'IM')
+                updated_answers['english_level'] = level_map.get(int(level), 'IM')
+                survey.answers = updated_answers
                 db.session.commit()
+                
+                # Debug log
+                print(f"[Test Mode] Self-assessment level saved: {int(level)}, Survey answers: {survey.answers}")
                 
                 flash('Self-assessment complete! Starting your test...', 'success')
                 return redirect(url_for('test_mode.questions', q=1))
@@ -565,21 +569,54 @@ class TestModeController(BaseController):
     
     def get_personalized_questions(self, survey_answers):
         """Get personalized questions based on survey answers and self-assessment level"""
+        # Handle both dict and JSON types
+        if survey_answers is None:
+            survey_answers = {}
+        
+        # Ensure it's a dict (SQLAlchemy JSON columns might return different types)
+        if not isinstance(survey_answers, dict):
+            try:
+                import json
+                if isinstance(survey_answers, str):
+                    survey_answers = json.loads(survey_answers)
+                else:
+                    survey_answers = dict(survey_answers)
+            except:
+                survey_answers = {}
+        
         english_level = survey_answers.get('english_level', 'IM')
         self_assessment_level = survey_answers.get('self_assessment_level', 3)
         interests = survey_answers.get('interests', [])
         
+        # Convert to int if it's a string or float
+        if isinstance(self_assessment_level, str):
+            try:
+                self_assessment_level = int(float(self_assessment_level))
+            except (ValueError, TypeError):
+                self_assessment_level = 3
+        elif isinstance(self_assessment_level, float):
+            self_assessment_level = int(self_assessment_level)
+        elif not isinstance(self_assessment_level, int):
+            self_assessment_level = 3
+        
+        # Ensure level is between 1 and 6
+        if self_assessment_level < 1 or self_assessment_level > 6:
+            self_assessment_level = 3
+        
         # Determine number of questions based on self-assessment level
-        # Lower levels: 10-12 questions, Higher levels: 15 questions
+        # Level-based question count: Lower levels (1-4): 10-12 questions, Higher levels (5-6): Maximum 15 questions
         question_count_map = {
-            1: 10,  # Novice Low
-            2: 10,  # Novice Mid
-            3: 12,  # Novice High / Intermediate Low
-            4: 12,  # Intermediate Mid
-            5: 15,  # Intermediate High / Advanced Low
-            6: 15   # Advanced Mid / Advanced High
+            1: 10,  # Novice Low - 10 questions
+            2: 10,  # Novice Mid - 10 questions
+            3: 12,  # Novice High / Intermediate Low - 12 questions
+            4: 12,  # Intermediate Mid - 12 questions
+            5: 15,  # Intermediate High / Advanced Low - Maximum 15 questions
+            6: 15   # Advanced Mid / Advanced High - Maximum 15 questions
         }
         target_count = question_count_map.get(self_assessment_level, 12)
+        
+        # Debug log to verify level is being read correctly
+        print(f"[Test Mode] get_personalized_questions - self_assessment_level: {self_assessment_level} (type: {type(self_assessment_level)}), target_count: {target_count}, survey_answers keys: {list(survey_answers.keys()) if survey_answers else 'None'}")
         
         # Get questions based on difficulty and interests
         questions = []
@@ -629,7 +666,14 @@ class TestModeController(BaseController):
         # Shuffle questions for variety
         random.shuffle(questions)
         
-        return questions[:target_count]
+        # Ensure we return exactly the target count (or less if not enough questions available)
+        # For levels 5 and 6, this will be maximum 15 questions
+        final_questions = questions[:target_count]
+        
+        # Log for debugging
+        print(f"[Test Mode] Self-assessment level: {self_assessment_level}, Target count: {target_count}, Final questions: {len(final_questions)}")
+        
+        return final_questions
     
     @login_required
     def record_response(self, question_id):

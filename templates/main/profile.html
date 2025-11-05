@@ -211,7 +211,7 @@
                                 <h6 class="mb-1">{{ response.question.topic }}</h6>
                                 <small>{{ response.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
                             </div>
-                            <p class="mb-1">{{ response.question.text[:100] }}{% if response.question.text|length > 100 %}...{% endif %}</p>
+                            <p class="mb-1">{{ (response.question.text|unescape_html)[:100] }}{% if response.question.text|length > 100 %}...{% endif %}</p>
                             <small class="text-muted">
                                 <i class="fas fa-clock me-1"></i>
                                 {% if response.duration %}

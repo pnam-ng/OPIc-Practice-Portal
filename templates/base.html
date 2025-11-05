@@ -2074,7 +2074,16 @@
                         requestNotificationPermission();
                     })
                     .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
+                        // Handle SSL certificate errors gracefully
+                        if (registrationError.name === 'SecurityError' || 
+                            registrationError.message.includes('SSL') ||
+                            registrationError.message.includes('certificate')) {
+                            console.warn('SW registration skipped due to SSL certificate issue (this is OK for self-signed certs):', registrationError.message);
+                            // Still request notification permission even if SW fails
+                            requestNotificationPermission();
+                        } else {
+                            console.log('SW registration failed: ', registrationError);
+                        }
                     });
             });
         }
@@ -2315,7 +2324,7 @@
             let notificationsOffset = 0;
             const notificationsLimit = 10;
             let hasMoreNotifications = false;
-            let currentFilter = 'all'; // 'all', 'read', 'unread'
+            let currentFilter = 'all'; // 'all', 'read', 'unread' - Default to 'all' to show all notifications (read and unread)
             
             // Fetch notifications
             async function loadNotifications(append = false) {
@@ -2341,16 +2350,25 @@
                         hasMoreNotifications = data.has_more;
                         
                         // Update count text
-                        const countText = currentFilter === 'all' ? `${data.total} total` : 
-                                        currentFilter === 'unread' ? `${data.unread_count} unread` :
-                                        `${data.total - data.unread_count} read`;
-                        document.getElementById('notificationCount').textContent = countText;
+                        const countTextEl = document.getElementById('notificationCount');
+                        if (countTextEl) {
+                            const countText = currentFilter === 'all' ? `${data.total} total` : 
+                                            currentFilter === 'unread' ? `${data.unread_count} unread` :
+                                            `${data.total - data.unread_count} read`;
+                            countTextEl.textContent = countText;
+                        }
                         
                         // Show/hide load more button
-                        document.getElementById('loadMoreNotifications').style.display = hasMoreNotifications ? 'block' : 'none';
+                        const loadMoreBtnEl = document.getElementById('loadMoreNotifications');
+                        if (loadMoreBtnEl) {
+                            loadMoreBtnEl.style.display = hasMoreNotifications ? 'block' : 'none';
+                        }
                         
                         // Show/hide mark all read button
-                        document.getElementById('markAllReadBtn').style.display = data.unread_count > 0 && currentFilter !== 'read' ? 'block' : 'none';
+                        const markAllReadBtnEl = document.getElementById('markAllReadBtn');
+                        if (markAllReadBtnEl) {
+                            markAllReadBtnEl.style.display = data.unread_count > 0 && currentFilter !== 'read' ? 'block' : 'none';
+                        }
                     } else {
                         console.error('[Notifications] API returned error:', data.error);
                     }
@@ -2419,8 +2437,10 @@
                 const commentPreview = notif.comment_preview ? 
                     `<div class="notification-preview">"${escapeHtml(notif.comment_preview)}"</div>` : '';
                 
+                // Note: Read notifications remain visible and accessible - they just don't have the unread badge
+                // Both read and unread notifications are clickable and persist in the database
                 return `
-                    <li class="notification-item ${unreadClass}" data-notification-id="${notif.id}" data-question-id="${notif.question_id}" data-comment-id="${notif.comment_id}">
+                    <li class="notification-item ${unreadClass}" data-notification-id="${notif.id}" data-question-id="${notif.question_id}" data-comment-id="${notif.comment_id}" data-is-read="${notif.is_read}">
                         <img src="${avatarUrl}" alt="${escapeHtml(notif.actor.name)}" class="notification-avatar">
                         <div class="notification-content">
                             <div class="notification-header">
@@ -2501,16 +2521,24 @@
                     const questionId = notificationItem.dataset.questionId;
                     const commentId = notificationItem.dataset.commentId;
                     
-                    // Mark as read
-                    if (!notificationItem.classList.contains('read')) {
+                    // Mark as read (notification remains visible and accessible even after being read)
+                    const isRead = notificationItem.dataset.isRead === 'true' || notificationItem.classList.contains('read');
+                    if (!isRead) {
                         try {
-                            await fetch(`/api/notifications/${notificationId}/read`, {
+                            const response = await fetch(`/api/notifications/${notificationId}/read`, {
                                 method: 'POST'
                             });
-                            notificationItem.classList.remove('unread');
-                            notificationItem.classList.add('read');
-                            const badge = notificationItem.querySelector('.notification-badge');
-                            if (badge) badge.remove();
+                            const data = await response.json();
+                            if (data.success) {
+                                // Update UI: remove unread styling, keep notification visible
+                                notificationItem.classList.remove('unread');
+                                notificationItem.classList.add('read');
+                                notificationItem.dataset.isRead = 'true';
+                                const badge = notificationItem.querySelector('.notification-badge');
+                                if (badge) badge.remove();
+                                // Update badge count (notification still visible in list)
+                                updateNotificationBadge(data.unread_count);
+                            }
                         } catch (error) {
                             console.error('Error marking notification as read:', error);
                         }
@@ -2522,33 +2550,42 @@
             });
             
             // Mark all as read
-            document.getElementById('markAllReadBtn').addEventListener('click', async function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                try {
-                    const response = await fetch('/api/notifications/mark-all-read', {
-                        method: 'POST'
-                    });
-                    const data = await response.json();
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    if (data.success) {
-                        // Reload notifications to reflect changes
-                        notificationsOffset = 0;
-                        loadNotifications(false);
+                    try {
+                        const response = await fetch('/api/notifications/mark-all-read', {
+                            method: 'POST'
+                        });
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Update badge count immediately
+                            updateNotificationBadge(0);
+                            // Reload notifications to reflect changes (read notifications remain visible)
+                            notificationsOffset = 0;
+                            loadNotifications(false);
+                            // Note: All notifications (read and unread) remain accessible and visible
+                        }
+                    } catch (error) {
+                        console.error('Error marking all as read:', error);
                     }
-                } catch (error) {
-                    console.error('Error marking all as read:', error);
-                }
-            });
+                });
+            }
             
             // Load more notifications
-            document.getElementById('loadMoreBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                notificationsOffset += notificationsLimit;
-                loadNotifications(true);
-            });
+            const loadMoreBtn = document.getElementById('loadMoreNotifications');
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    notificationsOffset += notificationsLimit;
+                    loadNotifications(true);
+                });
+            }
             
             // Filter buttons
             document.querySelectorAll('[data-filter]').forEach(button => {
@@ -2571,6 +2608,7 @@
             const notificationsDropdown = document.getElementById('notificationsDropdown');
             if (notificationsDropdown) {
                 notificationsDropdown.addEventListener('click', function() {
+                    notificationsOffset = 0; // Reset offset when opening
                     loadNotifications();
                 });
             }
@@ -2579,6 +2617,7 @@
             const mobileNotificationsDropdown = document.getElementById('mobileNotificationsDropdown');
             if (mobileNotificationsDropdown) {
                 mobileNotificationsDropdown.addEventListener('click', function() {
+                    notificationsOffset = 0; // Reset offset when opening
                     loadNotifications();
                 });
             }
@@ -2597,13 +2636,32 @@
                 });
             }
             
-            // Initial load
-            loadNotifications();
+            // Load unread count immediately on page load (for badge)
+            async function loadUnreadCount() {
+                try {
+                    const response = await fetch('/api/notifications/?limit=1&unread_only=true');
+                    const data = await response.json();
+                    if (data.success) {
+                        updateNotificationBadge(data.unread_count);
+                        console.log('[Notifications] Initial unread count loaded:', data.unread_count);
+                    }
+                } catch (error) {
+                    console.error('[Notifications] Error loading unread count:', error);
+                }
+            }
+            
+            // Load unread count immediately on page load
+            loadUnreadCount();
+            
+            // Initial load (full notifications when dropdown is opened)
+            // Note: loadNotifications() is also called when dropdown opens
             
             // Refresh notifications every 30 seconds
             setInterval(() => {
                 notificationsOffset = 0;
                 loadNotifications();
+                // Also refresh badge count
+                loadUnreadCount();
             }, 30000);
             {% endif %}
         })();

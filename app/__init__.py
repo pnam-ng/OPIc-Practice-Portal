@@ -1,4 +1,5 @@
 import os
+import html
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -91,6 +92,16 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+    
+    # Add Jinja2 filter to decode HTML entities
+    def unescape_html_filter(text):
+        """Decode HTML entities like &#39; to '"""
+        if text is None:
+            return ''
+        return html.unescape(str(text))
+    
+    # Register the filter with Flask (recommended method)
+    app.add_template_filter(unescape_html_filter, 'unescape_html')
     
     return app
 

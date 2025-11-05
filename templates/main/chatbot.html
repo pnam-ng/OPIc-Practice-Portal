@@ -194,7 +194,7 @@
 }
 
 #chatMessages {
-    scroll-behavior: smooth;
+    /* scroll-behavior removed to prevent animation when auto-scrolling */
 }
 
 #chatMessages::-webkit-scrollbar {
@@ -364,29 +364,112 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     const sendButton = document.getElementById('sendButton');
     
-    // Load conversation history from localStorage and render
-    const savedHistory = localStorage.getItem('opic_chatbot_history');
-    if (savedHistory) {
-        try {
-            conversationHistory = JSON.parse(savedHistory) || [];
-            // Remove default welcome if history exists
-            if (conversationHistory.length > 0) {
-                const welcome = chatMessages.querySelector('.bot-message');
-                if (welcome) {
-                    welcome.remove();
-                }
+    // Load conversation history from localStorage
+    function loadConversationHistory() {
+        const savedHistory = localStorage.getItem('opic_chatbot_history');
+        if (savedHistory) {
+            try {
+                conversationHistory = JSON.parse(savedHistory) || [];
+            } catch (e) {
+                console.error('Failed to load chat history:', e);
+                conversationHistory = [];
             }
-            // Re-render history
-            for (const msg of conversationHistory) {
-                if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
-                    addMessage(msg.content || '', msg.role === 'user' ? 'user' : 'bot');
-                }
-            }
-        } catch (e) {
-            console.error('Failed to load chat history:', e);
+        } else {
             conversationHistory = [];
         }
     }
+    
+    // Render conversation history to UI
+    function renderConversationHistory() {
+        // Use document fragment to batch DOM updates and prevent scroll jumping
+        const fragment = document.createDocumentFragment();
+        
+        // If there's history, render all messages to fragment first
+        if (conversationHistory.length > 0) {
+            for (const msg of conversationHistory) {
+                if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `chat-message ${msg.role === 'user' ? 'user' : 'bot'}-message mb-3`;
+                    
+                    const avatar = msg.role === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+                    const time = new Date().toLocaleTimeString('en-US', { 
+                        hour: 'numeric', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+                    
+                    messageDiv.innerHTML = `
+                        <div class="message-avatar">
+                            ${avatar}
+                        </div>
+                        <div class="message-content">
+                            <div class="message-bubble ${msg.role === 'user' ? 'user' : 'bot'}-bubble">
+                                ${formatMessage(msg.content || '')}
+                            </div>
+                            <small class="message-time">${time}</small>
+                        </div>
+                    `;
+                    fragment.appendChild(messageDiv);
+                }
+            }
+        } else {
+            // Show welcome message if no history
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'chat-message bot-message mb-3';
+            welcomeDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble bot-bubble">
+                        <p class="mb-0">Hello! 👋 I'm your OPIc test assistant. I can help you with:</p>
+                        <ul class="mb-0 mt-2">
+                            <li>Understanding OPIc test format and structure</li>
+                            <li>Tips for test preparation</li>
+                            <li>How to use this practice portal</li>
+                            <li>Best practices for speaking proficiency</li>
+                        </ul>
+                        <p class="mb-0 mt-2">What would you like to know?</p>
+                    </div>
+                    <small class="message-time">Just now</small>
+                </div>
+            `;
+            fragment.appendChild(welcomeDiv);
+        }
+        
+        // Clear and append fragment in one operation to prevent scroll jumping
+        chatMessages.innerHTML = '';
+        chatMessages.appendChild(fragment);
+        
+        // Instantly scroll to bottom after rendering (no animation)
+        // Use requestAnimationFrame only to ensure DOM is ready
+        requestAnimationFrame(() => {
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'auto'
+            });
+        });
+    }
+    
+    // Initial load
+    loadConversationHistory();
+    renderConversationHistory();
+    
+    // Listen for storage changes from other tabs/components (e.g., chatbot widget)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'opic_chatbot_history') {
+            console.log('[Chatbot Page] Storage event detected, syncing history');
+            loadConversationHistory();
+            renderConversationHistory();
+        }
+    });
+    
+    // Also listen for custom events (for same-tab sync with widget)
+    window.addEventListener('opic_chatbot_history_updated', function() {
+        console.log('[Chatbot Page] Custom event detected, syncing history');
+        loadConversationHistory();
+        renderConversationHistory();
+    });
     
     chatForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -411,7 +494,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add to conversation history and persist immediately
         conversationHistory.push({ role: 'user', content: message });
-        try { localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); } catch(_) {}
+        try { 
+            localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); 
+            // Dispatch custom event for same-tab sync (chatbot widget)
+            window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+        } catch(_) {}
         
         // Show loading indicator
         const loadingId = showLoading();
@@ -472,7 +559,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add to conversation history and persist
                 conversationHistory.push({ role: 'assistant', content: data.response });
-                try { localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); } catch(_) {}
+                try { 
+                    localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); 
+                    // Dispatch custom event for same-tab sync (chatbot widget)
+                    window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+                } catch(_) {}
             } else {
                 const errorMsg = data.error || 'Sorry, I encountered an error. Please try again later.';
                 addMessage(errorMsg, 'bot');
@@ -485,6 +576,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (error.name === 'AbortError') {
                 errorMessage = 'Request timed out. The server may be taking too long to respond. Please try again with a shorter question.';
+            } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
+                errorMessage = 'Connection error. Please check your internet connection and try again.';
+            } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
+                errorMessage = 'Connection was reset. Please try again.';
             } else if (error.message && error.message.includes('404')) {
                 errorMessage = 'Chatbot service not available. Please make sure the server is running and try again.';
             } else if (error.message && (error.message.includes('JSON') || error.message.includes('Failed to fetch'))) {
@@ -503,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chatInput.focus();
 });
 
-function addMessage(text, role) {
+function addMessage(text, role, scrollToBottom = true) {
     const chatMessages = document.getElementById('chatMessages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${role}-message mb-3`;
@@ -529,7 +625,21 @@ function addMessage(text, role) {
     `;
     
     chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Scroll to bottom for new messages, but only if user was already at bottom
+    if (scrollToBottom) {
+        // Check if user was at bottom before adding message (with small tolerance)
+        const scrollThreshold = 5; // pixels tolerance
+        const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight <= scrollThreshold;
+        
+        if (wasAtBottom) {
+            // If already at bottom, instantly set scroll position (no animation)
+            // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'auto'
+            });
+        }
+    }
 }
 
 function formatMessage(text) {
@@ -569,7 +679,11 @@ function showLoading() {
     `;
     
     chatMessages.appendChild(loadingDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Instantly scroll to bottom (no animation) when showing loading indicator
+    chatMessages.scrollTo({
+        top: chatMessages.scrollHeight,
+        behavior: 'auto'
+    });
     
     return loadingId;
 }
@@ -586,13 +700,33 @@ function clearChat() {
         conversationHistory = [];
         localStorage.removeItem('opic_chatbot_history');
         
+        // Dispatch custom event for same-tab sync (chatbot widget)
+        window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+        
         const chatMessages = document.getElementById('chatMessages');
-        // Keep only welcome message
-        const welcomeMessage = chatMessages.querySelector('.bot-message');
+        // Show welcome message
         chatMessages.innerHTML = '';
-        if (welcomeMessage) {
-            chatMessages.appendChild(welcomeMessage);
-        }
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.className = 'chat-message bot-message mb-3';
+        welcomeDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble bot-bubble">
+                    <p class="mb-0">Hello! 👋 I'm your OPIc test assistant. I can help you with:</p>
+                    <ul class="mb-0 mt-2">
+                        <li>Understanding OPIc test format and structure</li>
+                        <li>Tips for test preparation</li>
+                        <li>How to use this practice portal</li>
+                        <li>Best practices for speaking proficiency</li>
+                    </ul>
+                    <p class="mb-0 mt-2">What would you like to know?</p>
+                </div>
+                <small class="message-time">Just now</small>
+            </div>
+        `;
+        chatMessages.appendChild(welcomeDiv);
     }
 }
 </script>

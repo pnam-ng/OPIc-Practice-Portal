@@ -120,7 +120,7 @@
                                                         <span class="badge bg-secondary me-2">{{ loop.index }}</span>
                                                         <div class="flex-grow-1">
                                                             <strong>{{ response.question.topic }}</strong>
-                                                            <p class="mb-1 small text-muted">{{ response.question.text[:100] }}...</p>
+                                                            <p class="mb-1 small text-muted">{{ (response.question.text|unescape_html)[:100] }}...</p>
                                                             <div class="small">
                                                                 {% if response.question.difficulty_level %}
                                                                 <span class="badge bg-primary me-1">{{ response.question.difficulty_level }}</span>
@@ -155,7 +155,7 @@
                                                         {{ item.question.topic }}
                                                         <span class="badge bg-primary ms-2">Practice</span>
                                                 </h6>
-                                                    <p class="mb-2 text-muted">{{ item.question.text[:150] }}{% if item.question.text|length > 150 %}...{% endif %}</p>
+                                                    <p class="mb-2 text-muted">{{ (item.question.text|unescape_html)[:150] }}{% if item.question.text|length > 150 %}...{% endif %}</p>
                                                 <div class="response-meta">
                                                         {% if item.question.language %}
                                                     <span class="badge bg-info me-2">

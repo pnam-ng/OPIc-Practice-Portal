@@ -4,6 +4,7 @@ Flask application following OOP principles with proper separation of concerns
 """
 
 import os
+import html
 from flask import Flask, send_from_directory
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -98,6 +99,16 @@ def create_app():
     
     # Register blueprints
     register_blueprints(app)
+    
+    # Add Jinja2 filter to decode HTML entities
+    def unescape_html_filter(text):
+        """Decode HTML entities like &#39; to '"""
+        if text is None:
+            return ''
+        return html.unescape(str(text))
+    
+    # Register the filter with Flask (recommended method)
+    app.add_template_filter(unescape_html_filter, 'unescape_html')
 
     # Serve uploaded files (question/response audio)
     @app.route('/uploads/<path:filename>')

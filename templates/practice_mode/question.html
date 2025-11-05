@@ -89,7 +89,7 @@
                             <span>Show Question</span>
                         </button>
                         <div id="questionTextContent" class="toggle-content" style="display: none;">
-                            <div class="text-content">{{ question.text }}</div>
+                            <div class="text-content">{{ question.text|unescape_html|safe }}</div>
                         </div>
                     </div>
                     
@@ -2785,7 +2785,8 @@ function displaySampleAnswer() {
     const sampleTextEl = document.getElementById('sampleAnswerText');
     
     // Get sample answer data from the template (passed from database)
-    const sampleAnswerText = `{{ question.sample_answer_text or '' }}`;
+    // Decode HTML entities - use template filter to decode, then escape for JavaScript
+    const sampleAnswerText = {{ (question.sample_answer_text|unescape_html|tojson)|safe if question.sample_answer_text else '""' }};
     const sampleAnswerAudio = `{{ question.sample_answer_audio_url or '' }}`;
     
     console.log('Sample answer text:', sampleAnswerText ? 'Available' : 'Not available');
