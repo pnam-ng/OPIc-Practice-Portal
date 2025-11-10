@@ -134,6 +134,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=True)  # For replies
     content = db.Column(db.Text, nullable=False)
+    audio_url = db.Column(db.String(200), nullable=True)  # Audio file path for user-uploaded recordings
     is_edited = db.Column(db.Boolean, default=False)
     is_pinned = db.Column(db.Boolean, default=False)  # Admins can pin helpful comments
     likes_count = db.Column(db.Integer, default=0)
@@ -171,6 +172,7 @@ class Comment(db.Model):
             'user_avatar': self.author.avatar,
             'is_admin': self.author.is_admin,
             'content': self.content,
+            'audio_url': self.audio_url,
             'is_edited': self.is_edited,
             'is_pinned': self.is_pinned,
             'likes_count': self.likes_count,

@@ -126,12 +126,16 @@ class UserService(BaseService):
             return {}
         
         total_responses = Response.query.filter_by(user_id=user_id).count()
+        practice_responses_count = Response.query.filter_by(user_id=user_id, mode='practice').count()
+        test_responses_count = Response.query.filter_by(user_id=user_id, mode='test').count()
         recent_responses = Response.query.filter_by(user_id=user_id)\
             .order_by(Response.created_at.desc()).limit(5).all()
         
         return {
             'user': user,
             'total_responses': total_responses,
+            'practice_responses_count': practice_responses_count,
+            'test_responses_count': test_responses_count,
             'recent_responses': recent_responses,
             'streak_count': user.streak_count,
             'target_language': user.target_language

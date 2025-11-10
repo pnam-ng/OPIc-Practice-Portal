@@ -26,19 +26,22 @@ h2 small {
 /* Streak fire animations */
 .streak-active {
     animation: fireGlow 2s ease-in-out infinite;
+    color: #ff9800 !important;
 }
 
 .streak-faded {
-    opacity: 0.3;
+    opacity: 0.4;
     filter: grayscale(100%);
 }
 
 @keyframes fireGlow {
     0%, 100% {
-        text-shadow: 0 0 5px #ff9800, 0 0 10px #ff9800;
+        text-shadow: 0 0 4px rgba(255, 152, 0, 0.6), 0 0 6px rgba(255, 152, 0, 0.4);
+        opacity: 1;
     }
     50% {
-        text-shadow: 0 0 10px #ff9800, 0 0 20px #ff9800, 0 0 30px #ff5722;
+        text-shadow: 0 0 6px rgba(255, 152, 0, 0.8), 0 0 8px rgba(255, 152, 0, 0.6), 0 0 10px rgba(255, 87, 34, 0.4);
+        opacity: 1;
     }
 }
 

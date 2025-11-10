@@ -302,6 +302,26 @@
             color: var(--navbar-text) !important;
         }
         
+        /* Navbar User Avatar */
+        .nav-user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .nav-user-avatar:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .nav-avatar-fallback {
+            font-size: 1.25rem;
+            color: var(--navbar-text);
+        }
+        
         /* Dark Mode Toggle Button */
         .theme-toggle {
             background: none;
@@ -1583,8 +1603,14 @@
                 
                 <!-- User Dropdown Menu -->
                     <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if current_user.avatar and current_user.avatar.startswith('uploads/') %}
+                            <img src="/{{ current_user.avatar }}" alt="{{ current_user.username }}" class="nav-user-avatar me-2" onerror="this.onerror=null; this.src='{{ url_for('static', filename='avatars/default1.svg') }}';">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='avatars/' + (current_user.avatar or 'default1.svg')) }}" alt="{{ current_user.username }}" class="nav-user-avatar me-2" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                            <i class="fas fa-user-circle me-1 nav-avatar-fallback" style="display: none;"></i>
+                        {% endif %}
+                        <span>{{ current_user.username }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>

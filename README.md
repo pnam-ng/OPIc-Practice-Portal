@@ -358,13 +358,24 @@ OPP/
 
 ## 📚 Documentation
 
+### Setup & Configuration
 - [Setup Guide](docs/setup/SETUP_GUIDE.md) - Detailed installation instructions
 - [Database Solution](docs/setup/DATABASE_SOLUTION.md) - Database architecture
 - [Audio Setup](docs/setup/AUDIO_SETUP.md) - Audio file management
+- [Quick AI Setup](docs/development/QUICK_AI_SETUP.md) - Quick guide for AI integration
+
+### Deployment
+- [Migration Guide](docs/deployment/MIGRATION_GUIDE.md) - Complete migration guide
+- [Migration Quick Start](docs/deployment/MIGRATION_QUICK_START.md) - Quick migration guide
+- [Gunicorn Setup](docs/deployment/GUNICORN_SETUP.md) - Production server setup
+- [Quick Start Server](docs/deployment/QUICK_START_SERVER.md) - Quick server reference
+
+### Features
 - [Admin Features](docs/features/ADMIN_FEATURES_GUIDE.md) - Admin panel guide
 - [Comments System](docs/features/COMMENTS_SYSTEM_GUIDE.md) - Comment system documentation with replies and tagging
+
+### Development
 - [AI Integration Plan](docs/development/AI_INTEGRATION_PLAN_OPENSOURCE.md) - AI features and setup
-- [Quick AI Setup](docs/development/QUICK_AI_SETUP.md) - Quick guide for AI integration
 
 ## 🎯 Usage
 

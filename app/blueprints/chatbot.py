@@ -40,6 +40,18 @@ def chat():
             }), 400
         
         # Check if chatbot service has API token
+        # Refresh API token from environment in case it wasn't loaded at startup
+        if not chatbot_service.api_token:
+            import os
+            chatbot_service.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
+            
+            # Also try to get from Flask config
+            if not chatbot_service.api_token:
+                try:
+                    chatbot_service.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
+                except:
+                    pass
+        
         if not chatbot_service.api_token:
             return jsonify({
                 'success': False,

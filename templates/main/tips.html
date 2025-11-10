@@ -106,23 +106,9 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-0" style="background: #525252;">
-                <div class="d-flex justify-content-center align-items-center h-100" id="pdfContainer" style="min-height: 70vh;">
-                    <div class="text-center text-white">
-                        <div class="spinner-border mb-3" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p>Loading PDF...</p>
-                    </div>
+            <div class="modal-body p-0" style="background: #525252; height: calc(100vh - 120px);">
+                <div id="pdfContainer" style="height: 100%; width: 100%;">
                 </div>
-            </div>
-            <div class="modal-footer bg-secondary">
-                <a id="pdfDownloadBtn" href="#" class="btn btn-primary" download>
-                    <i class="fas fa-download me-2"></i>Download PDF
-                </a>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Close
-                </button>
             </div>
         </div>
     </div>
@@ -135,17 +121,34 @@
         transition: all 0.3s ease;
     }
     
+    /* Desktop PDF viewer - full height */
+    #pdfViewerModal .modal-body {
+        height: calc(100vh - 120px);
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+    
     #pdfContainer {
-        overflow: auto;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
     }
     
     #pdfContainer embed,
     #pdfContainer iframe,
     #pdfContainer object {
         width: 100%;
-        height: 80vh;
+        height: 100%;
         border: none;
+        flex: 1;
+        display: block;
     }
+    
     
     /* Mobile-specific PDF viewer styles */
     @media (max-width: 768px) {
@@ -194,17 +197,6 @@
             max-height: 70vh;
         }
         
-        #pdfViewerModal .modal-footer {
-            flex-direction: column;
-            gap: 0.75rem;
-            flex-shrink: 0;
-            padding: 1rem;
-        }
-        
-        #pdfViewerModal .modal-footer .btn {
-            width: 100%;
-            margin: 0;
-        }
         
         /* Ensure modal title doesn't overflow on small screens */
         #pdfViewerModal .modal-title {
@@ -226,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const pdfModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
     const pdfTitle = document.getElementById('pdfTitle');
     const pdfContainer = document.getElementById('pdfContainer');
-    const pdfDownloadBtn = document.getElementById('pdfDownloadBtn');
     
     // Detect mobile device
     function isMobileDevice() {
@@ -254,22 +245,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set PDF URL (use the Flask route)
             const pdfUrl = `/files/${encodeURIComponent(pdfFilename)}`;
             const fullPdfUrl = getFullPdfUrl(pdfFilename);
-            pdfDownloadBtn.href = pdfUrl + '?download=true';
             
             // Show modal first
             pdfModal.show();
             
-            // Clear previous content and show loading
-            pdfContainer.innerHTML = `
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-center text-white">
-                        <div class="spinner-border mb-3" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p>Loading PDF...</p>
-                    </div>
-                </div>
-            `;
+            // Clear previous content
+            pdfContainer.innerHTML = '';
             
             // For mobile devices, optimize layout for small screens
             if (isMobileDevice()) {
@@ -302,42 +283,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
                 
-                // Add fallback section below the iframe (stacked vertically for mobile)
-                const fallbackDiv = document.createElement('div');
-                fallbackDiv.className = 'text-center p-3';
-                fallbackDiv.style.background = 'rgba(0,0,0,0.4)';
-                fallbackDiv.style.flexShrink = '0';
-                fallbackDiv.style.width = '100%';
-                fallbackDiv.innerHTML = `
-                    <p class="text-white mb-2 small">Having trouble viewing?</p>
-                    <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-                        <i class="fas fa-external-link-alt me-2"></i>Open PDF in Browser
-                    </a>
-                `;
-                
-                // Clear loading and add elements
-                const loadingDiv = pdfContainer.querySelector('.d-flex.justify-content-center');
-                if (loadingDiv) {
-                    loadingDiv.remove();
-                }
-                
                 wrapper.appendChild(iframe);
-                wrapper.appendChild(fallbackDiv);
                 pdfContainer.appendChild(wrapper);
                 
-                // If iframe doesn't load after 5 seconds, show more prominent message
+                // If iframe doesn't load after 5 seconds, log but don't show fallback
                 setTimeout(() => {
                     if (!iframeLoaded && isLoading) {
-                        console.log('[PDF Viewer] Iframe may not be loading, showing browser option');
-                        // Update fallback message and make iframe section smaller
-                        iframe.style.height = '40vh';
-                        fallbackDiv.innerHTML = `
-                            <p class="text-white mb-2 fw-bold">PDF viewer may not be available</p>
-                            <p class="text-white-50 mb-3 small">Click below to open in your browser's PDF viewer:</p>
-                            <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-external-link-alt me-2"></i>Open PDF in Browser
-                            </a>
-                        `;
+                        console.log('[PDF Viewer] Iframe may not be loading');
                         isLoading = false;
                     }
                 }, 5000);
@@ -349,39 +301,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 const iframe = document.createElement('iframe');
                 iframe.src = pdfUrl;
                 iframe.style.width = '100%';
-                iframe.style.height = '80vh';
+                iframe.style.height = '100%';
                 iframe.style.border = 'none';
                 iframe.setAttribute('type', 'application/pdf');
                 
-                let isLoading = true;
-                
-                iframe.onload = function() {
-                    if (isLoading) {
-                        isLoading = false;
-                        const loadingDiv = pdfContainer.querySelector('.d-flex.justify-content-center');
-                        if (loadingDiv) {
-                            loadingDiv.remove();
-                        }
-                        console.log('[PDF Viewer] PDF loaded successfully');
-                    }
-                };
-                
                 pdfContainer.appendChild(iframe);
+                console.log('[PDF Viewer] PDF iframe added');
                 
                 // Fallback: If iframe doesn't load, try embed
                 setTimeout(() => {
-                    if (isLoading && pdfContainer.querySelector('.spinner-border')) {
-                        console.log('[PDF Viewer] Iframe timeout, trying embed fallback');
-                        pdfContainer.innerHTML = '';
-                        
-                        const embed = document.createElement('embed');
-                        embed.src = pdfUrl;
-                        embed.type = 'application/pdf';
-                        embed.style.width = '100%';
-                        embed.style.height = '80vh';
-                        pdfContainer.appendChild(embed);
-                        
-                        isLoading = false;
+                    const iframe = pdfContainer.querySelector('iframe');
+                    // Check if iframe exists and might not have loaded properly
+                    if (iframe) {
+                        try {
+                            // Try to access iframe content - if it fails, the PDF might not be loading
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                            if (!iframeDoc || iframeDoc.readyState === 'loading') {
+                                console.log('[PDF Viewer] Iframe may not be loading, trying embed fallback');
+                                iframe.remove();
+                                
+                                const embed = document.createElement('embed');
+                                embed.src = pdfUrl;
+                                embed.type = 'application/pdf';
+                                embed.style.width = '100%';
+                                embed.style.height = '100%';
+                                pdfContainer.appendChild(embed);
+                                console.log('[PDF Viewer] PDF embed fallback added');
+                            }
+                        } catch (e) {
+                            // Cross-origin or other error - embed might work better
+                            console.log('[PDF Viewer] Iframe access error, trying embed fallback');
+                            iframe.remove();
+                            
+                            const embed = document.createElement('embed');
+                            embed.src = pdfUrl;
+                            embed.type = 'application/pdf';
+                            embed.style.width = '100%';
+                            embed.style.height = '100%';
+                            pdfContainer.appendChild(embed);
+                            console.log('[PDF Viewer] PDF embed fallback added');
+                        }
                     }
                 }, 5000);
             }

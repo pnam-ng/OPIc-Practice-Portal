@@ -203,48 +203,91 @@
                 
                 <!-- Comments Section -->
                 <div class="comments-section mt-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white border-bottom">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-comments me-2 text-primary"></i>
-                                    Comments & Scripts
-                                    <span class="badge bg-secondary ms-2" id="commentsCount">0</span>
+                    <div class="comment-card">
+                        <!-- Comments Header -->
+                        <div class="comments-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="comments-title mb-0">
+                                    Comments
+                                    <span class="comments-badge" id="commentsCount">0</span>
                                 </h5>
-                                <div class="btn-group btn-group-sm mt-2 mt-md-0">
-                                    <button class="btn btn-outline-secondary active" data-sort="recent" onclick="sortComments('recent')">
-                                        <i class="fas fa-clock me-1"></i>Recent
-                                    </button>
-                                    <button class="btn btn-outline-secondary" data-sort="popular" onclick="sortComments('popular')">
-                                        <i class="fas fa-fire me-1"></i>Popular
-                                    </button>
+                                <div class="comments-sort">
+                                    <select class="form-select form-select-sm" id="commentsSortSelect" onchange="sortComments(this.value)">
+                                        <option value="recent" selected>Most recent</option>
+                                        <option value="popular">Most popular</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Add Comment Form -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">
-                                    <i class="fas fa-pen me-1"></i>Share Your Script or Tips
-                                </label>
+
+                        <!-- Comment Input Area -->
+                        <div class="comment-input-area">
                                 <div style="position: relative;">
-                                    <textarea class="form-control auto-resize-textarea" id="newCommentText" rows="4" 
-                                              placeholder="Share your answer script, tips, or thoughts on this question... (Type @ to mention someone)" maxlength="2200"
-                                              oninput="autoResizeTextarea(this)"></textarea>
+                                <textarea class="comment-textarea" id="newCommentText" rows="3" 
+                                          placeholder="Add comment..." maxlength="2200"
+                                          oninput="autoResizeTextarea(this); updateCharCount()"></textarea>
                                     <div id="mentionDropdown" class="mention-dropdown"></div>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mt-2">
+                            
+                            <!-- Formatting Toolbar -->
+                            <div class="formatting-toolbar">
+                                <button type="button" class="format-btn" onclick="formatText('bold')" title="Bold">
+                                    <strong>B</strong>
+                                        </button>
+                                <button type="button" class="format-btn" onclick="formatText('italic')" title="Italic">
+                                    <em>I</em>
+                                </button>
+                                <button type="button" class="format-btn" onclick="formatText('underline')" title="Underline">
+                                    <u>U</u>
+                                </button>
+                                <button type="button" class="format-btn" onclick="insertLink()" title="Link">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="format-btn" onclick="toggleAudioUpload()" title="Upload audio">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button type="button" class="format-btn" onclick="insertEmoji()" title="Emoji">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button type="button" class="format-btn" onclick="triggerMention()" title="Mention">
+                                    <i class="fas fa-at"></i>
+                                </button>
+                            </div>
+
+                            <!-- Audio Upload (Hidden by default) -->
+                            <div class="mt-2" id="commentAudioUploadSection" style="display: none;">
+                                <div class="audio-upload-container">
+                                    <input type="file" class="d-none" id="commentAudioFile" accept="audio/*" onchange="handleCommentAudioChange(this)" />
+                                        <div id="commentAudioPreview" class="mt-2" style="display: none;">
+                                        <div class="d-flex align-items-center justify-content-between bg-light rounded p-2 audio-file-preview">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-file-audio text-primary me-2"></i>
+                                                    <div>
+                                                        <small class="d-block fw-bold" id="commentAudioPreviewName"></small>
+                                                        <small class="text-muted" id="commentAudioPreviewSize"></small>
+                                                    </div>
+                                                </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearCommentAudio()" title="Remove audio file">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- Submit Button and Character Count -->
+                            <div class="comment-input-footer">
                                     <small class="text-muted">
-                                        <i class="fas fa-info-circle me-1"></i>
                                         <span id="charCount">0</span>/2200 characters
                                     </small>
-                                    <button class="btn btn-primary btn-sm" onclick="postComment()" id="postCommentBtn">
-                                        <i class="fas fa-paper-plane me-1"></i>Post Comment
+                                <button class="btn btn-submit-comment" onclick="postComment()" id="postCommentBtn">
+                                    Submit
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Comments List -->
+                        <div class="comments-list-container">
                             <div id="commentsList">
                                 <div class="text-center text-muted py-4">
                                     <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
@@ -1982,38 +2025,218 @@ h5.section-title {
     background: var(--bg-secondary);
 }
 
-/* Comment Card Styling */
-.comment {
-    transition: all 0.2s ease;
-    border: 1px solid #e0e0e0 !important;
+/* Modern Comment Card Styling */
+.comment-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    margin-bottom: 20px;
 }
 
-.comment:hover {
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    border-color: #d0d0d0 !important;
+[data-theme="dark"] .comment-card {
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Comments Header */
+.comments-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+[data-theme="dark"] .comments-header {
+    border-bottom-color: var(--border-color);
+}
+
+.comments-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="dark"] .comments-title {
+    color: var(--text-color);
+}
+
+.comments-badge {
+    background: #ff6b35;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.comments-sort .form-select {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 6px 28px 6px 12px;
+}
+
+[data-theme="dark"] .comments-sort .form-select {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Comment Input Area */
+.comment-input-area {
+    padding: 24px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+[data-theme="dark"] .comment-input-area {
+    border-bottom-color: var(--border-color);
+}
+
+.comment-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    border-color: #ff6b35;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+[data-theme="dark"] .comment-textarea {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .comment-textarea:focus {
+    background: var(--bg-secondary);
+    border-color: #ff6b35;
+}
+
+/* Formatting Toolbar */
+.formatting-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+[data-theme="dark"] .formatting-toolbar {
+    border-top-color: var(--border-color);
+}
+
+.format-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.format-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+[data-theme="dark"] .format-btn {
+    color: #aaa;
+}
+
+[data-theme="dark"] .format-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+.comment-input-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.btn-submit-comment {
+    background: #ff6b35;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-submit-comment:hover {
+    background: #e55a2b;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.btn-submit-comment:active {
+    transform: translateY(0);
+}
+
+/* Comments List Container */
+.comments-list-container {
+    padding: 24px;
+}
+
+/* Individual Comment Styling */
+.comment {
+    background: transparent;
+    border: none;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+}
+
+.comment:last-child {
+    border-bottom: none;
 }
 
 [data-theme="dark"] .comment {
-    background: var(--bg-secondary) !important;
-    border-color: var(--border-color) !important;
+    border-bottom-color: var(--border-color);
 }
 
-[data-theme="dark"] .comment:hover {
-    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+.comment:hover {
+    background: transparent;
+    box-shadow: none;
 }
 
-[data-theme="dark"] .reply {
-    background: var(--bg-secondary);
+/* Comment Header Styling */
+.comment-header {
+    margin-bottom: 8px;
 }
 
-/* Comment header styling */
-.comment .d-flex.justify-content-between {
-    align-items: center;
-}
-
-.comment strong {
+.comment-user-name {
     font-size: 15px;
     font-weight: 600;
+    color: #333;
+}
+
+[data-theme="dark"] .comment-user-name {
+    color: var(--text-color);
 }
 
 .comment .text-muted {
@@ -2024,6 +2247,7 @@ h5.section-title {
     font-size: 14px;
     line-height: 1.6;
     color: #333;
+    margin-bottom: 12px;
 }
 
 [data-theme="dark"] .comment-content {
@@ -2081,16 +2305,124 @@ h5.section-title {
     color: #58a6ff !important;
 }
 
-/* Reply section */
-.reply {
-    background: #fafafa;
-    padding: 12px;
-    border-radius: 8px;
+/* Audio Upload UI */
+.audio-upload-container {
+    position: relative;
+}
+
+.audio-upload-btn {
+    transition: all 0.2s ease;
+    border: 2px dashed #dee2e6;
+    background: #f8f9fa;
+}
+
+.audio-upload-btn:hover {
+    border-color: #0d6efd;
+    background: #e7f1ff;
+    color: #0d6efd;
+}
+
+[data-theme="dark"] .audio-upload-btn {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .audio-upload-btn:hover {
+    border-color: #58a6ff;
+    background: rgba(88, 166, 255, 0.1);
+    color: #58a6ff;
+}
+
+#commentAudioPreview, .audio-preview {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Audio player in comments */
+.audio-player-wrapper {
     margin-top: 8px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.comment-audio-player {
+    width: 100%;
+    max-width: 500px;
+    height: 40px;
+    outline: none;
+}
+
+.comment-audio-player::-webkit-media-controls-panel {
+    background-color: #f8f9fa;
+}
+
+[data-theme="dark"] .audio-player-wrapper {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .comment-audio-player::-webkit-media-controls-panel {
+    background-color: var(--bg-secondary);
+}
+
+/* Audio preview styling */
+#commentAudioPreview .bg-light,
+.audio-preview .bg-light {
+    transition: all 0.2s ease;
+}
+
+[data-theme="dark"] #commentAudioPreview .bg-light,
+[data-theme="dark"] .audio-preview .bg-light {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Reply Styling */
+.replies-container {
+    margin-left: 48px;
+    margin-top: 16px;
+    padding-left: 16px;
+    border-left: 2px solid #e0e0e0;
+    position: relative;
+}
+
+[data-theme="dark"] .replies-container {
+    border-left-color: var(--border-color);
+}
+
+.reply {
+    position: relative;
+    padding: 12px 0;
+    margin-bottom: 12px;
+    background: transparent;
+}
+
+.reply:last-child {
+    margin-bottom: 0;
+}
+
+.reply-connector {
+    position: absolute;
+    left: -18px;
+    top: 24px;
+    width: 12px;
+    height: 2px;
+    background: #e0e0e0;
+}
+
+[data-theme="dark"] .reply-connector {
+    background: var(--border-color);
 }
 
 [data-theme="dark"] .reply {
-    background: rgba(255,255,255,0.05);
+    background: transparent;
 }
 
 /* Mobile responsive for avatars */
@@ -3271,12 +3603,115 @@ autoResizeTextarea(newCommentTextarea);
 // Initialize mention autocomplete for main comment
 const mainMentionAutocomplete = new MentionAutocomplete(newCommentTextarea, 'mentionDropdown');
 
+// Handle audio file change
+function handleCommentAudioChange(input) {
+    const file = input.files[0];
+    if (file) {
+        const fileName = file.name;
+        const fileSize = formatFileSize(file.size);
+        
+        // Show the upload section if it's hidden
+        const audioSection = document.getElementById('commentAudioUploadSection');
+        if (audioSection) {
+            audioSection.style.display = 'block';
+        }
+        
+        // Show preview
+        const preview = document.getElementById('commentAudioPreview');
+        const previewName = document.getElementById('commentAudioPreviewName');
+        const previewSize = document.getElementById('commentAudioPreviewSize');
+        
+        if (preview && previewName && previewSize) {
+            previewName.textContent = fileName;
+            previewSize.textContent = fileSize;
+            preview.style.display = 'block';
+        }
+        
+        // Validate file type
+        const allowedTypes = ['.webm', '.mp3', '.wav', '.ogg', '.m4a'];
+        const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+        if (!allowedTypes.includes(fileExt)) {
+            alert(`Invalid file type. Allowed: ${allowedTypes.join(', ')}`);
+            clearCommentAudio();
+            return;
+        }
+    } else {
+        clearCommentAudio();
+    }
+}
+
+// Handle reply audio file change
+function handleReplyAudioChange(commentId, input) {
+    const file = input.files[0];
+    if (file) {
+        const fileName = file.name;
+        const fileSize = formatFileSize(file.size);
+        
+        // Update button text
+        document.getElementById(`replyAudioFileName-${commentId}`).textContent = fileName;
+        
+        // Show preview
+        document.getElementById(`replyAudioPreviewName-${commentId}`).textContent = fileName;
+        document.getElementById(`replyAudioPreviewSize-${commentId}`).textContent = fileSize;
+        document.getElementById(`replyAudioPreview-${commentId}`).style.display = 'block';
+        
+        // Validate file type
+        const allowedTypes = ['.webm', '.mp3', '.wav', '.ogg', '.m4a'];
+        const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+        if (!allowedTypes.includes(fileExt)) {
+            alert(`Invalid file type. Allowed: ${allowedTypes.join(', ')}`);
+            clearReplyAudio(commentId);
+            return;
+        }
+    } else {
+        clearReplyAudio(commentId);
+    }
+}
+
+// Clear comment audio
+function clearCommentAudio() {
+    const fileInput = document.getElementById('commentAudioFile');
+    const preview = document.getElementById('commentAudioPreview');
+    const audioSection = document.getElementById('commentAudioUploadSection');
+    
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (preview) {
+        preview.style.display = 'none';
+    }
+    // Hide the upload section after clearing
+    if (audioSection) {
+        audioSection.style.display = 'none';
+    }
+}
+
+// Clear reply audio
+function clearReplyAudio(commentId) {
+    const fileInput = document.getElementById(`replyAudioFile-${commentId}`);
+    if (fileInput) {
+        fileInput.value = '';
+        document.getElementById(`replyAudioFileName-${commentId}`).textContent = 'Choose audio file...';
+        document.getElementById(`replyAudioPreview-${commentId}`).style.display = 'none';
+    }
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
 // Add current user to mentions
 addUserToMentions({{ current_user.id }}, '{{ current_user.username }}', '{{ current_user.name }}', '{{ current_user.avatar }}');
 
 // Load comments when page loads
 window.addEventListener('load', function() {
     loadComments();
+    updateCharCount(); // Initialize character count
 });
 
 // Load comments from server
@@ -3371,56 +3806,75 @@ function createCommentHTML(comment) {
     const isAdmin = {{ 'true' if current_user.is_admin else 'false' }};
     const timeAgo = getTimeAgo(comment.created_at);
     const fullDate = getFullDate(comment.created_at);
-    const editedBadge = comment.is_edited ? '<small class="text-muted">(edited)</small>' : '';
+    const editedBadge = comment.is_edited ? '<small class="text-muted ms-1">(edited)</small>' : '';
     const pinnedBadge = comment.is_pinned ? '<span class="badge bg-warning text-dark ms-2"><i class="fas fa-thumbtack me-1"></i>Pinned</span>' : '';
-    const adminBadge = comment.is_admin ? '<span class="badge bg-danger ms-1">Admin</span>' : '';
+    const adminBadge = comment.is_admin ? '<i class="fas fa-check-circle text-primary ms-1" title="Verified"></i>' : '';
     const avatarUrl = getAvatarUrl(comment.user_avatar);
     
+    // Get dislike count (if available in the API response)
+    const dislikesCount = comment.dislikes_count || 0;
+    const userHasDisliked = comment.user_has_disliked || false;
+    
     return `
-        <div class="comment ${comment.is_pinned ? 'border-warning' : ''} mb-3 p-3 rounded bg-light" data-comment-id="${comment.id}" data-username="${escapeHtml(comment.username)}" data-user-name="${escapeHtml(comment.user_name)}">
+        <div class="comment" data-comment-id="${comment.id}" data-username="${escapeHtml(comment.username)}" data-user-name="${escapeHtml(comment.user_name)}">
             <div class="d-flex align-items-start">
                 <div class="comment-avatar">
                     <img src="${avatarUrl}" alt="${escapeHtml(comment.user_name)}" class="avatar-img">
                 </div>
                 <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="comment-header mb-2">
                         <div class="d-flex align-items-center flex-wrap">
-                            <strong class="me-2">${escapeHtml(comment.user_name)}</strong>
-                            <small class="text-muted me-2">@${escapeHtml(comment.username)}</small>
+                            <strong class="comment-user-name">${escapeHtml(comment.user_name)}</strong>
                             ${adminBadge}
+                            <small class="text-muted ms-2">${timeAgo}</small>
+                            ${editedBadge}
                             ${pinnedBadge}
                         </div>
-                        ${isOwn || isAdmin ? `
-                            <div class="btn-group btn-group-sm flex-shrink-0">
-                                ${isOwn ? `
-                                    <button class="btn btn-outline-secondary btn-sm" onclick="editComment(${comment.id})" title="Edit comment">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                ` : ''}
-                                <button class="btn btn-outline-danger btn-sm" onclick="deleteComment(${comment.id})" title="Delete comment">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                ${isAdmin && !comment.parent_id ? `
-                                    <button class="btn ${comment.is_pinned ? 'btn-warning' : 'btn-outline-warning'} btn-sm" onclick="togglePin(${comment.id})" title="${comment.is_pinned ? 'Unpin comment' : 'Pin comment'}">
-                                        <i class="fas fa-thumbtack"></i>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        ` : ''}
                     </div>
                     <div class="comment-content mb-2" id="content-${comment.id}">
                         ${parseMentions(escapeHtml(comment.content))}
+                        ${comment.audio_url ? `
+                            <div class="mt-2">
+                                <div class="audio-player-wrapper">
+                                    <audio controls class="comment-audio-player">
+                                        <source src="/${comment.audio_url}" type="audio/webm">
+                                        <source src="/${comment.audio_url}" type="audio/mpeg">
+                                        <source src="/${comment.audio_url}" type="audio/wav">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                     <div class="d-flex align-items-center gap-3 comment-actions">
                         <button class="btn btn-link btn-sm text-decoration-none p-0 ${comment.user_has_liked ? 'text-primary' : 'text-muted'}" onclick="toggleLike(${comment.id})" id="likeBtn-${comment.id}" title="Like this comment">
                             <i class="fas fa-thumbs-up me-1"></i>
-                            <span id="likeCount-${comment.id}">${comment.likes_count > 0 ? comment.likes_count : 'Like'}</span>
+                            <span id="likeCount-${comment.id}">${comment.likes_count > 0 ? comment.likes_count : ''}</span>
+                        </button>
+                        <button class="btn btn-link btn-sm text-decoration-none p-0 ${userHasDisliked ? 'text-danger' : 'text-muted'}" onclick="toggleDislike(${comment.id})" id="dislikeBtn-${comment.id}" title="Dislike this comment">
+                            <i class="fas fa-thumbs-down me-1"></i>
+                            <span id="dislikeCount-${comment.id}">${dislikesCount > 0 ? dislikesCount : ''}</span>
                         </button>
                         <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted" onclick="showReplyForm(${comment.id}, '${escapeHtml(comment.username)}')">
-                            <i class="fas fa-reply me-1"></i>Reply${comment.replies_count > 0 ? ` (${comment.replies_count})` : ''}
+                            <i class="fas fa-comment me-1"></i>Reply
                         </button>
-                        <small class="text-muted ms-auto" title="${fullDate}">${timeAgo}</small>
-                        ${editedBadge}
+                        <div class="dropdown ms-auto">
+                            <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted" type="button" id="commentMenu${comment.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="commentMenu${comment.id}">
+                                ${isOwn ? `
+                                    <li><a class="dropdown-item" href="#" onclick="editComment(${comment.id}); return false;"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                ` : ''}
+                                ${isOwn || isAdmin ? `
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteComment(${comment.id}); return false;"><i class="fas fa-trash me-2"></i>Delete</a></li>
+                                ` : ''}
+                                ${isAdmin && !comment.parent_id ? `
+                                    <li><a class="dropdown-item" href="#" onclick="togglePin(${comment.id}); return false;"><i class="fas fa-thumbtack me-2"></i>${comment.is_pinned ? 'Unpin' : 'Pin'}</a></li>
+                                ` : ''}
+                                <li><a class="dropdown-item" href="#" onclick="copyCommentLink(${comment.id}); return false;"><i class="fas fa-link me-2"></i>Copy link</a></li>
+                            </ul>
+                        </div>
                     </div>
                     
                     <!-- Show Replies Button (hidden if no replies) -->
@@ -3442,6 +3896,27 @@ function createCommentHTML(comment) {
                                   id="replyText-${comment.id}"
                                   oninput="autoResizeTextarea(this)"></textarea>
                         <div id="replyMentionDropdown-${comment.id}" class="mention-dropdown"></div>
+                        <div class="mt-2 audio-upload-container">
+                            <input type="file" class="d-none" id="replyAudioFile-${comment.id}" accept="audio/*" onchange="handleReplyAudioChange(${comment.id}, this)" />
+                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 audio-upload-btn" onclick="document.getElementById('replyAudioFile-${comment.id}').click()">
+                                <i class="fas fa-upload me-2"></i>
+                                <span id="replyAudioFileName-${comment.id}">Choose audio file...</span>
+                            </button>
+                            <div id="replyAudioPreview-${comment.id}" class="mt-2 audio-preview" style="display: none;">
+                                <div class="d-flex align-items-center justify-content-between bg-light rounded p-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-audio text-primary me-2"></i>
+                                        <div>
+                                            <small class="d-block fw-bold" id="replyAudioPreviewName-${comment.id}"></small>
+                                            <small class="text-muted" id="replyAudioPreviewSize-${comment.id}"></small>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearReplyAudio(${comment.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mt-1">
                             <button class="btn btn-primary btn-sm" onclick="postReply(${comment.id})">
                                 <i class="fas fa-paper-plane me-1"></i>Reply
@@ -3453,7 +3928,7 @@ function createCommentHTML(comment) {
                     </div>
                     
                     <!-- Replies Container (hidden by default) -->
-                    <div id="replies-${comment.id}" class="ms-4 mt-3" style="display: none;">
+                    <div id="replies-${comment.id}" class="replies-container" style="display: none;">
                         ${comment.replies ? comment.replies.map(reply => createReplyHTML(reply)).join('') : ''}
                     </div>
                 </div>
@@ -3467,46 +3942,67 @@ function createReplyHTML(reply) {
     const isAdmin = {{ 'true' if current_user.is_admin else 'false' }};
     const timeAgo = getTimeAgo(reply.created_at);
     const fullDate = getFullDate(reply.created_at);
-    const editedBadge = reply.is_edited ? '<small class="text-muted">(edited)</small>' : '';
-    const adminBadge = reply.is_admin ? '<span class="badge bg-danger ms-1">Admin</span>' : '';
+    const editedBadge = reply.is_edited ? '<small class="text-muted ms-1">(edited)</small>' : '';
+    const adminBadge = reply.is_admin ? '<i class="fas fa-check-circle text-primary ms-1" title="Verified"></i>' : '';
     const avatarUrl = getAvatarUrl(reply.user_avatar);
     
+    const dislikesCount = reply.dislikes_count || 0;
+    const userHasDisliked = reply.user_has_disliked || false;
+    
     return `
-        <div class="reply border-start border-primary border-3 ps-3 mb-2" data-comment-id="${reply.id}">
+        <div class="reply" data-comment-id="${reply.id}">
+            <div class="reply-connector"></div>
             <div class="d-flex align-items-start">
                 <div class="comment-avatar">
                     <img src="${avatarUrl}" alt="${escapeHtml(reply.user_name)}" class="avatar-img avatar-img-small">
                 </div>
                 <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="comment-header mb-2">
                         <div class="d-flex align-items-center flex-wrap">
-                            <strong class="me-2">${escapeHtml(reply.user_name)}</strong>
-                            <small class="text-muted me-2">@${escapeHtml(reply.username)}</small>
+                            <strong class="comment-user-name">${escapeHtml(reply.user_name)}</strong>
                             ${adminBadge}
+                            <small class="text-muted ms-2">${timeAgo}</small>
+                            ${editedBadge}
                         </div>
-                        ${isOwn || isAdmin ? `
-                            <div class="btn-group btn-group-sm flex-shrink-0">
-                                ${isOwn ? `
-                                    <button class="btn btn-outline-secondary btn-sm" onclick="editComment(${reply.id})" title="Edit reply">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                ` : ''}
-                                <button class="btn btn-outline-danger btn-sm" onclick="deleteComment(${reply.id})" title="Delete reply">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        ` : ''}
                     </div>
                     <div class="comment-content mb-2" id="content-${reply.id}">
                         ${parseMentions(escapeHtml(reply.content))}
+                        ${reply.audio_url ? `
+                            <div class="mt-2">
+                                <div class="audio-player-wrapper">
+                                    <audio controls class="comment-audio-player">
+                                        <source src="/${reply.audio_url}" type="audio/webm">
+                                        <source src="/${reply.audio_url}" type="audio/mpeg">
+                                        <source src="/${reply.audio_url}" type="audio/wav">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                     <div class="d-flex align-items-center gap-3 comment-actions">
                         <button class="btn btn-link btn-sm text-decoration-none p-0 ${reply.user_has_liked ? 'text-primary' : 'text-muted'}" onclick="toggleLike(${reply.id})" id="likeBtn-${reply.id}" title="Like this reply">
                             <i class="fas fa-thumbs-up me-1"></i>
-                            <span id="likeCount-${reply.id}">${reply.likes_count > 0 ? reply.likes_count : 'Like'}</span>
+                            <span id="likeCount-${reply.id}">${reply.likes_count > 0 ? reply.likes_count : ''}</span>
                         </button>
-                        <small class="text-muted ms-auto" title="${fullDate}">${timeAgo}</small>
-                        ${editedBadge}
+                        <button class="btn btn-link btn-sm text-decoration-none p-0 ${userHasDisliked ? 'text-danger' : 'text-muted'}" onclick="toggleDislike(${reply.id})" id="dislikeBtn-${reply.id}" title="Dislike this reply">
+                            <i class="fas fa-thumbs-down me-1"></i>
+                            <span id="dislikeCount-${reply.id}">${dislikesCount > 0 ? dislikesCount : ''}</span>
+                        </button>
+                        <div class="dropdown ms-auto">
+                            <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted" type="button" id="replyMenu${reply.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="replyMenu${reply.id}">
+                                ${isOwn ? `
+                                    <li><a class="dropdown-item" href="#" onclick="editComment(${reply.id}); return false;"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                ` : ''}
+                                ${isOwn || isAdmin ? `
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteComment(${reply.id}); return false;"><i class="fas fa-trash me-2"></i>Delete</a></li>
+                                ` : ''}
+                                <li><a class="dropdown-item" href="#" onclick="copyCommentLink(${reply.id}); return false;"><i class="fas fa-link me-2"></i>Copy link</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3517,9 +4013,10 @@ function createReplyHTML(reply) {
 async function postComment() {
     const textarea = document.getElementById('newCommentText');
     const content = textarea.value.trim();
+    const audioFile = document.getElementById('commentAudioFile').files[0];
     
-    if (!content) {
-        alert('Please write something before posting.');
+    if (!content && !audioFile) {
+        alert('Please write something or upload an audio file before posting.');
         return;
     }
     
@@ -3528,12 +4025,15 @@ async function postComment() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Posting...';
     
     try {
+        const formData = new FormData();
+        formData.append('content', content);
+        if (audioFile) {
+            formData.append('audio', audioFile);
+        }
+        
         const response = await fetch(`/api/comments/question/${questionId}`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                content: content
-            })
+            body: formData
         });
         
         const data = await response.json();
@@ -3541,10 +4041,11 @@ async function postComment() {
         if (data.success) {
             textarea.value = '';
             document.getElementById('charCount').textContent = '0';
+            clearCommentAudio(); // Clear file input and preview
             loadComments(1); // Reload comments
             showToast('Comment posted successfully!', 'success');
         } else {
-            alert(data.message || 'Failed to post comment');
+            alert(data.error || data.message || 'Failed to post comment');
         }
     } catch (error) {
         console.error('Error:', error);
@@ -3626,6 +4127,7 @@ function hideReplyForm(commentId) {
     const replyTextarea = document.getElementById(`replyText-${commentId}`);
     replyTextarea.value = '';
     replyTextarea.style.height = 'auto'; // Reset height
+    clearReplyAudio(commentId); // Clear file input and preview
     document.getElementById(`replyForm-${commentId}`).style.display = 'none';
 }
 
@@ -3633,19 +4135,23 @@ function hideReplyForm(commentId) {
 async function postReply(parentId) {
     const textarea = document.getElementById(`replyText-${parentId}`);
     const content = textarea.value.trim();
+    const audioFile = document.getElementById(`replyAudioFile-${parentId}`).files[0];
     
-    if (!content) {
-        alert('Please write something before posting.');
+    if (!content && !audioFile) {
+        alert('Please write something or upload an audio file before posting.');
         return;
     }
     
     try {
+        const formData = new FormData();
+        formData.append('content', content);
+        if (audioFile) {
+            formData.append('audio', audioFile);
+        }
+        
         const response = await fetch(`/api/comments/${parentId}/reply`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                content: content
-            })
+            body: formData
         });
         
         const data = await response.json();
@@ -3657,7 +4163,7 @@ async function postReply(parentId) {
             loadComments(1); // Reload to show new reply
             showToast('Reply posted successfully!', 'success');
         } else {
-            alert(data.message || 'Failed to post reply');
+            alert(data.error || data.message || 'Failed to post reply');
         }
     } catch (error) {
         console.error('Error:', error);
@@ -3679,8 +4185,8 @@ async function toggleLike(commentId) {
             const count = document.getElementById(`likeCount-${commentId}`);
             const icon = btn.querySelector('i');
             
-            // Update count text - show "Like" if 0, otherwise show number
-            count.textContent = data.likes_count > 0 ? data.likes_count : 'Like';
+            // Update count text - show number only if > 0
+            count.textContent = data.likes_count > 0 ? data.likes_count : '';
             
             // Update icon and button styling
             if (data.user_has_liked) {
@@ -3775,15 +4281,133 @@ async function togglePin(commentId) {
     }
 }
 
+// Update character count
+function updateCharCount() {
+    const textarea = document.getElementById('newCommentText');
+    const charCount = document.getElementById('charCount');
+    if (textarea && charCount) {
+        charCount.textContent = textarea.value.length;
+    }
+}
+
+// Format text functions (placeholder - can be enhanced)
+function formatText(type) {
+    const textarea = document.getElementById('newCommentText');
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    
+    let formatted = '';
+    switch(type) {
+        case 'bold':
+            formatted = selectedText ? `**${selectedText}**` : '****';
+            break;
+        case 'italic':
+            formatted = selectedText ? `*${selectedText}*` : '**';
+            break;
+        case 'underline':
+            formatted = selectedText ? `__${selectedText}__` : '____';
+            break;
+    }
+    
+    textarea.value = before + formatted + after;
+    textarea.focus();
+    textarea.setSelectionRange(start, start + formatted.length);
+    updateCharCount();
+}
+
+function insertLink() {
+    const textarea = document.getElementById('newCommentText');
+    if (!textarea) return;
+    
+    const url = prompt('Enter URL:');
+    if (url) {
+        const start = textarea.selectionStart;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + `[Link](${url})` + after;
+        updateCharCount();
+    }
+}
+
+function insertEmoji() {
+    // Placeholder - can be enhanced with emoji picker
+    const textarea = document.getElementById('newCommentText');
+    if (!textarea) return;
+    
+    const emoji = prompt('Enter emoji (e.g., 😀):');
+    if (emoji) {
+        const start = textarea.selectionStart;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + emoji + after;
+        textarea.focus();
+        textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+        updateCharCount();
+    }
+}
+
+function triggerMention() {
+    const textarea = document.getElementById('newCommentText');
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(textarea.selectionEnd);
+    textarea.value = before + '@' + after;
+    textarea.focus();
+    textarea.setSelectionRange(start + 1, start + 1);
+    
+    // Trigger mention autocomplete
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    updateCharCount();
+}
+
+function toggleAudioUpload() {
+    const audioSection = document.getElementById('commentAudioUploadSection');
+    const fileInput = document.getElementById('commentAudioFile');
+    
+    if (audioSection && fileInput) {
+        // Show the section first
+        audioSection.style.display = 'block';
+        // Then trigger file picker
+        setTimeout(() => {
+            fileInput.click();
+        }, 100);
+    }
+}
+
+// Toggle dislike (placeholder - implement if backend supports it)
+async function toggleDislike(commentId) {
+    // Placeholder function - implement if backend supports dislikes
+    console.log('Dislike toggle not implemented yet');
+    // Similar to toggleLike but for dislikes
+}
+
+// Copy comment link
+function copyCommentLink(commentId) {
+    const url = `${window.location.origin}${window.location.pathname}#comment-${commentId}`;
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('Comment link copied to clipboard!', 'success');
+    }).catch(() => {
+        alert('Failed to copy link');
+    });
+}
+
 // Sort comments
 function sortComments(sort) {
     currentSort = sort;
     
-    // Update button states
-    document.querySelectorAll('[data-sort]').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-sort="${sort}"]`).classList.add('active');
+    // Update dropdown if it exists
+    const select = document.getElementById('commentsSortSelect');
+    if (select) {
+        select.value = sort;
+    }
     
     loadComments(1);
 }

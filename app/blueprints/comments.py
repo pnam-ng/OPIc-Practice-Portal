@@ -1,8 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required, current_user
 from app import db
 from app.models import Comment, CommentLike, Question, User
 from datetime import datetime
+import os
+import time
+from werkzeug.utils import secure_filename
 
 comments_bp = Blueprint('comments', __name__, url_prefix='/api/comments')
 
@@ -35,11 +38,11 @@ def get_comments(question_id):
         # Convert to dict and include replies
         comments_data = []
         for comment in comments:
-            comment_dict = comment.to_dict()
+            comment_dict = comment.to_dict(current_user_id=current_user.id)
             
             # Get replies for this comment
             replies = Comment.query.filter_by(parent_id=comment.id).order_by(Comment.created_at.asc()).all()
-            comment_dict['replies'] = [reply.to_dict() for reply in replies]
+            comment_dict['replies'] = [reply.to_dict(current_user_id=current_user.id) for reply in replies]
             
             comments_data.append(comment_dict)
         
@@ -57,10 +60,17 @@ def get_comments(question_id):
 @comments_bp.route('/question/<int:question_id>', methods=['POST'])
 @login_required
 def post_comment(question_id):
-    """Post a new comment"""
+    """Post a new comment with optional audio file"""
     try:
-        data = request.get_json()
-        content = data.get('content', '').strip()
+        # Support both JSON (old) and form-data (new with file upload)
+        if request.is_json:
+            data = request.get_json()
+            content = data.get('content', '').strip()
+            audio_file = None
+        else:
+            # Form data with file upload
+            content = request.form.get('content', '').strip()
+            audio_file = request.files.get('audio')
         
         if not content:
             return jsonify({'success': False, 'error': 'Content is required'}), 400
@@ -74,11 +84,28 @@ def post_comment(question_id):
         if not question:
             return jsonify({'success': False, 'error': 'Question not found'}), 404
         
+        # Handle audio file upload
+        audio_url = None
+        if audio_file and audio_file.filename:
+            # Validate file type
+            allowed_extensions = {'.webm', '.mp3', '.wav', '.ogg', '.m4a'}
+            file_ext = os.path.splitext(audio_file.filename)[1].lower()
+            if file_ext not in allowed_extensions:
+                return jsonify({'success': False, 'error': f'Invalid file type. Allowed: {", ".join(allowed_extensions)}'}), 400
+            
+            # Save audio file
+            filename = secure_filename(f"comment_{current_user.id}_{question_id}_{int(time.time())}{file_ext}")
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comments', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+            audio_file.save(upload_path)
+            audio_url = f"uploads/comments/{filename}"
+        
         # Create comment (supports UTF-8, emojis, special characters)
         comment = Comment(
             question_id=question_id,
             user_id=current_user.id,
-            content=content
+            content=content,
+            audio_url=audio_url
         )
         
         db.session.add(comment)
@@ -94,16 +121,24 @@ def post_comment(question_id):
         
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Error posting comment: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @comments_bp.route('/<int:comment_id>/reply', methods=['POST'])
 @login_required
 def post_reply(comment_id):
-    """Post a reply to a comment"""
+    """Post a reply to a comment with optional audio file"""
     try:
-        data = request.get_json()
-        content = data.get('content', '').strip()
+        # Support both JSON (old) and form-data (new with file upload)
+        if request.is_json:
+            data = request.get_json()
+            content = data.get('content', '').strip()
+            audio_file = None
+        else:
+            # Form data with file upload
+            content = request.form.get('content', '').strip()
+            audio_file = request.files.get('audio')
         
         if not content:
             return jsonify({'success': False, 'error': 'Content is required'}), 400
@@ -117,12 +152,29 @@ def post_reply(comment_id):
         if not parent_comment:
             return jsonify({'success': False, 'error': 'Parent comment not found'}), 404
         
+        # Handle audio file upload
+        audio_url = None
+        if audio_file and audio_file.filename:
+            # Validate file type
+            allowed_extensions = {'.webm', '.mp3', '.wav', '.ogg', '.m4a'}
+            file_ext = os.path.splitext(audio_file.filename)[1].lower()
+            if file_ext not in allowed_extensions:
+                return jsonify({'success': False, 'error': f'Invalid file type. Allowed: {", ".join(allowed_extensions)}'}), 400
+            
+            # Save audio file
+            filename = secure_filename(f"reply_{current_user.id}_{comment_id}_{int(time.time())}{file_ext}")
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comments', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+            audio_file.save(upload_path)
+            audio_url = f"uploads/comments/{filename}"
+        
         # Create reply (supports UTF-8, emojis, special characters)
         reply = Comment(
             question_id=parent_comment.question_id,
             user_id=current_user.id,
             parent_id=comment_id,
-            content=content
+            content=content,
+            audio_url=audio_url
         )
         
         db.session.add(reply)
@@ -155,6 +207,7 @@ def post_reply(comment_id):
         
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Error posting reply: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 

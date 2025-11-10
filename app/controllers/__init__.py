@@ -139,9 +139,15 @@ class MainController(BaseController):
             self.user_service.update_user_streak(current_user)
             user_stats = self.user_service.get_user_statistics(current_user.id)
         
+        # Get streak status and active status
+        streak_status = current_user.check_streak_status()
+        is_active_today = current_user.is_active_today()
+        
         return render_template('main/dashboard.html',
                              user_stats=user_stats,
-                             total_questions=total_questions)
+                             total_questions=total_questions,
+                             streak_status=streak_status,
+                             is_active_today=is_active_today)
     
     @login_required
     def test_mode(self):

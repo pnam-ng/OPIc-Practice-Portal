@@ -10,9 +10,24 @@ from celery import Celery
 from dotenv import load_dotenv
 
 # Load environment variables (optional)
+# Try to load environment file in order of preference
 try:
-    load_dotenv()
-except:
+    import os
+    # Try multiple common environment file names
+    env_files = ['config.env', '.env', 'env']
+    loaded = False
+    for env_file in env_files:
+        if os.path.exists(env_file):
+            load_dotenv(env_file)
+            loaded = True
+            break
+    
+    # If no file found, try default load_dotenv() behavior
+    if not loaded:
+        load_dotenv()
+except Exception as e:
+    # If dotenv is not available or fails, continue without it
+    # Environment variables can still be set via system environment
     pass
 
 # Initialize extensions

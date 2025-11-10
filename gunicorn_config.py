@@ -18,9 +18,38 @@ max_requests_jitter = 50
 timeout = 120  # Timeout for workers (2 minutes)
 keepalive = 5
 
-# Logging
-accesslog = 'logs/access.log'
-errorlog = 'logs/error.log'
+# Logging - create logs directory if it doesn't exist with proper permissions
+logs_dir = 'logs'
+logs_writable = False
+
+try:
+    os.makedirs(logs_dir, exist_ok=True)
+    # Check if the directory is writable
+    logs_writable = os.access(logs_dir, os.W_OK)
+    
+    if not logs_writable:
+        # Try to fix permissions (only if we can)
+        try:
+            import stat
+            os.chmod(logs_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+            logs_writable = os.access(logs_dir, os.W_OK)
+        except:
+            pass
+except (OSError, PermissionError) as e:
+    # If we can't create or write to logs directory, use stdout/stderr instead
+    logs_writable = False
+
+# Set log files based on whether logs directory is writable
+if logs_writable:
+    accesslog = os.path.join(logs_dir, 'access.log')
+    errorlog = os.path.join(logs_dir, 'error.log')
+else:
+    # Fall back to stdout/stderr for logging
+    accesslog = '-'  # stdout
+    errorlog = '-'   # stderr
+    print("Warning: Logs directory is not writable. Using stdout/stderr for logging.")
+    print("To fix: mkdir -p logs && chmod 755 logs")
+
 loglevel = 'info'
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
 
@@ -29,7 +58,11 @@ proc_name = 'opic_portal'
 
 # Server mechanics
 daemon = False
-pidfile = 'logs/gunicorn.pid'
+# Only set pidfile if logs directory is writable
+if logs_writable:
+    pidfile = os.path.join(logs_dir, 'gunicorn.pid')
+else:
+    pidfile = None  # Don't create pidfile if logs directory is not writable
 user = None
 group = None
 tmp_upload_dir = None
@@ -43,6 +76,10 @@ preload_app = True
 
 # Worker restart
 graceful_timeout = 30
+
+# WSGI application (use wsgi.py instead of app:app)
+# This avoids conflicts between app.py and app/ package
+wsgi_app = 'wsgi:application'
 
 def on_starting(server):
     """Called just before the master process is initialized"""
@@ -66,6 +103,11 @@ def worker_int(worker):
 def post_fork(server, worker):
     """Called just after a worker has been forked"""
     print(f"✅ Worker spawned (pid: {worker.pid})")
+
+
+
+
+
 
 
 
