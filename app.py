@@ -52,6 +52,10 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = int(os.environ.get('MAX_CONTENT_LENGTH', 16777216))
     app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
     
+    # AI Configuration - Also store in Flask config for services to access
+    app.config['GOOGLE_AI_API_KEY'] = os.environ.get('GOOGLE_AI_API_KEY') or os.environ.get('GEMINI_API_KEY')
+    app.config['GEMINI_API_KEY'] = os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_AI_API_KEY')
+    
     # Database Connection Pooling (for production scalability)
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_size': 20,  # Number of connections to keep open

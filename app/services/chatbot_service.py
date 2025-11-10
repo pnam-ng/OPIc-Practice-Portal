@@ -38,21 +38,47 @@ class ChatbotService:
         
         self._update_api_url()
         
-        self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
-        
-        if not self.api_token:
-            try:
-                from flask import has_app_context
-                if has_app_context():
-                    self.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
-            except:
-                pass
+        # Don't set api_token in __init__ - get it dynamically
+        self._api_token_cache = None
         
         self.max_retries = 3
         self.timeout = 90
         
         # System prompt for OPIc chatbot
         self._system_prompt = self._build_system_prompt()
+    
+    def _get_api_token(self):
+        """Get API token, checking environment and Flask config dynamically"""
+        # Always check environment first (most up-to-date)
+        token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
+        
+        if token:
+            self._api_token_cache = token
+            return token
+        
+        # Try Flask config if in app context
+        try:
+            from flask import has_app_context, current_app
+            if has_app_context():
+                token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
+                if token:
+                    self._api_token_cache = token
+                    return token
+        except:
+            pass
+        
+        # Return cached token if available (fallback)
+        return self._api_token_cache
+    
+    @property
+    def api_token(self):
+        """Property to get API token dynamically"""
+        return self._get_api_token()
+    
+    @api_token.setter
+    def api_token(self, value):
+        """Setter for API token (for backward compatibility)"""
+        self._api_token_cache = value
     
     def _update_api_url(self):
         """Update API URL based on current model"""
@@ -216,27 +242,27 @@ Now, answer the user's question about OPIc test or this practice portal:"""
     
     def _call_gemini_api(self, prompt: str) -> Optional[str]:
         """Call Google Gemini API"""
-        # Refresh API token from config if not set
-        if not self.api_token:
-            self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
-            if not self.api_token:
-                try:
-                    from flask import has_app_context
-                    if has_app_context():
-                        self.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
-                except:
-                    pass
+        # Get API token dynamically (always fresh from environment)
+        api_token = self._get_api_token()
         
-        if not self.api_token:
+        if not api_token:
             try:
-                from flask import has_app_context
+                from flask import has_app_context, current_app
                 if has_app_context():
                     current_app.logger.error("GOOGLE_AI_API_KEY not set. Chatbot requires API key.")
-            except:
-                pass
+                    # Log what we checked
+                    env_key = os.getenv("GOOGLE_AI_API_KEY")
+                    env_gemini = os.getenv("GEMINI_API_KEY")
+                    config_key = current_app.config.get("GOOGLE_AI_API_KEY")
+                    config_gemini = current_app.config.get("GEMINI_API_KEY")
+                    current_app.logger.error(f"API Key check: env GOOGLE_AI_API_KEY={bool(env_key)}, env GEMINI_API_KEY={bool(env_gemini)}, config GOOGLE_AI_API_KEY={bool(config_key)}, config GEMINI_API_KEY={bool(config_gemini)}")
+            except Exception as e:
+                import traceback
+                print(f"Error checking API token: {e}")
+                traceback.print_exc()
             return None
         
-        api_url = f"{self.api_url}?key={self.api_token}"
+        api_url = f"{self.api_url}?key={api_token}"
         
         headers = {
             "Content-Type": "application/json"
@@ -307,7 +333,8 @@ Now, answer the user's question about OPIc test or this practice portal:"""
                     if self.current_model_index == 0:  # Currently using default model
                         if self._switch_to_fallback_model():
                             # Retry with fallback model
-                            api_url = f"{self.api_url}?key={self.api_token}"
+                            api_token = self._get_api_token()
+                            api_url = f"{self.api_url}?key={api_token}"
                             current_app.logger.info(f"Rate limited on {self.default_model}, switching to {self.model}")
                             continue
                     
@@ -330,7 +357,8 @@ Now, answer the user's question about OPIc test or this practice portal:"""
                         if self.current_model_index == 0:  # Currently using default model
                             if self._switch_to_fallback_model():
                                 # Retry with fallback model
-                                api_url = f"{self.api_url}?key={self.api_token}"
+                                api_token = self._get_api_token()
+                                api_url = f"{self.api_url}?key={api_token}"
                                 current_app.logger.warning(f"Quota exceeded on {self.default_model}, switching to {self.model}")
                                 continue
                         else:
@@ -371,7 +399,8 @@ Now, answer the user's question about OPIc test or this practice portal:"""
     
     def health_check(self) -> bool:
         """Check if chatbot service is available"""
-        if not self.api_token:
+        api_token = self._get_api_token()
+        if not api_token:
             return False
         # Simple test message
         test_response = self.chat("Hello")

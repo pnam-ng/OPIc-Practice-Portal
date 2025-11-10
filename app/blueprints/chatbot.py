@@ -39,20 +39,20 @@ def chat():
                 'error': 'Message is required'
             }), 400
         
-        # Check if chatbot service has API token
-        # Refresh API token from environment in case it wasn't loaded at startup
-        if not chatbot_service.api_token:
-            import os
-            chatbot_service.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
-            
-            # Also try to get from Flask config
-            if not chatbot_service.api_token:
-                try:
-                    chatbot_service.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
-                except:
-                    pass
+        # Check if chatbot service has API token (now dynamically fetched)
+        api_token = chatbot_service.api_token
         
-        if not chatbot_service.api_token:
+        # Log token status for debugging
+        from flask import current_app
+        if not api_token:
+            current_app.logger.error("Chatbot API key not found")
+            # Try to diagnose the issue
+            import os
+            env_key = os.getenv("GOOGLE_AI_API_KEY")
+            env_gemini = os.getenv("GEMINI_API_KEY")
+            config_key = current_app.config.get("GOOGLE_AI_API_KEY", None)
+            config_gemini = current_app.config.get("GEMINI_API_KEY", None)
+            current_app.logger.error(f"API Key diagnostics: env GOOGLE_AI_API_KEY={bool(env_key)}, env GEMINI_API_KEY={bool(env_gemini)}, config GOOGLE_AI_API_KEY={bool(config_key)}, config GEMINI_API_KEY={bool(config_gemini)}")
             return jsonify({
                 'success': False,
                 'error': 'Chatbot API key not configured. Please contact administrator.'
