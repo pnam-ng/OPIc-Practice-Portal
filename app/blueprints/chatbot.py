@@ -61,8 +61,18 @@ def chat():
         # Get chatbot response with timeout protection
         from flask import current_app
         current_app.logger.info(f"Chatbot request received: {message[:50]}...")
+        current_app.logger.info(f"API Token available: {bool(chatbot_service.api_token)}")
         
-        response = chatbot_service.chat(message, conversation_history)
+        try:
+            response = chatbot_service.chat(message, conversation_history)
+        except Exception as e:
+            current_app.logger.error(f"Exception in chatbot_service.chat: {e}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({
+                'success': False,
+                'error': f'Chatbot error: {str(e)}'
+            }), 500
         
         if response:
             current_app.logger.info(f"Chatbot response generated successfully: {len(response)} chars")
@@ -71,11 +81,20 @@ def chat():
                 'response': response
             })
         else:
-            current_app.logger.warning("Chatbot service returned None - API may be rate limited or unavailable")
-            return jsonify({
-                'success': False,
-                'error': 'Failed to get chatbot response. The AI service may be temporarily unavailable. Please try again in a moment.'
-            }), 500
+            # Log more details about why response is None
+            current_app.logger.warning("Chatbot service returned None")
+            current_app.logger.warning(f"API Token available: {bool(chatbot_service.api_token)}")
+            # Check if it's an API key issue
+            if not chatbot_service.api_token:
+                return jsonify({
+                    'success': False,
+                    'error': 'Chatbot API key not configured. Please contact administrator.'
+                }), 500
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': 'Failed to get chatbot response. The AI service may be temporarily unavailable. Please try again in a moment.'
+                }), 500
         
     except TimeoutError as e:
         from flask import current_app

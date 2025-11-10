@@ -226,18 +226,46 @@ Now, answer the user's question about OPIc test or this practice portal:"""
             prompt += f"**User**: {message}\n\n**Assistant**:"
             
             # Call Gemini API
+            try:
+                from flask import has_app_context, current_app
+                if has_app_context():
+                    current_app.logger.info(f"Calling Gemini API with prompt length: {len(prompt)}")
+            except:
+                pass
+            
             response_text = self._call_gemini_api(prompt)
             
             if response_text:
-                current_app.logger.info(f"Chatbot response generated for: {message[:50]}...")
+                try:
+                    from flask import has_app_context, current_app
+                    if has_app_context():
+                        current_app.logger.info(f"Chatbot response generated for: {message[:50]}...")
+                except:
+                    pass
                 return response_text
             else:
+                try:
+                    from flask import has_app_context, current_app
+                    if has_app_context():
+                        current_app.logger.warning(f"Chatbot API returned None for: {message[:50]}...")
+                except:
+                    pass
                 return None
                 
         except Exception as e:
-            current_app.logger.error(f"Error in chatbot: {e}")
-            import traceback
-            current_app.logger.error(traceback.format_exc())
+            try:
+                from flask import has_app_context, current_app
+                if has_app_context():
+                    current_app.logger.error(f"Error in chatbot: {e}")
+                    import traceback
+                    current_app.logger.error(traceback.format_exc())
+                else:
+                    print(f"Error in chatbot: {e}")
+                    import traceback
+                    traceback.print_exc()
+            except:
+                import traceback
+                traceback.print_exc()
             return None
     
     def _call_gemini_api(self, prompt: str) -> Optional[str]:
@@ -284,7 +312,14 @@ Now, answer the user's question about OPIc test or this practice portal:"""
         
         for attempt in range(self.max_retries):
             try:
-                current_app.logger.debug(f"Calling Gemini API for chatbot (attempt {attempt + 1}/{self.max_retries})...")
+                from flask import has_app_context, current_app
+                if has_app_context():
+                    current_app.logger.info(f"Calling Gemini API for chatbot (attempt {attempt + 1}/{self.max_retries})...")
+                    current_app.logger.info(f"API URL: {self.api_url}")
+                    current_app.logger.info(f"API Token present: {bool(api_token)}")
+                    current_app.logger.info(f"Model: {self.model}")
+                else:
+                    print(f"Calling Gemini API for chatbot (attempt {attempt + 1}/{self.max_retries})...")
                 
                 response = requests.post(
                     api_url,
@@ -293,6 +328,16 @@ Now, answer the user's question about OPIc test or this practice portal:"""
                     timeout=self.timeout,
                     stream=False
                 )
+                
+                # Log response status for debugging
+                try:
+                    from flask import has_app_context, current_app
+                    if has_app_context():
+                        current_app.logger.info(f"Gemini API response status: {response.status_code}")
+                    else:
+                        print(f"Gemini API response status: {response.status_code}")
+                except:
+                    pass
                 
                 if response.status_code == 200:
                     result = response.json()
@@ -376,7 +421,25 @@ Now, answer the user's question about OPIc test or this practice portal:"""
                         current_app.logger.error("Invalid or missing API key")
                     return None
                 else:
-                    current_app.logger.error(f"Gemini API error: {response.status_code} - {response.text[:200]}")
+                    # Log detailed error information
+                    error_text = response.text[:500] if response.text else "No error text"
+                    try:
+                        error_json = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
+                        error_detail = json.dumps(error_json, indent=2)[:500] if error_json else error_text
+                    except:
+                        error_detail = error_text
+                    
+                    try:
+                        from flask import has_app_context, current_app
+                        if has_app_context():
+                            current_app.logger.error(f"Gemini API error: {response.status_code}")
+                            current_app.logger.error(f"Error response: {error_detail}")
+                            current_app.logger.error(f"Response headers: {dict(response.headers)}")
+                        else:
+                            print(f"Gemini API error: {response.status_code}")
+                            print(f"Error response: {error_detail}")
+                    except:
+                        print(f"Gemini API error: {response.status_code} - {error_text}")
                     return None
                     
             except requests.exceptions.Timeout:
