@@ -34,7 +34,7 @@
 - Python 3.14 (venv at `D:\OPP\venv`)
 - 8GB RAM system
 - Running on internal network: `https://107.98.150.22:8080/`
-- Public access: `bit.ly/srvopic` (ngrok tunnel)
+- Public access: `opic.duckdns.org` (ngrok tunnel)
 
 ---
 
@@ -558,7 +558,7 @@ python --version  # 3.14.0
 
 - **Local**: https://localhost:8080/
 - **Internal Network**: https://107.98.150.22:8080/
-- **Public**: bit.ly/srvopic
+- **Public**: opic.duckdns.org
 - **PWA Guide**: /pwa-guide
 - **Dashboard**: /dashboard
 - **Test Mode**: /test

@@ -280,7 +280,7 @@ For users within the company network:
 
 ### Public Access (ngrok Tunnel)
 For external users and testing:
-- **Short URL**: `https://bit.ly/srvopic`
+- **Short URL**: `https://opic.duckdns.org`
 - **Full URL**: Via ngrok secure tunnel
 - **Use Case**: Remote access, demos, external testing
 - **Benefits**: 

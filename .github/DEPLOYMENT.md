@@ -14,7 +14,7 @@
              ▼                       ▼
     ┌──────────────────┐    ┌──────────────────┐
     │  Internal Server │    │   ngrok Tunnel   │
-    │  107.98.150.22   │    │  bit.ly/srvopic  │
+    │  107.98.150.22   │    │  opic.duckdns.org  │
     │  Port: 8080      │    │                  │
     │  Protocol: HTTPS │    │  Protocol: HTTPS │
     └────────┬─────────┘    └────────┬─────────┘
@@ -55,7 +55,7 @@
 - Higher security
 
 ### 2. Public Access (ngrok)
-**Short URL**: `https://bit.ly/srvopic`  
+**Short URL**: `https://opic.duckdns.org`  
 **Full URL**: Dynamically assigned by ngrok
 
 **For**: External users, demos, remote testing
@@ -374,7 +374,7 @@ pip install -r requirements.txt --force-reinstall
 | Purpose | URL | Protocol | Access |
 |---------|-----|----------|--------|
 | Internal Users | `https://107.98.150.22:8080/` | HTTPS | Company Network |
-| External Users | `https://bit.ly/srvopic` | HTTPS (ngrok) | Public Internet |
+| External Users | `https://opic.duckdns.org` | HTTPS (ngrok) | Public Internet |
 | Developers | `http://localhost:5000` | HTTP | Localhost Only |
 | ngrok Inspector | `http://localhost:4040` | HTTP | Localhost Only |
 
