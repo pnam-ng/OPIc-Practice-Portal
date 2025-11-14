@@ -72,11 +72,12 @@ def post_comment(question_id):
             content = request.form.get('content', '').strip()
             audio_file = request.files.get('audio')
         
-        if not content:
-            return jsonify({'success': False, 'error': 'Content is required'}), 400
+        # Allow either content or audio file (or both)
+        if not content and not (audio_file and audio_file.filename):
+            return jsonify({'success': False, 'error': 'Content or audio file is required'}), 400
         
-        # Validate content length
-        if len(content) > 2200:
+        # Validate content length (only if content is provided)
+        if content and len(content) > 2200:
             return jsonify({'success': False, 'error': 'Comment is too long (max 2200 characters)'}), 400
         
         # Verify question exists
@@ -140,11 +141,12 @@ def post_reply(comment_id):
             content = request.form.get('content', '').strip()
             audio_file = request.files.get('audio')
         
-        if not content:
-            return jsonify({'success': False, 'error': 'Content is required'}), 400
+        # Allow either content or audio file (or both)
+        if not content and not (audio_file and audio_file.filename):
+            return jsonify({'success': False, 'error': 'Content or audio file is required'}), 400
         
-        # Validate content length
-        if len(content) > 2200:
+        # Validate content length (only if content is provided)
+        if content and len(content) > 2200:
             return jsonify({'success': False, 'error': 'Reply is too long (max 2200 characters)'}), 400
         
         # Verify parent comment exists

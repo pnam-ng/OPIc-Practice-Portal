@@ -4033,8 +4033,34 @@ async function postComment() {
         
         const response = await fetch(`/api/comments/question/${questionId}`, {
             method: 'POST',
+            credentials: 'include', // Include cookies for authentication
             body: formData
         });
+        
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            // Try to parse error message from JSON response
+            let errorMsg = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMsg = errorData.error;
+                }
+            } catch (e) {
+                // If JSON parsing fails, it might be an HTML error page
+                if (response.status === 403) {
+                    errorMsg = 'Access forbidden. Please make sure you are logged in and have permission to post comments.';
+                } else if (response.status === 401) {
+                    errorMsg = 'Please log in to post a comment.';
+                } else if (response.status === 400) {
+                    errorMsg = 'Invalid request. Please check your input.';
+                } else {
+                    errorMsg = `Server returned error ${response.status}. Please try again.`;
+                }
+            }
+            alert(errorMsg);
+            return;
+        }
         
         const data = await response.json();
         
@@ -4151,8 +4177,34 @@ async function postReply(parentId) {
         
         const response = await fetch(`/api/comments/${parentId}/reply`, {
             method: 'POST',
+            credentials: 'include', // Include cookies for authentication
             body: formData
         });
+        
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            // Try to parse error message from JSON response
+            let errorMsg = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMsg = errorData.error;
+                }
+            } catch (e) {
+                // If JSON parsing fails, it might be an HTML error page
+                if (response.status === 403) {
+                    errorMsg = 'Access forbidden. Please make sure you are logged in and have permission to post replies.';
+                } else if (response.status === 401) {
+                    errorMsg = 'Please log in to post a reply.';
+                } else if (response.status === 400) {
+                    errorMsg = 'Invalid request. Please check your input.';
+                } else {
+                    errorMsg = `Server returned error ${response.status}. Please try again.`;
+                }
+            }
+            alert(errorMsg);
+            return;
+        }
         
         const data = await response.json();
         
