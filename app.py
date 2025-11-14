@@ -73,7 +73,17 @@ def create_app():
     # Session configuration - Optimized for concurrent users
     app.config['SESSION_TYPE'] = 'filesystem'  # Use 'redis' in production
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days in seconds
-    app.config['SESSION_COOKIE_SECURE'] = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+    
+    # Auto-detect HTTPS: Check environment variable first, then auto-detect
+    session_cookie_secure_env = os.environ.get('SESSION_COOKIE_SECURE', '').lower()
+    if session_cookie_secure_env in ('true', 'false'):
+        app.config['SESSION_COOKIE_SECURE'] = session_cookie_secure_env == 'true'
+    else:
+        # Auto-detect: Check if SSL certificates exist (indicates HTTPS)
+        ssl_cert = 'ssl/cert.pem'
+        ssl_key = 'ssl/key.pem'
+        app.config['SESSION_COOKIE_SECURE'] = os.path.exists(ssl_cert) and os.path.exists(ssl_key)
+    
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['REMEMBER_COOKIE_DURATION'] = 86400 * 30  # 30 days
@@ -139,6 +149,34 @@ def create_app():
         """Add header to bypass ngrok browser warning on free tier"""
         response.headers['ngrok-skip-browser-warning'] = 'true'
         return response
+    
+    # Middleware to handle HTTPS detection and session cookies
+    @app.before_request
+    def detect_https():
+        """Detect HTTPS from request and ensure secure cookies are enabled"""
+        from flask import request
+        # Check if request is secure (HTTPS) - ProxyFix middleware makes request.is_secure work
+        is_secure = request.is_secure
+        
+        # If we detect HTTPS, ensure secure cookies are enabled
+        # Note: This needs to be set before session cookies are created
+        if is_secure:
+            app.config['SESSION_COOKIE_SECURE'] = True
+            # For self-signed certs, we might need SameSite=None, but let's try Lax first
+            # If issues persist, can change to: app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    
+    # Trust proxy headers (for reverse proxies like nginx, load balancers)
+    # This must be applied AFTER all app setup but BEFORE returning
+    # This allows request.is_secure to work correctly behind proxies
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app,
+        x_for=1,
+        x_proto=1,
+        x_host=1,
+        x_port=1,
+        x_prefix=1
+    )
     
     return app
 
