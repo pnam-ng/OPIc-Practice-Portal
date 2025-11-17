@@ -3272,8 +3272,33 @@ async function submitResponse() {
         
         const response = await fetch('{{ url_for("practice_mode.record_practice_response", question_id=question.id) }}', {
             method: 'POST',
+            credentials: 'include', // Include cookies for authentication
             body: formData
         });
+        
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            // Try to parse error message from JSON response
+            let errorMsg = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMsg = errorData.error;
+                }
+            } catch (e) {
+                // If JSON parsing fails, it might be an HTML error page
+                if (response.status === 403) {
+                    errorMsg = 'Access forbidden. Please make sure you are logged in and have permission to submit responses.';
+                } else if (response.status === 401) {
+                    errorMsg = 'Please log in to submit your response.';
+                } else if (response.status === 400) {
+                    errorMsg = 'Invalid request. Please check your input.';
+                } else {
+                    errorMsg = `Server returned error ${response.status}. Please try again.`;
+                }
+            }
+            throw new Error(errorMsg);
+        }
         
         const data = await response.json();
         
@@ -3718,7 +3743,9 @@ window.addEventListener('load', function() {
 async function loadComments(page = 1) {
     try {
         const offset = (page - 1) * 10;
-        const response = await fetch(`/api/comments/question/${questionId}?offset=${offset}&limit=10&sort=${currentSort}`);
+        const response = await fetch(`/api/comments/question/${questionId}?offset=${offset}&limit=10&sort=${currentSort}`, {
+            credentials: 'include' // Include cookies for authentication
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -4227,7 +4254,8 @@ async function postReply(parentId) {
 async function toggleLike(commentId) {
     try {
         const response = await fetch(`/api/comments/${commentId}/like`, {
-            method: 'POST'
+            method: 'POST',
+            credentials: 'include' // Include cookies for authentication
         });
         
         const data = await response.json();
@@ -4270,6 +4298,7 @@ async function editComment(commentId) {
     try {
         const response = await fetch(`/api/comments/${commentId}`, {
             method: 'PUT',
+            credentials: 'include', // Include cookies for authentication
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({content: newContent})
         });
@@ -4296,7 +4325,8 @@ async function deleteComment(commentId) {
     
     try {
         const response = await fetch(`/api/comments/${commentId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include' // Include cookies for authentication
         });
         
         const data = await response.json();
@@ -4317,7 +4347,8 @@ async function deleteComment(commentId) {
 async function togglePin(commentId) {
     try {
         const response = await fetch(`/api/comments/${commentId}/pin`, {
-            method: 'POST'
+            method: 'POST',
+            credentials: 'include' // Include cookies for authentication
         });
         
         const data = await response.json();

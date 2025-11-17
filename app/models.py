@@ -77,10 +77,8 @@ class Question(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(100), nullable=False)
-    category = db.Column(db.String(100))  # New field for organized topics
     language = db.Column(db.String(20), default='english')
     text = db.Column(db.Text, nullable=True)  # Changed to nullable for transcription
-    difficulty = db.Column(db.Enum('beginner', 'intermediate', 'advanced', name='difficulty'), nullable=True)
     difficulty_level = db.Column(db.String(10))  # New field: IM, IH, AL
     question_type = db.Column(db.String(20), default='question')  # New field: question or answer
     audio_url = db.Column(db.String(200))
@@ -96,6 +94,22 @@ class Question(db.Model):
     def __repr__(self):
         text_preview = self.text[:50] if self.text else 'No text'
         return f'<Question {self.id}: {text_preview}...>'
+
+    def to_dict(self):
+        """Serialize question for JSON responses"""
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'language': self.language,
+            'text': self.text,
+            'difficulty_level': self.difficulty_level,
+            'question_type': self.question_type,
+            'audio_url': self.audio_url,
+            'sample_answer_text': self.sample_answer_text,
+            'sample_answer_audio_url': self.sample_answer_audio_url,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
 
 class Response(db.Model):
     __tablename__ = 'responses'

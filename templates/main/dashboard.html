@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <tr>
                                     <th>Question</th>
                                     <th>Topic</th>
-                                    <th>Difficulty</th>
+                                    <th>Level</th>
                                     <th>Date</th>
                                     <th>Actions</th>
                                 </tr>
@@ -364,8 +364,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <td>
                                         {% if response.question.difficulty_level %}
                                             <span class="badge bg-primary">{{ response.question.difficulty_level }}</span>
-                                        {% elif response.question.difficulty %}
-                                            <span class="badge bg-{{ 'success' if response.question.difficulty == 'easy' else 'warning' if response.question.difficulty == 'medium' else 'danger' }}">{{ response.question.difficulty.title() }}</span>
                                         {% else %}
                                             <span class="badge bg-secondary">N/A</span>
                                         {% endif %}

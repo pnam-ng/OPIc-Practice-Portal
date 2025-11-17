@@ -78,15 +78,29 @@ def create_app():
     session_cookie_secure_env = os.environ.get('SESSION_COOKIE_SECURE', '').lower()
     if session_cookie_secure_env in ('true', 'false'):
         app.config['SESSION_COOKIE_SECURE'] = session_cookie_secure_env == 'true'
+        print(f"[Config] SESSION_COOKIE_SECURE set from environment: {app.config['SESSION_COOKIE_SECURE']}")
     else:
         # Auto-detect: Check if SSL certificates exist (indicates HTTPS)
         ssl_cert = 'ssl/cert.pem'
         ssl_key = 'ssl/key.pem'
-        app.config['SESSION_COOKIE_SECURE'] = os.path.exists(ssl_cert) and os.path.exists(ssl_key)
+        ssl_exists = os.path.exists(ssl_cert) and os.path.exists(ssl_key)
+        app.config['SESSION_COOKIE_SECURE'] = ssl_exists
+        print(f"[Config] SESSION_COOKIE_SECURE auto-detected (SSL certs exist: {ssl_exists}): {app.config['SESSION_COOKIE_SECURE']}")
     
     app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    # For HTTPS (especially with self-signed certs), use None for SameSite
+    # This allows cookies to work across different contexts
+    if app.config['SESSION_COOKIE_SECURE']:
+        app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    else:
+        app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['REMEMBER_COOKIE_DURATION'] = 86400 * 30  # 30 days
+    
+    # Log session cookie configuration
+    print(f"[Config] Session cookie settings:")
+    print(f"  - SESSION_COOKIE_SECURE: {app.config['SESSION_COOKIE_SECURE']}")
+    print(f"  - SESSION_COOKIE_HTTPONLY: {app.config['SESSION_COOKIE_HTTPONLY']}")
+    print(f"  - SESSION_COOKIE_SAMESITE: {app.config['SESSION_COOKIE_SAMESITE']}")
     
     # Email configuration
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
@@ -110,6 +124,32 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'info'
+    
+    # Configure Flask-Login to use secure cookies when HTTPS is detected
+    # Flask-Login uses the app's SESSION_COOKIE_SECURE setting
+    # But we also need to ensure the session cookie name is set correctly
+    app.config['SESSION_COOKIE_NAME'] = 'session'
+    
+    # Custom unauthorized handler for API endpoints
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        """Handle unauthorized access - return JSON for API requests, redirect for web requests"""
+        from flask import request, jsonify, redirect, url_for, current_app
+        # Log authentication failure for debugging
+        current_app.logger.warning(f"[Auth] Unauthorized access attempt to {request.path}")
+        current_app.logger.warning(f"[Auth] Request is_secure: {request.is_secure}")
+        current_app.logger.warning(f"[Auth] Session cookie secure: {current_app.config.get('SESSION_COOKIE_SECURE')}")
+        current_app.logger.warning(f"[Auth] Cookies in request: {list(request.cookies.keys())}")
+        
+        # Check if this is an API request
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'success': False,
+                'error': 'Authentication required. Please log in.',
+                'authenticated': False
+            }), 401
+        # For web requests, redirect to login
+        return redirect(url_for('auth.login'))
     
     # Create upload directories
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -154,16 +194,25 @@ def create_app():
     @app.before_request
     def detect_https():
         """Detect HTTPS from request and ensure secure cookies are enabled"""
-        from flask import request
+        from flask import request, current_app, session
         # Check if request is secure (HTTPS) - ProxyFix middleware makes request.is_secure work
         is_secure = request.is_secure
         
         # If we detect HTTPS, ensure secure cookies are enabled
         # Note: This needs to be set before session cookies are created
         if is_secure:
-            app.config['SESSION_COOKIE_SECURE'] = True
-            # For self-signed certs, we might need SameSite=None, but let's try Lax first
-            # If issues persist, can change to: app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+            if not current_app.config.get('SESSION_COOKIE_SECURE'):
+                current_app.config['SESSION_COOKIE_SECURE'] = True
+                current_app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+                current_app.logger.info(f"[HTTPS] Detected HTTPS request, enabled SESSION_COOKIE_SECURE and set SameSite=None")
+            
+            # Debug logging for authentication issues
+            if request.path.startswith('/api/') and not hasattr(request, '_auth_logged'):
+                request._auth_logged = True
+                current_app.logger.debug(f"[Auth] API request to {request.path}")
+                current_app.logger.debug(f"[Auth] User authenticated: {hasattr(request, 'user') and hasattr(request.user, 'is_authenticated')}")
+                current_app.logger.debug(f"[Auth] Session ID: {session.get('_id', 'None')}")
+                current_app.logger.debug(f"[Auth] Cookies sent: {list(request.cookies.keys())}")
     
     # Trust proxy headers (for reverse proxies like nginx, load balancers)
     # This must be applied AFTER all app setup but BEFORE returning

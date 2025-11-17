@@ -644,7 +644,7 @@ class TestModeController(BaseController):
         
         # Add level-specific questions if we don't have enough
         if len(questions) < target_count:
-            level_questions = self.question_service.get_questions_by_difficulty(english_level, 'english')
+            level_questions = self.question_service.get_questions_by_level(english_level, 'english')
             for q in level_questions:
                 if len(questions) >= target_count:
                     break

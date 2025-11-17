@@ -6,10 +6,21 @@ import time
 from flask_login import login_required, current_user
 from sqlalchemy import or_, desc, asc, func
 from app import db
-from app.models import User, Response as UserResponse, Survey, Tip
+from app.models import User, Response as UserResponse, Survey, Tip, Question
 from app.utils.pdf_thumbnail import generate_pdf_thumbnail, get_thumbnail_path
 
 admin_bp = Blueprint("admin", __name__, template_folder="../../templates/admin")
+
+QUESTION_TYPES = {'question', 'answer'}
+QUESTION_SORT_COLUMNS = {
+    'id': Question.id,
+    'topic': Question.topic,
+    'language': Question.language,
+    'level': Question.difficulty_level,
+    'type': Question.question_type,
+    'updated': Question.updated_at,
+}
+MAX_QUESTIONS_PER_PAGE = 200
 
 # --- simple admin-only gate ---
 def admin_required(fn):
@@ -280,6 +291,363 @@ def tips_api():
     """API endpoint to get tips list"""
     tips = Tip.query.filter_by(is_active=True).order_by(Tip.display_order, Tip.created_at.desc()).all()
     return jsonify({'success': True, 'tips': [tip.to_dict() for tip in tips]})
+
+
+def _get_question_request_data():
+    """Return request payload regardless of content type"""
+    if request.is_json:
+        return request.get_json(silent=True) or {}
+    if request.form:
+        return request.form.to_dict(flat=True)
+    return {}
+
+
+def _clean_str(value):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip()
+        return value or None
+    return value
+
+
+def _prepare_question_payload(data, *, partial: bool = False):
+    """Normalize and validate question payload"""
+    payload = {}
+    provided_keys = set(data.keys())
+
+    def key_requested(field):
+        return not partial or field in provided_keys
+
+    if key_requested('topic'):
+        topic = _clean_str(data.get('topic'))
+        if not topic:
+            return None, 'Topic is required.'
+        payload['topic'] = topic
+
+    if key_requested('language'):
+        language = _clean_str(data.get('language')) or 'english'
+        payload['language'] = language.lower()
+
+    if key_requested('difficulty_level'):
+        level = _clean_str(data.get('difficulty_level'))
+        payload['difficulty_level'] = level.upper() if level else None
+
+    if key_requested('question_type'):
+        q_type = _clean_str(data.get('question_type')) or 'question'
+        q_type = q_type.lower()
+        if q_type not in QUESTION_TYPES:
+            return None, f"Question type must be one of: {', '.join(sorted(QUESTION_TYPES))}."
+        payload['question_type'] = q_type
+
+    if key_requested('text'):
+        payload['text'] = _clean_str(data.get('text'))
+
+    if key_requested('audio_url'):
+        payload['audio_url'] = _clean_str(data.get('audio_url'))
+
+    if key_requested('sample_answer_text'):
+        payload['sample_answer_text'] = _clean_str(data.get('sample_answer_text'))
+
+    if key_requested('sample_answer_audio_url'):
+        payload['sample_answer_audio_url'] = _clean_str(data.get('sample_answer_audio_url'))
+
+    # Enforce that new questions always contain text or audio
+    if not partial:
+        text_val = payload.get('text')
+        audio_val = payload.get('audio_url')
+        if not text_val and not audio_val:
+            return None, 'Provide question text or an audio URL.'
+
+    return payload, None
+
+
+def _apply_question_filters(query, filters):
+    """Apply common filters for question listings"""
+    language = filters.get('language')
+    if language and language.lower() != 'all':
+        query = query.filter(Question.language == language.lower())
+
+    topic = filters.get('topic')
+    if topic:
+        query = query.filter(Question.topic == topic)
+
+    level = filters.get('level')
+    if level:
+        query = query.filter(Question.difficulty_level == level)
+
+    q_type = filters.get('question_type')
+    if q_type in QUESTION_TYPES:
+        query = query.filter(Question.question_type == q_type)
+
+    search = filters.get('q')
+    if search:
+        like = f"%{search}%"
+        query = query.filter(
+            or_(
+                Question.topic.ilike(like),
+                Question.text.ilike(like),
+                Question.sample_answer_text.ilike(like)
+            )
+        )
+
+    return query
+
+
+def _collect_question_filter_options(language_filter):
+    """Gather dropdown values for the management UI"""
+    language_rows = db.session.query(Question.language).filter(Question.language.isnot(None)).distinct().all()
+    languages = sorted({row[0] for row in language_rows if row[0]})
+
+    topic_query = db.session.query(Question.topic).filter(Question.topic.isnot(None))
+    level_query = db.session.query(Question.difficulty_level).filter(Question.difficulty_level.isnot(None))
+
+    if language_filter and language_filter.lower() != 'all':
+        topic_query = topic_query.filter(Question.language == language_filter.lower())
+        level_query = level_query.filter(Question.language == language_filter.lower())
+
+    topics = sorted({row[0] for row in topic_query.distinct().all() if row[0]})
+    levels = sorted({row[0] for row in level_query.distinct().all() if row[0]})
+
+    return {
+        'languages': languages,
+        'topics': topics,
+        'levels': levels,
+        'question_types': sorted(QUESTION_TYPES),
+    }
+
+
+def _apply_question_sort(query, sort_key, sort_order):
+    """Apply sorting to the question query"""
+    column = QUESTION_SORT_COLUMNS.get(sort_key, Question.updated_at)
+    sort_order = 'asc' if sort_order == 'asc' else 'desc'
+    
+    ordered_column = column.asc() if sort_order == 'asc' else column.desc()
+    
+    if sort_key == 'updated':
+        ordered_column = ordered_column.nullslast()
+        secondary = Question.created_at.asc() if sort_order == 'asc' else Question.created_at.desc()
+        return query.order_by(ordered_column, secondary)
+    
+    return query.order_by(ordered_column)
+
+
+@admin_bp.route("/questions", methods=['GET'])
+@login_required
+@admin_required
+def manage_questions():
+    """Render the question management console"""
+    filters = {
+        'q': request.args.get('q', '').strip(),
+        'topic': request.args.get('topic', '').strip(),
+        'language': request.args.get('language', 'english').strip().lower() or 'english',
+        'level': request.args.get('level', '').strip().upper(),
+        'question_type': request.args.get('question_type', '').strip().lower(),
+    }
+    
+    sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
+    if sort_key not in QUESTION_SORT_COLUMNS:
+        sort_key = 'updated'
+    
+    sort_order = (request.args.get('order', 'desc') or 'desc').lower()
+    if sort_order not in ('asc', 'desc'):
+        sort_order = 'desc'
+
+    try:
+        page = max(int(request.args.get('page', 1)), 1)
+    except (TypeError, ValueError):
+        page = 1
+
+    try:
+        per_page = int(request.args.get('per_page', 50))
+    except (TypeError, ValueError):
+        per_page = 50
+
+    per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
+
+    query = _apply_question_filters(Question.query, filters)
+    query = _apply_question_sort(query, sort_key, sort_order)
+    total = query.count()
+    questions = (
+        query.offset((page - 1) * per_page)
+        .limit(per_page)
+        .all()
+    )
+
+    filter_options = _collect_question_filter_options(filters['language'])
+    filter_options['languages'].insert(0, 'all')
+
+    pages = (total + per_page - 1) // per_page
+
+    base_sort_args = request.args.to_dict()
+    
+    def page_url(p):
+        args = request.args.to_dict()
+        args['page'] = p
+        args['per_page'] = per_page
+        return url_for('admin.manage_questions', **args)
+    
+    def build_sort_link(field):
+        args = base_sort_args.copy()
+        args.pop('page', None)
+        args['sort'] = field
+        if sort_key == field and sort_order == 'asc':
+            args['order'] = 'desc'
+        elif sort_key == field and sort_order == 'desc':
+            args['order'] = 'asc'
+        else:
+            args['order'] = 'asc'
+        return url_for('admin.manage_questions', **args)
+    
+    sort_controls = {field: build_sort_link(field) for field in QUESTION_SORT_COLUMNS.keys()}
+
+    return render_template(
+        "admin/questions.html",
+        questions=questions,
+        filters=filters,
+        pagination={
+            'page': page,
+            'per_page': per_page,
+            'pages': pages,
+            'total': total,
+        },
+        filter_options=filter_options,
+        stats={
+            'total_questions': Question.query.count(),
+            'showing': len(questions),
+        },
+        page_url=page_url,
+        sort={
+            'key': sort_key,
+            'order': sort_order,
+        },
+        sort_controls=sort_controls,
+        request_args=base_sort_args,
+    )
+
+
+@admin_bp.route("/questions/api", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def questions_api():
+    """JSON API for question management"""
+    if request.method == 'GET':
+        filters = {
+            'q': request.args.get('q', '').strip(),
+            'topic': request.args.get('topic', '').strip(),
+            'language': request.args.get('language', 'all').strip().lower(),
+            'level': request.args.get('level', '').strip().upper(),
+            'question_type': request.args.get('question_type', '').strip().lower(),
+        }
+        
+        sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
+        if sort_key not in QUESTION_SORT_COLUMNS:
+            sort_key = 'updated'
+        
+        sort_order = (request.args.get('order', 'desc') or 'desc').lower()
+        if sort_order not in ('asc', 'desc'):
+            sort_order = 'desc'
+
+        try:
+            page = max(int(request.args.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            page = 1
+
+        try:
+            per_page = int(request.args.get('per_page', 50))
+        except (TypeError, ValueError):
+            per_page = 50
+
+        per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
+
+        query = _apply_question_filters(Question.query, filters)
+        query = _apply_question_sort(query, sort_key, sort_order)
+        total = query.count()
+        questions = (
+            query.offset((page - 1) * per_page)
+            .limit(per_page)
+            .all()
+        )
+
+        return jsonify({
+            'success': True,
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'pages': (total + per_page - 1) // per_page,
+                'total': total,
+            },
+            'filters': filters,
+            'sort': {
+                'key': sort_key,
+                'order': sort_order,
+            },
+            'questions': [question.to_dict() for question in questions],
+        })
+
+    # POST: create new question
+    data = _get_question_request_data()
+    payload, error = _prepare_question_payload(data)
+    if error:
+        return jsonify({'success': False, 'error': error}), 400
+
+    try:
+        question = Question(**payload)
+        db.session.add(question)
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Question created successfully.',
+            'question': question.to_dict(),
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@admin_bp.route("/questions/api/<int:question_id>", methods=['GET', 'PUT', 'DELETE'])
+@login_required
+@admin_required
+def question_detail_api(question_id):
+    """Retrieve, update, or delete a question"""
+    question = Question.query.get(question_id)
+    if not question:
+        return jsonify({'success': False, 'error': 'Question not found'}), 404
+
+    if request.method == 'GET':
+        return jsonify({'success': True, 'question': question.to_dict()})
+
+    if request.method == 'DELETE':
+        try:
+            db.session.delete(question)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Question deleted successfully.'})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    # PUT
+    data = _get_question_request_data()
+    payload, error = _prepare_question_payload(data, partial=False)
+    if error:
+        return jsonify({'success': False, 'error': error}), 400
+
+    for field, value in payload.items():
+        setattr(question, field, value)
+
+    if not (question.text or question.audio_url):
+        return jsonify({'success': False, 'error': 'Question must contain text or audio.'}), 400
+
+    try:
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Question updated successfully.',
+            'question': question.to_dict(),
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route("/users")
 @login_required

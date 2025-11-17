@@ -13,6 +13,19 @@ comments_bp = Blueprint('comments', __name__, url_prefix='/api/comments')
 from app.blueprints.notifications import create_mention_notifications
 
 
+@comments_bp.route('/test-auth', methods=['GET'])
+@login_required
+def test_auth():
+    """Test endpoint to verify authentication is working"""
+    return jsonify({
+        'success': True,
+        'authenticated': True,
+        'user_id': current_user.id,
+        'username': current_user.username,
+        'message': 'Authentication is working correctly!'
+    }), 200
+
+
 @comments_bp.route('/question/<int:question_id>', methods=['GET'])
 @login_required
 def get_comments(question_id):

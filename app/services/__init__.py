@@ -153,9 +153,12 @@ class QuestionService(BaseService):
         """Get questions by topic and language"""
         return Question.query.filter_by(topic=topic, language=language).all()
     
-    def get_questions_by_difficulty(self, difficulty: str, language: str = 'english') -> List[Question]:
-        """Get questions by difficulty level"""
-        return Question.query.filter_by(difficulty=difficulty, language=language).all()
+    def get_questions_by_level(self, level: str, language: str = 'english') -> List[Question]:
+        """Get questions by CEFR-style difficulty level (IM/IH/AL)"""
+        query = Question.query.filter_by(language=language)
+        if level:
+            query = query.filter_by(difficulty_level=level)
+        return query.all()
     
     def get_random_questions(self, count: int = 1, language: str = 'english') -> List[Question]:
         """Get random questions"""

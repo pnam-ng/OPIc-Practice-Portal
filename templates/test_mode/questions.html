@@ -324,8 +324,6 @@
                         <h6 class="mb-0">Question {{ current_question_index }} of {{ total_questions }}</h6>
                         {% if question.difficulty_level %}
                             <span class="badge bg-primary">{{ question.difficulty_level }}</span>
-                        {% elif question.difficulty %}
-                        <span class="badge bg-primary">{{ question.difficulty.title() }}</span>
                         {% endif %}
                     </div>
                     <div class="progress" style="height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden;">
