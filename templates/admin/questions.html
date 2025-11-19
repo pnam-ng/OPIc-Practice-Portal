@@ -4,95 +4,109 @@
 
 {% block content %}
 {% macro sortable_header(field, label) -%}
-    {% set is_active = sort.key == field %}
-    <a href="{{ sort_controls[field] }}" class="d-inline-flex align-items-center gap-1 text-decoration-none text-reset fw-semibold">
-        <span>{{ label }}</span>
-        {% if is_active %}
-            <i class="fas fa-sort-{{ 'up' if sort.order == 'asc' else 'down' }}"></i>
-        {% else %}
-            <i class="fas fa-sort text-muted"></i>
-        {% endif %}
-    </a>
+{% set is_active = sort.key == field %}
+<a href="{{ sort_controls[field] }}"
+    class="d-inline-flex align-items-center gap-1 text-decoration-none text-reset fw-semibold">
+    <span>{{ label }}</span>
+    {% if is_active %}
+    <i class="fas fa-sort-{{ 'up' if sort.order == 'asc' else 'down' }}"></i>
+    {% else %}
+    <i class="fas fa-sort text-muted"></i>
+    {% endif %}
+</a>
 {%- endmacro %}
+
 <div class="container-fluid py-4 px-3 px-md-4">
-    <div class="row mb-4 align-items-center">
-        <div class="col">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
             <h2 class="mb-1">
                 <i class="fas fa-question-circle text-primary me-2"></i>Question Bank
             </h2>
-            <p class="text-muted mb-0">
-                Manage OPIc questions stored in <code>opic_portal.db</code>. Add, edit, or remove prompts used across practice and test modes.
-            </p>
+            <p class="text-muted mb-0">Manage practice questions, audio prompts, and sample answers.</p>
         </div>
-        <div class="col-auto text-end">
-            <div class="small text-muted">Total questions: <strong>{{ stats.total_questions }}</strong></div>
-            <button class="btn btn-primary mt-2" onclick="openQuestionModal('create')">
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-success" onclick="openImportModal()">
+                <i class="fas fa-file-import me-2"></i>Import
+            </button>
+            <button type="button" class="btn btn-primary" onclick="openQuestionModal('create')">
                 <i class="fas fa-plus me-2"></i>Add Question
             </button>
         </div>
     </div>
 
     <div class="card shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body bg-light">
             <form class="row g-3 align-items-end" method="GET" action="{{ url_for('admin.manage_questions') }}">
-                <div class="col-md-3">
-                    <label class="form-label">Search</label>
-                    <input type="text" class="form-control" name="q" value="{{ filters.q }}" placeholder="Topic, text, keywords...">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" class="form-control" name="q" value="{{ filters.q }}"
+                            placeholder="Search topic, text...">
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Language</label>
+                    <label class="form-label fw-bold small text-uppercase text-muted">Language</label>
                     <select class="form-select" name="language">
                         {% for lang in filter_options.languages %}
-                            {% if lang == 'all' %}
-                                <option value="all" {% if filters.language == 'all' %}selected{% endif %}>All languages</option>
-                            {% else %}
-                                <option value="{{ lang }}" {% if filters.language == lang %}selected{% endif %}>{{ lang }}</option>
-                            {% endif %}
+                        {% if lang == 'all' %}
+                        <option value="all" {% if filters.language=='all' %}selected{% endif %}>All Languages</option>
+                        {% else %}
+                        <option value="{{ lang }}" {% if filters.language==lang %}selected{% endif %}>{{ lang|capitalize
+                            }}
+                        </option>
+                        {% endif %}
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Topic</label>
+                    <label class="form-label fw-bold small text-uppercase text-muted">Topic</label>
                     <select class="form-select" name="topic">
-                        <option value="" {% if not filters.topic %}selected{% endif %}>All topics</option>
+                        <option value="" {% if not filters.topic %}selected{% endif %}>All Topics</option>
                         {% for topic in filter_options.topics %}
-                            <option value="{{ topic }}" {% if filters.topic == topic %}selected{% endif %}>{{ topic }}</option>
+                        <option value="{{ topic }}" {% if filters.topic==topic %}selected{% endif %}>{{ topic }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-1">
-                    <label class="form-label">Level</label>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Level</label>
                     <select class="form-select" name="level">
-                        <option value="" {% if not filters.level %}selected{% endif %}>Any</option>
+                        <option value="" {% if not filters.level %}selected{% endif %}>Any Level</option>
                         {% for level in filter_options.levels %}
-                            <option value="{{ level }}" {% if filters.level == level %}selected{% endif %}>{{ level }}</option>
+                        <option value="{{ level }}" {% if filters.level==level %}selected{% endif %}>{{ level }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-1">
-                    <label class="form-label">Type</label>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Type</label>
                     <select class="form-select" name="question_type">
-                        <option value="" {% if not filters.question_type %}selected{% endif %}>Any</option>
+                        <option value="" {% if not filters.question_type %}selected{% endif %}>Any Type</option>
                         {% for qtype in filter_options.question_types %}
-                            <option value="{{ qtype }}" {% if filters.question_type == qtype %}selected{% endif %}>{{ qtype|capitalize }}</option>
+                        <option value="{{ qtype }}" {% if filters.question_type==qtype %}selected{% endif %}>{{
+                            qtype|capitalize }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-1">
-                    <label class="form-label">Per page</label>
-                    <select class="form-select" name="per_page">
-                        {% for size in [10, 25, 50, 100, 200] %}
-                            <option value="{{ size }}" {% if pagination.per_page == size %}selected{% endif %}>{{ size }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-12 d-flex gap-2">
-                    <button type="submit" class="btn btn-outline-primary">
-                        <i class="fas fa-filter me-2"></i>Apply Filters
-                    </button>
-                    <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-outline-secondary">
-                        Reset
-                    </a>
+                <div class="col-12 d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label mb-0 text-muted small">Per page:</label>
+                        <select class="form-select form-select-sm w-auto" name="per_page" onchange="this.form.submit()">
+                            {% for size in [10, 25, 50, 100, 200] %}
+                            <option value="{{ size }}" {% if pagination.per_page==size %}selected{% endif %}>{{ size }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-light border">
+                            Reset
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -114,7 +128,8 @@
                     <thead>
                         <tr>
                             <th>{{ sortable_header('id', 'ID') }}</th>
-                            <th>{{ sortable_header('topic', 'Topic & Text') }}</th>
+                            <th>{{ sortable_header('topic', 'Topic') }}</th>
+                            <th>Question Text</th>
                             <th>{{ sortable_header('language', 'Language') }}</th>
                             <th>{{ sortable_header('level', 'Level') }}</th>
                             <th>{{ sortable_header('type', 'Type') }}</th>
@@ -126,36 +141,39 @@
                         {% for question in questions %}
                         <tr>
                             <td><code>#{{ question.id }}</code></td>
-                            <td style="max-width: 420px;">
+                            <td>
                                 <div class="fw-semibold">{{ question.topic }}</div>
+                            </td>
+                            <td style="max-width: 350px;">
                                 <div class="small text-muted text-truncate-2">
                                     {% if question.text %}
-                                        {{ question.text }}
+                                    {{ question.text }}
                                     {% else %}
-                                        <em>No text — audio only</em>
+                                    <em>No text — audio only</em>
                                     {% endif %}
                                 </div>
                             </td>
                             <td>{{ question.language or '—' }}</td>
                             <td>{{ question.difficulty_level or '—' }}</td>
                             <td>
-                                <span class="badge bg-light text-dark border">{{ question.question_type|capitalize }}</span>
+                                <span class="badge bg-light text-dark border">{{ question.question_type|capitalize
+                                    }}</span>
                             </td>
                             <td>
                                 {% if question.updated_at %}
-                                    {{ question.updated_at.strftime('%Y-%m-%d') }}
+                                {{ question.updated_at.strftime('%Y-%m-%d') }}
                                 {% else %}
-                                    {{ question.created_at.strftime('%Y-%m-%d') if question.created_at else '—' }}
+                                {{ question.created_at.strftime('%Y-%m-%d') if question.created_at else '—' }}
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <button type="button"
-                                        class="btn btn-sm btn-primary me-2"
-                                        data-question='{{ question.to_dict() | tojson | safe }}'
-                                        onclick="openQuestionModal('edit', this.dataset.question)">
+                                <button type="button" class="btn btn-sm btn-primary me-2"
+                                    data-question='{{ question.to_dict() | tojson | safe }}'
+                                    onclick="openQuestionModal('edit', this.dataset.question)">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteQuestion({{ question.id }})">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                    onclick="deleteQuestion({{ question.id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -175,11 +193,11 @@
             <div class="small text-muted">Page {{ pagination.page }} of {{ pagination.pages }}</div>
             <div class="btn-group">
                 <a class="btn btn-outline-secondary btn-sm {% if pagination.page == 1 %}disabled{% endif %}"
-                   href="{{ page_url(pagination.page - 1) if pagination.page > 1 else '#' }}">
+                    href="{{ page_url(pagination.page - 1) if pagination.page > 1 else '#' }}">
                     Previous
                 </a>
                 <a class="btn btn-outline-secondary btn-sm {% if pagination.page >= pagination.pages %}disabled{% endif %}"
-                   href="{{ page_url(pagination.page + 1) if pagination.page < pagination.pages else '#' }}">
+                    href="{{ page_url(pagination.page + 1) if pagination.page < pagination.pages else '#' }}">
                     Next
                 </a>
             </div>
@@ -188,7 +206,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Question Modal -->
 <div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="questionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -196,7 +214,8 @@
                 <h5 class="modal-title" id="questionModalLabel">
                     <i class="fas fa-question me-2"></i><span id="questionModalAction">Add</span> Question
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <form id="questionForm">
                 <input type="hidden" id="formMode" value="create">
@@ -220,26 +239,37 @@
                             <label class="form-label">Question Type</label>
                             <select class="form-select" id="questionType">
                                 {% for qtype in filter_options.question_types %}
-                                    <option value="{{ qtype }}">{{ qtype|capitalize }}</option>
+                                <option value="{{ qtype }}">{{ qtype|capitalize }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Question Text</label>
-                            <textarea class="form-control" id="questionText" rows=4 placeholder="Prompt text shown to users"></textarea>
+                            <textarea class="form-control" id="questionText" rows=4
+                                placeholder="Prompt text shown to users"></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Question Audio URL</label>
-                            <input type="text" class="form-control" id="questionAudio" placeholder="uploads/questions/filename.mp3">
-                            <small class="text-muted">Provide if this question should play audio. Leave blank for text-only prompts.</small>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="questionAudio"
+                                    placeholder="uploads/questions/filename.mp3">
+                                <button class="btn btn-outline-secondary" type="button" id="btnGenerateAudio"
+                                    onclick="generateAudio()">
+                                    <i class="fas fa-magic me-1"></i> Generate
+                                </button>
+                            </div>
+                            <small class="text-muted">Provide if this question should play audio. Leave blank for
+                                text-only prompts.</small>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Sample Answer (text)</label>
-                            <textarea class="form-control" id="sampleAnswerText" rows="3" placeholder="Optional AI-generated sample answer..."></textarea>
+                            <textarea class="form-control" id="sampleAnswerText" rows="3"
+                                placeholder="Optional AI-generated sample answer..."></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Sample Answer Audio URL</label>
-                            <input type="text" class="form-control" id="sampleAnswerAudio" placeholder="uploads/answers/sample.mp3">
+                            <input type="text" class="form-control" id="sampleAnswerAudio"
+                                placeholder="uploads/answers/sample.mp3">
                         </div>
                     </div>
                 </div>
@@ -254,142 +284,298 @@
     </div>
 </div>
 
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-file-import me-2"></i>Import Questions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select File (CSV/Excel)</label>
+                        <input type="file" class="form-control" id="importFile" accept=".csv, .xlsx, .xls">
+                        <div class="form-text">
+                            Supported formats: CSV, Excel.
+                            <a href="{{ url_for('admin.get_import_template') }}" class="text-decoration-none">
+                                <i class="fas fa-download me-1"></i>Download Template
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="importAutoAudio" checked>
+                        <label class="form-check-label" for="importAutoAudio">
+                            Auto-generate Audio (TTS)
+                            <small class="d-block text-muted">Uses 'Ava' voice for English text</small>
+                        </label>
+                    </div>
+                    <div id="importProgress" class="d-none text-center my-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Processing file and generating audio...</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitImport()">
+                    <i class="fas fa-upload me-2"></i>Import
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-const QUESTIONS_API_URL = "{{ url_for('admin.questions_api') }}";
-const DEFAULT_LANGUAGE = "{{ filters.language }}";
+    const QUESTIONS_API_URL = "{{ url_for('admin.questions_api') }}";
+    const DEFAULT_LANGUAGE = "{{ filters.language }}";
 
-let questionModal;
-const modalElement = document.getElementById('questionModal');
-const questionForm = document.getElementById('questionForm');
+    let questionModal;
+    const modalElement = document.getElementById('questionModal');
+    const questionForm = document.getElementById('questionForm');
 
-document.addEventListener('DOMContentLoaded', () => {
-    questionModal = new bootstrap.Modal(modalElement);
-    questionForm.addEventListener('submit', handleQuestionSubmit);
-});
+    document.addEventListener('DOMContentLoaded', () => {
+        questionModal = new bootstrap.Modal(modalElement);
+        questionForm.addEventListener('submit', handleQuestionSubmit);
+    });
 
-function openQuestionModal(mode, questionDataString = null) {
-    questionForm.reset();
-    document.getElementById('formMode').value = mode;
-    document.getElementById('questionId').value = '';
-    document.getElementById('questionModalAction').textContent = mode === 'edit' ? 'Edit' : 'Add';
-    document.getElementById('questionType').value = 'question';
+    function openQuestionModal(mode, questionDataString = null) {
+        questionForm.reset();
+        document.getElementById('formMode').value = mode;
+        document.getElementById('questionId').value = '';
+        document.getElementById('questionModalAction').textContent = mode === 'edit' ? 'Edit' : 'Add';
+        document.getElementById('questionType').value = 'question';
 
-    const defaultLang = DEFAULT_LANGUAGE && DEFAULT_LANGUAGE !== 'all' ? DEFAULT_LANGUAGE : 'english';
-    document.getElementById('questionLanguage').value = defaultLang;
+        const defaultLang = DEFAULT_LANGUAGE && DEFAULT_LANGUAGE !== 'all' ? DEFAULT_LANGUAGE : 'english';
+        document.getElementById('questionLanguage').value = defaultLang;
 
-    if (mode === 'edit' && questionDataString) {
-        const questionData = typeof questionDataString === 'string' ? JSON.parse(questionDataString) : questionDataString;
-        document.getElementById('questionId').value = questionData.id;
-        document.getElementById('questionTopic').value = questionData.topic || '';
-        document.getElementById('questionLanguage').value = questionData.language || defaultLang;
-        document.getElementById('questionLevel').value = questionData.difficulty_level || '';
-        document.getElementById('questionType').value = questionData.question_type || 'question';
-        document.getElementById('questionText').value = questionData.text || '';
-        document.getElementById('questionAudio').value = questionData.audio_url || '';
-        document.getElementById('sampleAnswerText').value = questionData.sample_answer_text || '';
-        document.getElementById('sampleAnswerAudio').value = questionData.sample_answer_audio_url || '';
-    }
-
-    questionModal.show();
-}
-
-function normalizeValue(value) {
-    if (typeof value !== 'string') {
-        return value;
-    }
-    const trimmed = value.trim();
-    return trimmed.length ? trimmed : null;
-}
-
-async function handleQuestionSubmit(event) {
-    event.preventDefault();
-
-    const mode = document.getElementById('formMode').value;
-    const questionId = document.getElementById('questionId').value;
-
-    const payload = {
-        topic: document.getElementById('questionTopic').value.trim(),
-        language: (document.getElementById('questionLanguage').value || 'english').trim().toLowerCase(),
-        difficulty_level: normalizeValue(document.getElementById('questionLevel').value),
-        question_type: document.getElementById('questionType').value || 'question',
-        text: normalizeValue(document.getElementById('questionText').value),
-        audio_url: normalizeValue(document.getElementById('questionAudio').value),
-        sample_answer_text: normalizeValue(document.getElementById('sampleAnswerText').value),
-        sample_answer_audio_url: normalizeValue(document.getElementById('sampleAnswerAudio').value),
-    };
-
-    if (!payload.topic) {
-        alert('Topic is required.');
-        return;
-    }
-
-    if (!payload.text && !payload.audio_url) {
-        alert('Please provide question text or an audio URL.');
-        return;
-    }
-
-    try {
-        const method = mode === 'edit' ? 'PUT' : 'POST';
-        const url = mode === 'edit' ? `${QUESTIONS_API_URL}/${questionId}` : QUESTIONS_API_URL;
-
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            questionModal.hide();
-            window.location.reload();
-        } else {
-            alert(data.error || 'Failed to save question.');
+        if (mode === 'edit' && questionDataString) {
+            const questionData = typeof questionDataString === 'string' ? JSON.parse(questionDataString) : questionDataString;
+            document.getElementById('questionId').value = questionData.id;
+            document.getElementById('questionTopic').value = questionData.topic || '';
+            document.getElementById('questionLanguage').value = questionData.language || defaultLang;
+            document.getElementById('questionLevel').value = questionData.difficulty_level || '';
+            document.getElementById('questionType').value = questionData.question_type || 'question';
+            document.getElementById('questionText').value = questionData.text || '';
+            document.getElementById('questionAudio').value = questionData.audio_url || '';
+            document.getElementById('sampleAnswerText').value = questionData.sample_answer_text || '';
+            document.getElementById('sampleAnswerAudio').value = questionData.sample_answer_audio_url || '';
         }
-    } catch (error) {
-        console.error('Failed to save question', error);
-        alert('Unexpected error while saving question.');
-    }
-}
 
-async function deleteQuestion(questionId) {
-    if (!confirm('Delete this question? This action cannot be undone.')) {
-        return;
+        questionModal.show();
     }
 
-    try {
-        const response = await fetch(`${QUESTIONS_API_URL}/${questionId}`, { method: 'DELETE' });
-        const data = await response.json();
-
-        if (data.success) {
-            window.location.reload();
-        } else {
-            alert(data.error || 'Failed to delete question.');
+    function normalizeValue(value) {
+        if (typeof value !== 'string') {
+            return value;
         }
-    } catch (error) {
-        console.error('Failed to delete question', error);
-        alert('Unexpected error while deleting question.');
+        const trimmed = value.trim();
+        return trimmed.length ? trimmed : null;
     }
-}
+
+    async function handleQuestionSubmit(event) {
+        event.preventDefault();
+
+        const mode = document.getElementById('formMode').value;
+        const questionId = document.getElementById('questionId').value;
+
+        const payload = {
+            topic: document.getElementById('questionTopic').value.trim(),
+            language: (document.getElementById('questionLanguage').value || 'english').trim().toLowerCase(),
+            difficulty_level: normalizeValue(document.getElementById('questionLevel').value),
+            question_type: document.getElementById('questionType').value || 'question',
+            text: normalizeValue(document.getElementById('questionText').value),
+            audio_url: normalizeValue(document.getElementById('questionAudio').value),
+            sample_answer_text: normalizeValue(document.getElementById('sampleAnswerText').value),
+            sample_answer_audio_url: normalizeValue(document.getElementById('sampleAnswerAudio').value),
+        };
+
+        if (!payload.topic) {
+            alert('Topic is required.');
+            return;
+        }
+
+        if (!payload.text && !payload.audio_url) {
+            alert('Please provide question text or an audio URL.');
+            return;
+        }
+
+        try {
+            const method = mode === 'edit' ? 'PUT' : 'POST';
+            const url = mode === 'edit' ? `${QUESTIONS_API_URL}/${questionId}` : QUESTIONS_API_URL;
+
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                questionModal.hide();
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to save question.');
+            }
+        } catch (error) {
+            console.error('Failed to save question', error);
+            alert('Unexpected error while saving question.');
+        }
+    }
+
+    async function deleteQuestion(questionId) {
+        if (!confirm('Delete this question? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${QUESTIONS_API_URL}/${questionId}`, { method: 'DELETE' });
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to delete question.');
+            }
+        } catch (error) {
+            console.error('Failed to delete question', error);
+            alert('Unexpected error while deleting question.');
+        }
+    }
+
+    async function generateAudio() {
+        const questionId = document.getElementById('questionId').value;
+        const text = document.getElementById('questionText').value.trim();
+        const btn = document.getElementById('btnGenerateAudio');
+        const input = document.getElementById('questionAudio');
+
+        if (!questionId) {
+            alert('Please save the question first before generating audio.');
+            return;
+        }
+
+        if (!text) {
+            alert('Please enter question text first.');
+            return;
+        }
+
+        // Loading state
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
+
+        try {
+            const response = await fetch(`/admin/questions/${questionId}/generate-audio`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                input.value = data.audio_url;
+                // Flash success
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-success');
+                setTimeout(() => {
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 2000);
+            } else {
+                alert(data.error || 'Failed to generate audio');
+            }
+        } catch (error) {
+            console.error('Error generating audio:', error);
+            alert('Error generating audio. Please try again.');
+        } finally {
+            // Restore state
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    }
+
+    // Import functionality
+    let importModal;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const importModalEl = document.getElementById('importModal');
+        if (importModalEl) {
+            importModal = new bootstrap.Modal(importModalEl);
+        }
+    });
+
+    function openImportModal() {
+        document.getElementById('importForm').reset();
+        document.getElementById('importProgress').classList.add('d-none');
+        importModal.show();
+    }
+
+    async function submitImport() {
+        const fileInput = document.getElementById('importFile');
+        const autoAudio = document.getElementById('importAutoAudio').checked;
+
+        if (!fileInput.files.length) {
+            alert('Please select a file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('auto_generate_audio', autoAudio);
+
+        // Show progress
+        const btn = document.querySelector('#importModal .btn-success');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        document.getElementById('importProgress').classList.remove('d-none');
+
+        try {
+            const response = await fetch("{{ url_for('admin.import_questions') }}", {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message);
+                if (data.errors && data.errors.length > 0) {
+                    console.warn('Import errors:', data.errors);
+                    alert('Some rows failed. Check console for details.');
+                }
+                window.location.reload();
+            } else {
+                alert(data.error || 'Import failed');
+            }
+        } catch (error) {
+            console.error('Import error:', error);
+            alert('An error occurred during import.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            document.getElementById('importProgress').classList.add('d-none');
+        }
+    }
 </script>
 
 <style>
-.text-truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
-.table thead th {
-    border-bottom-width: 2px;
-}
+    .table thead th {
+        border-bottom-width: 2px;
+    }
 
-.badge {
-    font-weight: 500;
-}
+    .badge {
+        font-weight: 500;
+    }
 </style>
 {% endblock %}
-

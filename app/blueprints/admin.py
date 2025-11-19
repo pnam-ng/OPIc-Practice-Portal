@@ -649,6 +649,170 @@ def question_detail_api(question_id):
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
+@admin_bp.route("/questions/<int:question_id>/generate-audio", methods=['POST'])
+@login_required
+@admin_required
+def generate_question_audio(question_id):
+    """Generate TTS audio for a question"""
+    question = Question.query.get(question_id)
+    if not question:
+        return jsonify({'success': False, 'error': 'Question not found'}), 404
+        
+    if not question.text:
+        return jsonify({'success': False, 'error': 'Question has no text content'}), 400
+        
+    try:
+        from app.services.tts_service import TTSService
+        tts_service = TTSService()
+        
+        # Generate filename
+        filename = f"question_{question.id}_{int(time.time())}.mp3"
+        
+        # Resolve paths
+        # Use absolute path for saving file
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        upload_dir = os.path.join(base_dir, 'uploads', 'questions')
+        output_path = os.path.join(upload_dir, filename)
+        
+        # URL path for database (relative to root)
+        audio_url = f"/uploads/questions/{filename}"
+        
+        # Generate audio
+        success = tts_service.generate_audio(question.text, output_path, voice_key='ava')
+        
+        if success:
+            # Update question
+            question.audio_url = audio_url
+            db.session.commit()
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Audio generated successfully',
+                'audio_url': audio_url
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Failed to generate audio file'}), 500
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@admin_bp.route("/questions/import", methods=['POST'])
+@login_required
+@admin_required
+def import_questions():
+    """Bulk import questions from CSV/Excel"""
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+        
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'No file selected'}), 400
+        
+    auto_generate_audio = request.form.get('auto_generate_audio') == 'true'
+    
+    try:
+        import pandas as pd
+        from app.services.tts_service import TTSService
+        
+        # Determine file type
+        filename = secure_filename(file.filename)
+        if filename.endswith('.csv'):
+            df = pd.read_csv(file)
+        elif filename.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file)
+        else:
+            return jsonify({'success': False, 'error': 'Invalid file type. Use CSV or Excel.'}), 400
+            
+        # Validate columns
+        required_cols = ['topic', 'text']
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            return jsonify({'success': False, 'error': f'Missing required columns: {", ".join(missing_cols)}'}), 400
+            
+        # Initialize TTS if needed
+        tts_service = None
+        if auto_generate_audio:
+            tts_service = TTSService()
+            
+        success_count = 0
+        errors = []
+        
+        # Process rows
+        for index, row in df.iterrows():
+            try:
+                # Basic data
+                topic = str(row['topic']).strip()
+                text = str(row['text']).strip()
+                
+                if not topic or not text:
+                    continue
+                    
+                # Optional fields with defaults
+                language = str(row.get('language', 'english')).strip().lower()
+                level = str(row.get('level', '')).strip().upper() or None
+                q_type = str(row.get('type', 'question')).strip().lower()
+                
+                question = Question(
+                    topic=topic,
+                    text=text,
+                    language=language,
+                    difficulty_level=level,
+                    question_type=q_type,
+                    created_by=current_user.id
+                )
+                
+                # Auto-generate Audio
+                if auto_generate_audio and tts_service:
+                    # Generate filename
+                    filename = f"question_import_{int(time.time())}_{index}.mp3"
+                    
+                    # Resolve paths
+                    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                    upload_dir = os.path.join(base_dir, 'uploads', 'questions')
+                    output_path = os.path.join(upload_dir, filename)
+                    audio_url = f"/uploads/questions/{filename}"
+                    
+                    if tts_service.generate_audio(text, output_path, voice_key='ava'):
+                        question.audio_url = audio_url
+                
+                db.session.add(question)
+                success_count += 1
+                
+            except Exception as e:
+                errors.append(f"Row {index + 1}: {str(e)}")
+                
+        if success_count > 0:
+            db.session.commit()
+            
+        return jsonify({
+            'success': True,
+            'message': f'Successfully imported {success_count} questions.',
+            'errors': errors[:10]  # Limit error details
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': f"Import failed: {str(e)}"}), 500
+
+
+@admin_bp.route("/questions/template")
+@login_required
+@admin_required
+def get_import_template():
+    """Download CSV template for bulk import"""
+    csv_content = "topic,text,level,language,type\nExample Topic,This is an example question text.,IM,english,question"
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=questions_template.csv"}
+    )
+
+
 @admin_bp.route("/users")
 @login_required
 @admin_required
