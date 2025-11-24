@@ -650,6 +650,48 @@ def question_detail_api(question_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@admin_bp.route("/questions/generate-audio-preview", methods=['POST'])
+@login_required
+@admin_required
+def generate_audio_preview():
+    """Generate TTS audio preview for new questions"""
+    data = request.get_json()
+    text = data.get('text')
+
+    if not text:
+        return jsonify({'success': False, 'error': 'Text is required'}), 400
+
+    try:
+        from app.services.tts_service import TTSService
+        tts_service = TTSService()
+
+        # Generate filename
+        filename = f"preview_{int(time.time())}_{current_user.id}.mp3"
+
+        # Resolve paths
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        upload_dir = os.path.join(base_dir, 'uploads', 'questions')
+        os.makedirs(upload_dir, exist_ok=True)
+        output_path = os.path.join(upload_dir, filename)
+
+        # URL path
+        audio_url = f"/uploads/questions/{filename}"
+
+        # Generate
+        success = tts_service.generate_audio(text, output_path, voice_key='ava')
+
+        if success:
+            return jsonify({
+                'success': True,
+                'audio_url': audio_url
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Failed to generate audio'}), 500
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @admin_bp.route("/questions/<int:question_id>/generate-audio", methods=['POST'])
 @login_required
 @admin_required

@@ -145,12 +145,20 @@
                                 <div class="fw-semibold">{{ question.topic }}</div>
                             </td>
                             <td style="max-width: 350px;">
-                                <div class="small text-muted text-truncate-2">
-                                    {% if question.text %}
-                                    {{ question.text }}
-                                    {% else %}
-                                    <em>No text — audio only</em>
+                                <div class="d-flex align-items-start gap-2">
+                                    {% if question.audio_url %}
+                                    <button class="btn btn-sm btn-outline-primary flex-shrink-0"
+                                        onclick="playAudio('{{ question.audio_url }}')" title="Play Audio">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
                                     {% endif %}
+                                    <div class="small text-truncate-2">
+                                        {% if question.text %}
+                                        {{ question.text }}
+                                        {% else %}
+                                        <em>No text — audio only</em>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </td>
                             <td>{{ question.language or '—' }}</td>
@@ -233,7 +241,12 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Level (IM/IH/AL)</label>
-                            <input type="text" class="form-control" id="questionLevel" maxlength="3">
+                            <select class="form-select" id="questionLevel">
+                                <option value="">Select Level</option>
+                                {% for level in filter_options.levels %}
+                                <option value="{{ level }}">{{ level }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Question Type</label>
@@ -244,7 +257,12 @@
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Question Text</label>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label mb-0">Question Text</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="generateAudio()">
+                                    <i class="fas fa-magic me-1"></i> Generate Audio
+                                </button>
+                            </div>
                             <textarea class="form-control" id="questionText" rows=4
                                 placeholder="Prompt text shown to users"></textarea>
                         </div>
@@ -452,39 +470,52 @@
     async function generateAudio() {
         const questionId = document.getElementById('questionId').value;
         const text = document.getElementById('questionText').value.trim();
-        const btn = document.getElementById('btnGenerateAudio');
+        const btn = document.getElementById('btnGenerateAudio'); // This is the old button in input group
         const input = document.getElementById('questionAudio');
 
-        if (!questionId) {
-            alert('Please save the question first before generating audio.');
-            return;
-        }
+        // We can also support the new button if we want to show loading state on it
+        // But for simplicity, we'll just use the global loading indicator or alert if needed
+        // Or better, let's try to find the button that triggered this if passed, but we didn't pass 'this'
 
         if (!text) {
             alert('Please enter question text first.');
             return;
         }
 
-        // Loading state
-        const originalHtml = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
+        // Loading state (update both buttons if possible, or just the one in the input group for now)
+        if (btn) {
+            var originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>';
+        }
 
         try {
-            const response = await fetch(`/admin/questions/${questionId}/generate-audio`, {
-                method: 'POST'
+            let response;
+
+            // ALWAYS use the preview endpoint to ensure we use the current text in the input
+            // This unifies the behavior for Add and Edit, and ensures WYSIWYG
+            response = await fetch('/admin/questions/generate-audio-preview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text })
             });
+
             const data = await response.json();
 
             if (data.success) {
                 input.value = data.audio_url;
-                // Flash success
-                btn.classList.remove('btn-outline-secondary');
-                btn.classList.add('btn-success');
-                setTimeout(() => {
-                    btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-secondary');
-                }, 2000);
+
+                // Visual feedback
+                if (btn) {
+                    btn.classList.remove('btn-outline-secondary');
+                    btn.classList.add('btn-success');
+                    setTimeout(() => {
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-secondary');
+                    }, 2000);
+                }
             } else {
                 alert(data.error || 'Failed to generate audio');
             }
@@ -493,8 +524,10 @@
             alert('Error generating audio. Please try again.');
         } finally {
             // Restore state
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
     }
 
@@ -559,6 +592,29 @@
             btn.innerHTML = originalText;
             document.getElementById('importProgress').classList.add('d-none');
         }
+    }
+
+    let currentAudio = null;
+
+    function playAudio(url) {
+        if (!url) return;
+
+        // Ensure path is absolute if relative
+        let src = url;
+        if (!src.startsWith('http') && !src.startsWith('/')) {
+            src = '/' + src;
+        }
+
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        currentAudio = new Audio(src);
+        currentAudio.play().catch(error => {
+            console.error('Error playing audio:', error);
+            alert('Could not play audio file.');
+        });
     }
 </script>
 

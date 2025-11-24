@@ -14,50 +14,51 @@
                     <p class="mb-0 mt-2">Help us personalize your OPIc practice test</p>
                 </div>
                 <div class="card-body p-4">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Coming Soon!</strong> The full test mode with survey and audio recording will be implemented next. 
-                        For now, you can explore the interface.
-                    </div>
-                    
-                    <div class="text-center py-5">
-                        <i class="fas fa-microphone fa-5x text-primary mb-4"></i>
-                        <h3>Test Mode Features</h3>
-                        <div class="row mt-4">
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-4x text-primary mb-4"></i>
+                        <h3>Welcome to OPIc Test Mode</h3>
+                        <p class="lead text-muted mb-4">
+                            Experience a realistic OPIc simulation customized to your level and interests.
+                        </p>
+                        
+                        <div class="row justify-content-center mb-5">
                             <div class="col-md-4">
-                                <div class="card border-0">
+                                <div class="card border-0 h-100">
                                     <div class="card-body text-center">
-                                        <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
-                                        <h6>Survey</h6>
-                                        <small class="text-muted">Personalized questions</small>
+                                        <i class="fas fa-tasks fa-2x text-success mb-2"></i>
+                                        <h6>Background Survey</h6>
+                                        <small class="text-muted">Customize your test topics</small>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card border-0">
+                                <div class="card border-0 h-100">
                                     <div class="card-body text-center">
-                                        <i class="fas fa-volume-up fa-2x text-warning mb-2"></i>
-                                        <h6>Audio Questions</h6>
-                                        <small class="text-muted">Listen and respond</small>
+                                        <i class="fas fa-layer-group fa-2x text-warning mb-2"></i>
+                                        <h6>Self Assessment</h6>
+                                        <small class="text-muted">Choose your difficulty level</small>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card border-0">
+                                <div class="card border-0 h-100">
                                     <div class="card-body text-center">
                                         <i class="fas fa-microphone fa-2x text-danger mb-2"></i>
-                                        <h6>Recording</h6>
-                                        <small class="text-muted">Record your answers</small>
+                                        <h6>Full Simulation</h6>
+                                        <small class="text-muted">12-15 questions with recording</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                        </a>
+                        
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <a href="{{ url_for('test_mode.survey') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Start New Test
+                            </a>
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

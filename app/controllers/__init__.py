@@ -627,7 +627,24 @@ class TestModeController(BaseController):
         # Get questions based on difficulty and interests
         questions = []
         
-        # Add questions based on interests from survey
+        # 1. ALWAYS get the introductory question first
+        # Try to find by ID 1001 first (most reliable if ID is stable)
+        from app.models import Question
+        intro_question = Question.query.get(1001)
+        
+        # Fallback to text search if ID 1001 is not the right one
+        if not intro_question or "Tell me something about yourself" not in intro_question.text:
+            intro_question = Question.query.filter(Question.text.ilike("%Tell me something about yourself%")).first()
+            
+        if intro_question:
+            questions.append(intro_question)
+            # Reduce target count for remaining questions since we already have one
+            remaining_target = target_count - 1
+        else:
+            remaining_target = target_count
+            print("[Test Mode] Warning: Introductory question not found!")
+        
+        # 2. Add questions based on interests from survey
         # Maximum 3 questions per topic to ensure variety
         if interests:
             questions_per_topic = 3  # Maximum 3 questions per topic
@@ -635,25 +652,28 @@ class TestModeController(BaseController):
                 topic_questions = self.question_service.get_questions_by_topic(interest.title(), 'english')
                 if topic_questions:
                     # Add up to 3 questions from this topic
-                    questions.extend(topic_questions[:questions_per_topic])
+                    for q in topic_questions[:questions_per_topic]:
+                        # Avoid duplicates (especially the intro question)
+                        if q not in questions:
+                            questions.append(q)
         
         # Track how many questions we have per topic
         topic_count = {}
         for q in questions:
             topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
         
-        # Add level-specific questions if we don't have enough
+        # 3. Add level-specific questions if we don't have enough
         if len(questions) < target_count:
             level_questions = self.question_service.get_questions_by_level(english_level, 'english')
             for q in level_questions:
                 if len(questions) >= target_count:
                     break
-                # Only add if we don't have 3 questions from this topic already
+                # Only add if we don't have 3 questions from this topic already and not duplicate
                 if topic_count.get(q.topic, 0) < 3 and q not in questions:
                     questions.append(q)
                     topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
         
-        # Fill remaining with random questions at appropriate level
+        # 4. Fill remaining with random questions at appropriate level
         if len(questions) < target_count:
             # Request more than needed to account for filtering
             random_questions = self.question_service.get_random_questions_by_level(
@@ -664,13 +684,21 @@ class TestModeController(BaseController):
             for q in random_questions:
                 if len(questions) >= target_count:
                     break
-                # Only add if we don't have 3 questions from this topic already
+                # Only add if we don't have 3 questions from this topic already and not duplicate
                 if topic_count.get(q.topic, 0) < 3 and q not in questions:
                     questions.append(q)
                     topic_count[q.topic] = topic_count.get(q.topic, 0) + 1
         
-        # Shuffle questions for variety
-        random.shuffle(questions)
+        # 5. Shuffle ONLY the questions after the first one (if we have an intro question)
+        if intro_question and questions and questions[0].id == intro_question.id:
+            # Keep first question, shuffle the rest
+            first_q = questions[0]
+            rest_qs = questions[1:]
+            random.shuffle(rest_qs)
+            questions = [first_q] + rest_qs
+        else:
+            # Shuffle all if no intro question found (fallback)
+            random.shuffle(questions)
         
         # Ensure we return exactly the target count (or less if not enough questions available)
         # For levels 5 and 6, this will be maximum 15 questions
