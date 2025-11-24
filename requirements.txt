@@ -13,7 +13,7 @@ Alembic==1.17.0
 psycopg2==2.9.11  # Production DB driver
 
 # AI & Machine Learning
-edge-tts==6.1.9
+edge-tts==7.2.3
 
 # Data Processing & Utilities
 pandas==2.2.0
