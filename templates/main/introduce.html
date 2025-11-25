@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to OPIc Practice Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        color: white;
+        padding: 4rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-bg-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.1;
+        background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4) 2px, transparent 2.5px),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.4) 2px, transparent 2.5px);
+        background-size: 40px 40px;
+    }
+
+    .feature-card {
+        border: none;
+        border-radius: 1rem;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--navbar-bg);
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+
+    [data-theme="dark"] .icon-box {
+        background: rgba(88, 166, 255, 0.15);
+        color: #58a6ff;
+    }
+
+    .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 3rem;
+        font-weight: 700;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: #0d6efd;
+        border-radius: 2px;
+    }
+
+    .mockup-container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .mockup-img {
+        border-radius: 1rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        border: 4px solid var(--bg-card);
+    }
+
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .social-feature-item {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        background-color: var(--bg-secondary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center mb-5">
+    <div class="hero-bg-pattern"></div>
+    <div class="container position-relative">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span class="badge bg-white text-primary rounded-pill mb-3 px-3 py-2 fw-bold shadow-sm">
+                    <i class="fas fa-sparkles me-2"></i>AI-Powered Learning
+                </span>
+                <h1 class="display-3 fw-bold mb-4">Master Your OPIc Test</h1>
+                <p class="lead mb-5 opacity-90">Your personal AI coach for English speaking mastery. Practice anytime,
+                    anywhere, and get instant feedback.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('main.test_mode') }}"
+                        class="btn btn-light btn-lg px-4 fw-bold text-primary shadow-sm">
+                        <i class="fas fa-play me-2"></i>Start Mock Test
+                    </a>
+                    <a href="{{ url_for('main.pwa_guide') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-mobile-alt me-2"></i>Get Mobile App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <!-- Core Features Grid -->
+    <div class="row g-4 mb-5">
+        <!-- Test Mode -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card feature-card p-4">
+                <div class="icon-box">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3 class="h5 fw-bold mb-3">Realistic Test Mode</h3>
+                <p class="text-muted small mb-0">Simulate the actual OPIc exam with 12-15 tailored questions, strict
+                    timing, and realistic flow based on your survey.</p>
+            </div>
+        </div>
+
+        <!-- Practice Mode -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card feature-card p-4">
+                <div class="icon-box">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3 class="h5 fw-bold mb-3">Flexible Practice</h3>
+                <p class="text-muted small mb-0">Target specific topics or question types. Re-record answers until
+                    you're confident without exam pressure.</p>
+            </div>
+        </div>
+
+        <!-- AI Assistant -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card feature-card p-4">
+                <div class="icon-box">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3 class="h5 fw-bold mb-3">Gemini AI Coach</h3>
+                <p class="text-muted small mb-0">Powered by Google Gemini. Get instant, detailed analysis of your
+                    grammar, vocabulary, and fluency.</p>
+            </div>
+        </div>
+
+        <!-- Tips & Strategy -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card feature-card p-4">
+                <div class="icon-box">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3 class="h5 fw-bold mb-3">Expert Tips</h3>
+                <p class="text-muted small mb-0">Access curated PDF resources and strategies from OPIc experts to boost
+                    your score level.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile & PWA Section -->
+    <div class="row align-items-center mb-5 py-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="pe-lg-5">
+                <h2 class="fw-bold mb-4">Practice Anywhere, Anytime</h2>
+                <p class="lead text-muted mb-4">Install OPIc Practice Portal on your iOS or Android device for a
+                    seamless native app experience.</p>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box mb-0 me-3 bg-light text-dark"
+                            style="width: 48px; height: 48px; font-size: 1.25rem;">
+                            <i class="fab fa-apple"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">iOS / iPhone</h6>
+                            <small class="text-muted">Tap "Share" > "Add to Home Screen"</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box mb-0 me-3 bg-light text-dark"
+                            style="width: 48px; height: 48px; font-size: 1.25rem;">
+                            <i class="fab fa-android"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Android</h6>
+                            <small class="text-muted">Tap "Menu" > "Install App" or "Add to Home Screen"</small>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('main.pwa_guide') }}" class="btn btn-primary mt-4">
+                    View Installation Guide <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <!-- Placeholder for mobile mockup -->
+            <div class="bg-light rounded-4 p-5 d-inline-block shadow-sm" style="max-width: 300px;">
+                <i class="fas fa-mobile-alt fa-5x text-muted mb-3"></i>
+                <p class="text-muted fw-bold">Mobile Optimized</p>
+                <p class="small text-muted">Responsive design that works perfectly on all screen sizes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social & Gamification Section -->
+    <div class="row mb-5 py-5 bg-light rounded-3">
+        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+            <div class="ps-lg-5">
+                <h2 class="fw-bold mb-4">Community & Progress</h2>
+                <p class="text-muted mb-4">Stay motivated and learn together with our social and gamification features.
+                </p>
+
+                <div class="social-feature-item">
+                    <div class="step-number"><i class="fas fa-fire"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Daily Streak System</h6>
+                        <p class="small text-muted mb-0">Build a habit! Maintain your streak by practicing every day to
+                            earn badges.</p>
+                    </div>
+                </div>
+
+                <div class="social-feature-item">
+                    <div class="step-number"><i class="fas fa-comments"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Social Learning</h6>
+                        <p class="small text-muted mb-0">Upload recordings, comment on others' answers, and get peer
+                            feedback. Receive notifications for interactions.</p>
+                    </div>
+                </div>
+
+                <div class="social-feature-item">
+                    <div class="step-number"><i class="fas fa-history"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Detailed History</h6>
+                        <p class="small text-muted mb-0">Track your improvement over time. Review past answers and AI
+                            scores in your personal dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 order-lg-1 d-flex align-items-center justify-content-center">
+            <div class="text-center">
+                <div class="d-inline-block p-4 bg-white rounded-circle shadow-sm mb-3"
+                    style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-trophy fa-4x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mt-3">Level Up Your Skills</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row justify-content-center text-center py-5">
+        <div class="col-lg-8">
+            <h2 class="fw-bold mb-3">Ready to Start?</h2>
+            <p class="lead text-muted mb-4">Join the community and achieve your target OPIc score today.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('main.test_mode') }}" class="btn btn-primary btn-lg px-5">Start Now</a>
+                <a href="{{ url_for('main.feedback') }}" class="btn btn-outline-secondary btn-lg px-5">Give Feedback</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

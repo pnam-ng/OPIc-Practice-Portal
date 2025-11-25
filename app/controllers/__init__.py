@@ -8,6 +8,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from datetime import date
 import time
 import random
+import requests
+import os
 
 from app import db
 from app.services import AuthService, UserService, QuestionService, ResponseService, SurveyService
@@ -201,6 +203,72 @@ class MainController(BaseController):
             ]
         
         return render_template('main/tips.html', pdf_resources=pdf_resources)
+
+    def introduce(self):
+        """Handle introduce page request"""
+        return render_template('main/introduce.html')
+
+    def feedback(self):
+        """Handle feedback page request"""
+        if request.method == 'POST':
+            title = request.form.get('title')
+            feedback_type = request.form.get('type')
+            description = request.form.get('description')
+            
+            if not title or not feedback_type or not description:
+                flash('All fields are required.', 'error')
+                return redirect(url_for('main.feedback'))
+            
+            # Create GitHub Issue
+            token = os.environ.get('GITHUB_TOKEN')
+            if not token:
+                flash('GitHub integration is not configured. Feedback saved locally (simulated).', 'warning')
+                # In a real app, we might save to DB here
+                return redirect(url_for('main.feedback'))
+            
+            repo_owner = "pnam-ng"
+            repo_name = "OPIc-Practice-Portal"
+            url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/issues"
+            
+            headers = {
+                "Authorization": f"token {token}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            
+            # Map feedback type to labels
+            labels = []
+            if feedback_type == 'bug':
+                labels.append('bug')
+            elif feedback_type == 'enhancement':
+                labels.append('enhancement')
+            elif feedback_type == 'question':
+                labels.append('question')
+            
+            # Get submitter info
+            submitter_info = "Anonymous User"
+            if current_user.is_authenticated:
+                submitter_info = f"{current_user.name} ({current_user.username})"
+            
+            data = {
+                "title": f"[{feedback_type.title()}] {title}",
+                "body": f"**Submitted via OPIc Practice Portal**\n**By:** {submitter_info}\n\n{description}",
+                "labels": labels
+            }
+            
+            try:
+                response = requests.post(url, headers=headers, json=data)
+                if response.status_code == 201:
+                    flash('Thank you! Your feedback has been posted to our GitHub repository.', 'success')
+                else:
+                    current_app.logger.error(f"GitHub API Error: {response.status_code} - {response.text}")
+                    flash('Failed to post feedback to GitHub, but we noted it. Thank you.', 'warning')
+            except Exception as e:
+                current_app.logger.error(f"Error posting to GitHub: {e}")
+                flash('An error occurred while submitting feedback.', 'error')
+                
+            return redirect(url_for('main.feedback'))
+            
+        return render_template('main/feedback.html')
     
     @login_required
     def profile(self):

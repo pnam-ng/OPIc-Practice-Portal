@@ -19,6 +19,14 @@ main_controller = MainController()
 def index():
     return main_controller.index()
 
+@main_bp.route('/introduce')
+def introduce():
+    return main_controller.introduce()
+
+@main_bp.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    return main_controller.feedback()
+
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
