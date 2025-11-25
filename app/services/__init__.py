@@ -137,7 +137,7 @@ class UserService(BaseService):
             'practice_responses_count': practice_responses_count,
             'test_responses_count': test_responses_count,
             'recent_responses': recent_responses,
-            'streak_count': user.streak_count,
+            'streak_count': user.current_streak,
             'target_language': user.target_language
         }
 

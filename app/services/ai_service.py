@@ -278,7 +278,8 @@ class AIService:
         
         return full_text
     
-    def score_response(self, transcript: str, question_text: str, audio_features: Dict = None) -> Optional[Dict]:
+    def score_response(self, transcript: str, question_text: str, audio_features: Dict = None, 
+                      current_level: str = None, target_level: str = None) -> Optional[Dict]:
         """
         Score an OPIc response using AI
         
@@ -286,6 +287,8 @@ class AIService:
             transcript: The user's spoken response (transcribed text)
             question_text: The question text
             audio_features: Optional dict with audio analysis features (pitch, tempo, pauses, etc.)
+            current_level: Optional user's current level (e.g., "IM")
+            target_level: Optional user's target level (e.g., "AL")
             
         Returns:
             Dict with 'score', 'feedback', 'strengths', 'suggestions'
@@ -297,15 +300,26 @@ class AIService:
             rater_guidelines = self._load_rater_guidelines()
             
             # Build system prompt (cached if PDF already loaded)
-            if self._system_prompt_base is None:
-                # Create base system prompt with clear OPIc test context
-                system_prompt = """You are an OPIc (Oral Proficiency Interview - Computer) examiner evaluating English speaking responses for the OPIc test.
+            # Note: We rebuild if levels are provided to customize the prompt
+            
+            # Create base system prompt with clear OPIc test context
+            system_prompt = """You are an OPIc (Oral Proficiency Interview - Computer) examiner evaluating English speaking responses for the OPIc test.
 
 **CONTEXT**: You are evaluating responses from students taking the OPIc test, which is a standardized computer-based speaking proficiency assessment. Your evaluations will help students understand their speaking level and areas for improvement.
 
 **YOUR TASK**: Evaluate English speaking responses on a scale of 0-100 based on OPIc evaluation criteria.
 
 **IMPORTANT**: You must FIRST read and understand the question context, then evaluate how well the response answers that specific question in the context of the OPIc test."""
+
+            # Add level context if provided
+            if current_level or target_level:
+                level_context = "\n\n**STUDENT PROFILE**:"
+                if current_level:
+                    level_context += f"\n- Current Level: {current_level}"
+                if target_level:
+                    level_context += f"\n- Target Level: {target_level}"
+                    level_context += f"\n\n**EVALUATION GOAL**: Help the student bridge the gap from {current_level or 'their current level'} to {target_level}. Focus feedback on what is needed to reach {target_level}."
+                system_prompt += level_context
                 
                 # Add summarized PDF guidelines if available (only once)
                 if rater_guidelines and rater_guidelines.strip():
@@ -351,14 +365,6 @@ Provide:
 - 2-3 specific areas for improvement in Vietnamese that are SPECIFIC to this response (cite actual errors, weaknesses, or areas where this particular response could be better)
 
 Format your response as JSON with these keys: score, feedback (Vietnamese, personalized), strengths (array of Vietnamese strings, specific to this response), suggestions (array of Vietnamese strings, specific to this response)."""
-                
-                # Cache the system prompt (with PDF included)
-                self._system_prompt_base = system_prompt
-                current_app.logger.info("✅ System prompt with PDF guidelines cached. Will reuse for all evaluations.")
-            else:
-                # Use cached system prompt (PDF already included - no need to reload PDF)
-                system_prompt = self._system_prompt_base
-                current_app.logger.debug("Using cached system prompt with PDF guidelines (PDF already internalized)")
 
             # Build user prompt - Question context first, then response
             user_prompt = f"""**QUESTION CONTEXT:**

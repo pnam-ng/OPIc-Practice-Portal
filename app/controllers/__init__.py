@@ -316,6 +316,26 @@ class MainController(BaseController):
         user_stats = self.user_service.get_user_statistics(current_user.id)
         return render_template('main/profile.html', user_stats=user_stats)
     
+    @login_required
+    def update_levels(self):
+        """Handle user level update request"""
+        if request.method == 'POST':
+            current_level = request.form.get('current_level')
+            target_level = request.form.get('target_level')
+            
+            if current_level and target_level:
+                current_user.current_level = current_level
+                current_user.target_level = target_level
+                
+                if self.user_service.commit():
+                    flash('Learning goals updated successfully!', 'success')
+                else:
+                    flash('Failed to update learning goals.', 'error')
+            else:
+                flash('Both current and target levels are required.', 'error')
+                
+        return redirect(url_for('main.dashboard'))
+    
     def _delete_old_avatar(self, avatar_path):
         """Helper function to delete old avatar file"""
         try:
@@ -845,7 +865,7 @@ class TestModeController(BaseController):
         
         test_data = {
             'question_count': recent_test_responses,
-            'streak_count': current_user.streak_count,
+            'streak_count': current_user.current_streak,
             'total_tests': user_stats.get('test_responses_count', 0)
         }
         
@@ -1101,7 +1121,7 @@ class PracticeModeController(BaseController):
         
         practice_data = {
             'response': response,
-            'streak_count': current_user.streak_count,
+            'streak_count': current_user.current_streak,
             'total_practices': user_stats.get('practice_responses_count', 0),
             'question': response.question if response else None
         }
@@ -1167,7 +1187,13 @@ class PracticeModeController(BaseController):
                 })
             
             # Get AI scoring with audio features
-            ai_result = ai_service.score_response(transcript, question_text, audio_features)
+            ai_result = ai_service.score_response(
+                transcript, 
+                question_text, 
+                audio_features,
+                current_level=current_user.current_level,
+                target_level=current_user.target_level
+            )
             
             if not ai_result:
                 return jsonify({

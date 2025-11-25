@@ -186,3 +186,8 @@ def upload_avatar():
 def history():
     return main_controller.history()
 
+@main_bp.route('/update-levels', methods=['POST'])
+@login_required
+def update_levels():
+    return main_controller.update_levels()
+

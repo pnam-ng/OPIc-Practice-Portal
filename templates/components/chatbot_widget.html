@@ -2,16 +2,19 @@
 <div id="chatbotWidget" class="chatbot-widget">
     <!-- Chat Bubble Button -->
     <button id="chatbotToggle" class="chatbot-toggle-btn" aria-label="Open chatbot" title="Chat with OPIc Assistant">
-        <img src="{{ url_for('static', filename='galaxyAI.png') }}" alt="Chatbot Icon" class="chatbot-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Chatbot Icon" class="chatbot-icon-img"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <i class="fas fa-robot chatbot-icon-fallback" style="display: none;"></i>
         <span class="chatbot-badge d-none" id="chatbotBadge">1</span>
     </button>
-    
+
     <!-- Chat Window -->
     <div id="chatbotWindow" class="chatbot-window">
         <div class="chatbot-window-header">
             <div class="d-flex align-items-center">
-                <img src="{{ url_for('static', filename='galaxyAI.png') }}" alt="Chatbot" class="chatbot-header-icon me-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Chatbot"
+                    class="chatbot-header-icon me-2"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
                 <i class="fas fa-robot me-2 chatbot-header-icon-fallback" style="display: none;"></i>
                 <h6 class="mb-0">OPIc Assistant</h6>
             </div>
@@ -24,13 +27,15 @@
                 </button>
             </div>
         </div>
-        
+
         <!-- Chat Messages Container -->
         <div class="chatbot-window-body" id="chatbotMessages">
             <!-- Welcome Message -->
             <div class="chatbot-message bot-message">
                 <div class="chatbot-avatar">
-                    <img src="{{ url_for('static', filename='galaxyAI.png') }}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Galaxy AI"
+                        class="chatbot-avatar-img"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
                 </div>
                 <div class="chatbot-content">
@@ -47,19 +52,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Chat Input -->
         <div class="chatbot-window-footer">
             <form id="chatbotForm" class="chatbot-form" data-ajax="true" data-has-inline-loader="true">
                 <div class="input-group">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="chatbotInput" 
-                        placeholder="Type your question..." 
-                        autocomplete="off"
-                        required
-                    >
+                    <input type="text" class="form-control" id="chatbotInput" placeholder="Type your question..."
+                        autocomplete="off" required>
                     <button type="submit" class="btn btn-primary" id="chatbotSendBtn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -70,475 +69,504 @@
 </div>
 
 <style>
-/* Prevent page loader from showing for chatbot widget */
-#chatbotWidget ~ * #pageLoader,
-#chatbotWidget #pageLoader,
-body:has(#chatbotWidget.active) #pageLoader {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
+    /* Prevent page loader from showing for chatbot widget */
+    #chatbotWidget~* #pageLoader,
+    #chatbotWidget #pageLoader,
+    body:has(#chatbotWidget.active) #pageLoader {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
 
-/* Chatbot Widget Styles */
-.chatbot-widget {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1050;
-    font-family: inherit;
-}
+    /* Chatbot Widget Styles */
+    .chatbot-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+        font-family: inherit;
+    }
 
-.chatbot-toggle-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 0;
-}
+    .chatbot-toggle-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 0;
+    }
 
-.chatbot-icon-img {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    display: block;
-    /* Add white background circle for better visibility on gradient */
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    padding: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
+    .chatbot-icon-img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        display: block;
+        /* Add white background circle for better visibility on gradient */
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
 
-.chatbot-icon-fallback {
-    display: none; /* Hidden by default, shown on error */
-}
+    .chatbot-icon-fallback {
+        display: none;
+        /* Hidden by default, shown on error */
+    }
 
-/* If icon image fails to load, show fallback */
-.chatbot-toggle-btn:has(img[style*="display: none"]) .chatbot-icon-fallback,
-.chatbot-toggle-btn img:not([src]) + .chatbot-icon-fallback {
-    display: block !important;
-}
+    /* If icon image fails to load, show fallback */
+    .chatbot-toggle-btn:has(img[style*="display: none"]) .chatbot-icon-fallback,
+    .chatbot-toggle-btn img:not([src])+.chatbot-icon-fallback {
+        display: block !important;
+    }
 
-.chatbot-toggle-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
+    .chatbot-toggle-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
 
-.chatbot-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #dc3545;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
+    .chatbot-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
 
-.chatbot-window {
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    width: 380px;
-    max-width: calc(100vw - 40px);
-    height: 500px;
-    max-height: calc(100vh - 120px);
-    min-height: 400px; /* Ensure minimum height */
-    background: var(--bg-card);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-
-/* Desktop: use absolute positioning and wider width */
-@media (min-width: 769px) {
     .chatbot-window {
         position: absolute;
-        width: 500px;
+        bottom: 80px;
+        right: 0;
+        width: 380px;
         max-width: calc(100vw - 40px);
+        height: 500px;
+        max-height: calc(100vh - 120px);
+        min-height: 400px;
+        /* Ensure minimum height */
+        background: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
     }
-}
 
-.chatbot-widget.active .chatbot-window {
-    display: flex;
-}
-
-.chatbot-window-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.chatbot-window-body {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 16px;
-    background: var(--bg-secondary);
-    min-height: 0; /* Allow flex shrinking */
-    /* scroll-behavior removed to prevent animation when auto-scrolling */
-    /* Ensure scrolling works properly */
-    -webkit-overflow-scrolling: touch;
-}
-
-.chatbot-window-footer {
-    padding: 12px;
-    background: var(--bg-card);
-    border-top: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.chatbot-form {
-    margin: 0;
-}
-
-.chatbot-message {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    animation: slideIn 0.3s ease-out;
-}
-
-.chatbot-message.user-message {
-    flex-direction: row-reverse;
-}
-
-.chatbot-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 16px;
-    overflow: hidden; /* Ensure image fits within circle */
-}
-
-.chatbot-header-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    display: inline-block;
-    /* Add white background for better visibility */
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    padding: 3px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-.chatbot-header-icon-fallback {
-    display: none;
-}
-
-.chatbot-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 4px; /* Small padding for better appearance */
-    /* Add subtle brightness filter for better visibility on gradient background */
-    filter: brightness(1.1) contrast(1.1);
-}
-
-.chatbot-avatar-icon-fallback {
-    display: none; /* Hidden by default, shown on error */
-}
-
-.bot-message .chatbot-avatar {
-    background: rgba(255, 255, 255, 0.95);
-    color: white;
-    /* White background for better Galaxy AI icon visibility */
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.user-message .chatbot-avatar {
-    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
-    color: white;
-}
-
-.chatbot-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.user-message .chatbot-content {
-    text-align: right;
-}
-
-.chatbot-bubble {
-    display: inline-block;
-    padding: 10px 14px;
-    border-radius: 16px;
-    max-width: 80%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.bot-bubble {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    border-bottom-left-radius: 4px;
-    border: 1px solid var(--border-color);
-}
-
-.user-bubble {
-    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-.chatbot-bubble p {
-    margin-bottom: 4px;
-}
-
-.chatbot-bubble ul {
-    padding-left: 20px;
-    margin-top: 8px;
-    margin-bottom: 4px;
-}
-
-.chatbot-bubble li {
-    margin-bottom: 4px;
-}
-
-.chatbot-loading {
-    display: inline-flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.chatbot-loading span {
-    margin-right: 4px;
-}
-
-.chatbot-loading-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--text-secondary);
-    animation: bounce 1.4s infinite ease-in-out;
-    display: inline-block;
-}
-
-.chatbot-loading-dot:nth-child(2) {
-    animation-delay: -0.32s;
-}
-
-.chatbot-loading-dot:nth-child(3) {
-    animation-delay: -0.16s;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+    /* Desktop: use absolute positioning and wider width */
+    @media (min-width: 769px) {
+        .chatbot-window {
+            position: absolute;
+            width: 500px;
+            max-width: calc(100vw - 40px);
+        }
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-@keyframes bounce {
-    0%, 80%, 100% {
-        transform: scale(0);
-        opacity: 0.5;
-    }
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .chatbot-widget {
-        bottom: 100px; /* Higher position to avoid overlapping with recording buttons */
-        right: 15px;
-        z-index: 1040; /* Above recording panel but below modals */
-    }
-    
-    .chatbot-toggle-btn {
-        width: 56px;
-        height: 56px;
-        font-size: 22px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* More visible shadow on mobile */
-    }
-    
-    .chatbot-window {
-        width: calc(100vw - 30px);
-        max-width: calc(100vw - 30px);
-        /* Position window above toggle button with proper spacing */
-        position: fixed;
-        top: 60px; /* Position from top (below navbar ~56px + padding) */
-        bottom: 180px; /* Position from bottom - enough space for toggle button (56px) + padding (124px) */
-        left: 15px;
-        right: 15px;
-        height: auto; /* Auto height based on top/bottom constraints */
-        max-height: none;
-        min-height: 300px; /* Minimum usable height */
-        z-index: 1041; /* Above the toggle button */
-    }
-    
     .chatbot-widget.active .chatbot-window {
         display: flex;
     }
-    
+
+    .chatbot-window-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .chatbot-window-body {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 16px;
+        background: var(--bg-secondary);
+        min-height: 0;
+        /* Allow flex shrinking */
+        /* scroll-behavior removed to prevent animation when auto-scrolling */
+        /* Ensure scrolling works properly */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chatbot-window-footer {
+        padding: 12px;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        flex-shrink: 0;
+    }
+
+    .chatbot-form {
+        margin: 0;
+    }
+
+    .chatbot-message {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .chatbot-message.user-message {
+        flex-direction: row-reverse;
+    }
+
+    .chatbot-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 16px;
+        overflow: hidden;
+        /* Ensure image fits within circle */
+    }
+
+    .chatbot-header-icon {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+        display: inline-block;
+        /* Add white background for better visibility */
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        padding: 3px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .chatbot-header-icon-fallback {
+        display: none;
+    }
+
+    .chatbot-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 4px;
+        /* Small padding for better appearance */
+        /* Add subtle brightness filter for better visibility on gradient background */
+        filter: brightness(1.1) contrast(1.1);
+    }
+
+    .chatbot-avatar-icon-fallback {
+        display: none;
+        /* Hidden by default, shown on error */
+    }
+
+    .bot-message .chatbot-avatar {
+        background: rgba(255, 255, 255, 0.95);
+        color: white;
+        /* White background for better Galaxy AI icon visibility */
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-message .chatbot-avatar {
+        background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+        color: white;
+    }
+
+    .chatbot-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .user-message .chatbot-content {
+        text-align: right;
+    }
+
     .chatbot-bubble {
-        max-width: 85%;
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 16px;
+        max-width: 80%;
+        word-wrap: break-word;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-}
 
-/* Extra small mobile devices */
-@media (max-width: 576px) {
-    .chatbot-widget {
-        bottom: 90px; /* Slightly higher on very small screens */
-        right: 10px;
+    .bot-bubble {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border-bottom-left-radius: 4px;
+        border: 1px solid var(--border-color);
     }
-    
-    .chatbot-toggle-btn {
-        width: 52px;
-        height: 52px;
-        font-size: 20px;
-    }
-    
-    .chatbot-window {
-        width: calc(100vw - 20px);
-        max-width: calc(100vw - 20px);
-        /* Use fixed positioning for proper alignment */
-        position: fixed;
-        top: 55px; /* Position from top */
-        bottom: 160px; /* Position from bottom - enough space for toggle button (52px) + padding (108px) */
-        left: 10px;
-        right: 10px;
-        height: auto; /* Auto height based on top/bottom */
-        max-height: none;
-        min-height: 280px; /* Minimum usable height for small screens */
-    }
-    
-    .chatbot-widget.active .chatbot-window {
-        display: flex;
-    }
-}
 
-/* Dynamic adjustment for pages with bottom fixed elements (like recording panel) */
-@media (max-width: 768px) {
-    /* If recording panel is visible, move chatbot button higher */
-    body:has(.mobile-recording-panel) .chatbot-widget,
-    body:has([id*="mobileRecordBtn"]) .chatbot-widget {
-        bottom: 120px !important; /* Extra space for recording buttons */
+    .user-bubble {
+        background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
     }
-    
-    /* Adjust window position when recording panel is visible */
-    body:has(.mobile-recording-panel) .chatbot-window,
-    body:has([id*="mobileRecordBtn"]) .chatbot-window {
-        top: 60px !important; /* Position from top */
-        bottom: 300px !important; /* Extra space: recording panel (~120px) + button (100px) + toggle button (56px) + padding (24px) */
-        height: auto !important;
-        max-height: none !important;
+
+    .chatbot-bubble p {
+        margin-bottom: 4px;
     }
-}
 
-/* Scrollbar styling */
-.chatbot-window-body::-webkit-scrollbar {
-    width: 6px;
-}
+    .chatbot-bubble ul {
+        padding-left: 20px;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
 
-.chatbot-window-body::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
+    .chatbot-bubble li {
+        margin-bottom: 4px;
+    }
 
-.chatbot-window-body::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-}
+    .chatbot-loading {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+    }
 
-.chatbot-window-body::-webkit-scrollbar-thumb:hover {
-    background: #999;
-}
+    .chatbot-loading span {
+        margin-right: 4px;
+    }
+
+    .chatbot-loading-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-secondary);
+        animation: bounce 1.4s infinite ease-in-out;
+        display: inline-block;
+    }
+
+    .chatbot-loading-dot:nth-child(2) {
+        animation-delay: -0.32s;
+    }
+
+    .chatbot-loading-dot:nth-child(3) {
+        animation-delay: -0.16s;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes bounce {
+
+        0%,
+        80%,
+        100% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .chatbot-widget {
+            bottom: 100px;
+            /* Higher position to avoid overlapping with recording buttons */
+            right: 15px;
+            z-index: 1040;
+            /* Above recording panel but below modals */
+        }
+
+        .chatbot-toggle-btn {
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            /* More visible shadow on mobile */
+        }
+
+        .chatbot-window {
+            width: calc(100vw - 30px);
+            max-width: calc(100vw - 30px);
+            /* Position window above toggle button with proper spacing */
+            position: fixed;
+            top: 60px;
+            /* Position from top (below navbar ~56px + padding) */
+            bottom: 180px;
+            /* Position from bottom - enough space for toggle button (56px) + padding (124px) */
+            left: 15px;
+            right: 15px;
+            height: auto;
+            /* Auto height based on top/bottom constraints */
+            max-height: none;
+            min-height: 300px;
+            /* Minimum usable height */
+            z-index: 1041;
+            /* Above the toggle button */
+        }
+
+        .chatbot-widget.active .chatbot-window {
+            display: flex;
+        }
+
+        .chatbot-bubble {
+            max-width: 85%;
+        }
+    }
+
+    /* Extra small mobile devices */
+    @media (max-width: 576px) {
+        .chatbot-widget {
+            bottom: 90px;
+            /* Slightly higher on very small screens */
+            right: 10px;
+        }
+
+        .chatbot-toggle-btn {
+            width: 52px;
+            height: 52px;
+            font-size: 20px;
+        }
+
+        .chatbot-window {
+            width: calc(100vw - 20px);
+            max-width: calc(100vw - 20px);
+            /* Use fixed positioning for proper alignment */
+            position: fixed;
+            top: 55px;
+            /* Position from top */
+            bottom: 160px;
+            /* Position from bottom - enough space for toggle button (52px) + padding (108px) */
+            left: 10px;
+            right: 10px;
+            height: auto;
+            /* Auto height based on top/bottom */
+            max-height: none;
+            min-height: 280px;
+            /* Minimum usable height for small screens */
+        }
+
+        .chatbot-widget.active .chatbot-window {
+            display: flex;
+        }
+    }
+
+    /* Dynamic adjustment for pages with bottom fixed elements (like recording panel) */
+    @media (max-width: 768px) {
+
+        /* If recording panel is visible, move chatbot button higher */
+        body:has(.mobile-recording-panel) .chatbot-widget,
+        body:has([id*="mobileRecordBtn"]) .chatbot-widget {
+            bottom: 120px !important;
+            /* Extra space for recording buttons */
+        }
+
+        /* Adjust window position when recording panel is visible */
+        body:has(.mobile-recording-panel) .chatbot-window,
+        body:has([id*="mobileRecordBtn"]) .chatbot-window {
+            top: 60px !important;
+            /* Position from top */
+            bottom: 300px !important;
+            /* Extra space: recording panel (~120px) + button (100px) + toggle button (56px) + padding (24px) */
+            height: auto !important;
+            max-height: none !important;
+        }
+    }
+
+    /* Scrollbar styling */
+    .chatbot-window-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chatbot-window-body::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+    }
+
+    .chatbot-window-body::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+    }
+
+    .chatbot-window-body::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
 </style>
 
 <script>
-(function() {
-    'use strict';
-    
-    let conversationHistory = [];
-    let isChatbotOpen = false;
-    
-    // Load conversation history
-    // NOTE: This widget shares the same conversation history with the main chatbot page
-    // Both use the same localStorage key 'opic_chatbot_history' and the same chatbot_service backend
-    function loadConversationHistory() {
-        const savedHistory = localStorage.getItem('opic_chatbot_history');
-        if (savedHistory) {
-            try {
-                conversationHistory = JSON.parse(savedHistory);
-            } catch (e) {
-                console.error('Failed to load chat history:', e);
+    (function () {
+        'use strict';
+
+        let conversationHistory = [];
+        let isChatbotOpen = false;
+
+        // Load conversation history
+        // NOTE: This widget shares the same conversation history with the main chatbot page
+        // Both use the same localStorage key 'opic_chatbot_history' and the same chatbot_service backend
+        function loadConversationHistory() {
+            const savedHistory = localStorage.getItem('opic_chatbot_history');
+            if (savedHistory) {
+                try {
+                    conversationHistory = JSON.parse(savedHistory);
+                } catch (e) {
+                    console.error('Failed to load chat history:', e);
+                    conversationHistory = [];
+                }
+            } else {
                 conversationHistory = [];
             }
-        } else {
-            conversationHistory = [];
         }
-    }
-    
-    // Get elements first
-    const chatbotWidget = document.getElementById('chatbotWidget');
-    const chatbotToggle = document.getElementById('chatbotToggle');
-    const chatbotWindow = document.getElementById('chatbotWindow');
-    const chatbotCloseBtn = document.getElementById('chatbotCloseBtn');
-    const chatbotClearBtn = document.getElementById('chatbotClearBtn');
-    const chatbotForm = document.getElementById('chatbotForm');
-    const chatbotInput = document.getElementById('chatbotInput');
-    const chatbotMessages = document.getElementById('chatbotMessages');
-    const chatbotSendBtn = document.getElementById('chatbotSendBtn');
-    
-    // Initial load
-    loadConversationHistory();
-    
-    // Render conversation history to UI
-    function renderConversationHistory() {
-        if (!chatbotMessages) return;
-        
-        // Temporarily disable scrolling during render to prevent jumping
-        const fragment = document.createDocumentFragment();
-        
-        // If there's history, render all messages to fragment first
-        if (conversationHistory.length > 0) {
-            for (const msg of conversationHistory) {
-                if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `chatbot-message ${msg.role === 'user' ? 'user' : 'bot'}-message`;
-                    
-                    const galaxyIconUrl = '/static/galaxyAI.png';
-                    const avatar = msg.role === 'bot' 
-                        ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
-                        : '<i class="fas fa-user"></i>';
-                    
-                    messageDiv.innerHTML = `
+
+        // Get elements first
+        const chatbotWidget = document.getElementById('chatbotWidget');
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const chatbotCloseBtn = document.getElementById('chatbotCloseBtn');
+        const chatbotClearBtn = document.getElementById('chatbotClearBtn');
+        const chatbotForm = document.getElementById('chatbotForm');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+
+        // Initial load
+        loadConversationHistory();
+
+        // Render conversation history to UI
+        function renderConversationHistory() {
+            if (!chatbotMessages) return;
+
+            // Temporarily disable scrolling during render to prevent jumping
+            const fragment = document.createDocumentFragment();
+
+            // If there's history, render all messages to fragment first
+            if (conversationHistory.length > 0) {
+                for (const msg of conversationHistory) {
+                    if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `chatbot-message ${msg.role === 'user' ? 'user' : 'bot'}-message`;
+
+                        const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+
+                        const avatar = (msg.role === 'bot' || msg.role === 'assistant')
+                            ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
+                            : '<i class="fas fa-user"></i>';
+
+                        messageDiv.innerHTML = `
                         <div class="chatbot-avatar">
                             ${avatar}
                         </div>
@@ -548,15 +576,15 @@ body:has(#chatbotWidget.active) #pageLoader {
                             </div>
                         </div>
                     `;
-                    fragment.appendChild(messageDiv);
+                        fragment.appendChild(messageDiv);
+                    }
                 }
-            }
-        } else {
-            // Show welcome message if no history
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'chatbot-message bot-message';
-            const galaxyIconUrl = '/static/galaxyAI.png';
-            welcomeDiv.innerHTML = `
+            } else {
+                // Show welcome message if no history
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'chatbot-message bot-message';
+                const galaxyIconUrl = '/static/galaxyAI.ico';
+                welcomeDiv.innerHTML = `
                 <div class="chatbot-avatar">
                     <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
@@ -574,81 +602,82 @@ body:has(#chatbotWidget.active) #pageLoader {
                     </div>
                 </div>
             `;
-            fragment.appendChild(welcomeDiv);
-        }
-        
-        // Clear and append fragment in one operation to prevent scroll jumping
-        chatbotMessages.innerHTML = '';
-        chatbotMessages.appendChild(fragment);
-        
-        // Instantly scroll to bottom after rendering (no animation)
-        // Use requestAnimationFrame only to ensure DOM is ready
-        requestAnimationFrame(() => {
-            chatbotMessages.scrollTo({
-                top: chatbotMessages.scrollHeight,
-                behavior: 'auto'
-            });
-        });
-    }
-    
-    // Listen for storage changes from other tabs/components (e.g., main chatbot page)
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'opic_chatbot_history') {
-            console.log('[Chatbot Widget] Storage event detected, syncing history');
-            loadConversationHistory();
-            renderConversationHistory();
-        }
-    });
-    
-    // Also listen for custom events (for same-tab sync)
-    window.addEventListener('opic_chatbot_history_updated', function() {
-        console.log('[Chatbot Widget] Custom event detected, syncing history');
-        loadConversationHistory();
-        renderConversationHistory();
-    });
-    
-    // Toggle chatbot window
-    function toggleChatbot() {
-        isChatbotOpen = !isChatbotOpen;
-        if (isChatbotOpen) {
-            chatbotWidget.classList.add('active');
-            // Reload and render history when opening (in case it changed from main chatbot page)
-            loadConversationHistory();
-            renderConversationHistory();
-            // Focus input after a short delay to ensure window is fully visible
-            setTimeout(() => {
-                chatbotInput.focus();
-            }, 150);
-            // Ensure page loader is hidden when opening chatbot
-            const pageLoader = document.getElementById('pageLoader');
-            if (pageLoader) {
-                pageLoader.classList.remove('active');
-                pageLoader.classList.remove('hiding');
-                pageLoader.style.display = 'none';
+                fragment.appendChild(welcomeDiv);
             }
-        } else {
+
+            // Clear and append fragment in one operation to prevent scroll jumping
+            chatbotMessages.innerHTML = '';
+            chatbotMessages.appendChild(fragment);
+
+            // Instantly scroll to bottom after rendering (no animation)
+            // Use requestAnimationFrame only to ensure DOM is ready
+            requestAnimationFrame(() => {
+                chatbotMessages.scrollTo({
+                    top: chatbotMessages.scrollHeight,
+                    behavior: 'auto'
+                });
+            });
+        }
+
+        // Listen for storage changes from other tabs/components (e.g., main chatbot page)
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'opic_chatbot_history') {
+                console.log('[Chatbot Widget] Storage event detected, syncing history');
+                loadConversationHistory();
+                renderConversationHistory();
+            }
+        });
+
+        // Also listen for custom events (for same-tab sync)
+        window.addEventListener('opic_chatbot_history_updated', function () {
+            console.log('[Chatbot Widget] Custom event detected, syncing history');
+            loadConversationHistory();
+            renderConversationHistory();
+        });
+
+        // Toggle chatbot window
+        function toggleChatbot() {
+            isChatbotOpen = !isChatbotOpen;
+            if (isChatbotOpen) {
+                chatbotWidget.classList.add('active');
+                // Reload and render history when opening (in case it changed from main chatbot page)
+                loadConversationHistory();
+                renderConversationHistory();
+                // Focus input after a short delay to ensure window is fully visible
+                setTimeout(() => {
+                    chatbotInput.focus();
+                }, 150);
+                // Ensure page loader is hidden when opening chatbot
+                const pageLoader = document.getElementById('pageLoader');
+                if (pageLoader) {
+                    pageLoader.classList.remove('active');
+                    pageLoader.classList.remove('hiding');
+                    pageLoader.style.display = 'none';
+                }
+            } else {
+                chatbotWidget.classList.remove('active');
+            }
+        }
+
+        // Close chatbot
+        function closeChatbot() {
+            isChatbotOpen = false;
             chatbotWidget.classList.remove('active');
         }
-    }
-    
-    // Close chatbot
-    function closeChatbot() {
-        isChatbotOpen = false;
-        chatbotWidget.classList.remove('active');
-    }
-    
-    // Add message to chat
-    function addChatbotMessage(text, role, scrollToBottom = true) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `chatbot-message ${role}-message`;
-        
-        // Get the Galaxy AI icon URL from the welcome message or use static path
-        const galaxyIconUrl = '/static/galaxyAI.png';
-        const avatar = role === 'bot' 
-            ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
-            : '<i class="fas fa-user"></i>';
-        
-        messageDiv.innerHTML = `
+
+        // Add message to chat
+        function addChatbotMessage(text, role, scrollToBottom = true) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chatbot-message ${role}-message`;
+
+            // Get the Galaxy AI icon URL from the welcome message or use static path
+            const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+
+            const avatar = (role === 'bot' || role === 'assistant')
+                ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
+                : '<i class="fas fa-user"></i>';
+
+            messageDiv.innerHTML = `
             <div class="chatbot-avatar">
                 ${avatar}
             </div>
@@ -658,43 +687,43 @@ body:has(#chatbotWidget.active) #pageLoader {
                 </div>
             </div>
         `;
-        
-        chatbotMessages.appendChild(messageDiv);
-        // Scroll to bottom for new messages, but only if user was already at bottom
-        if (scrollToBottom) {
-            // Check if user was at bottom before adding message (with small tolerance)
-            const scrollThreshold = 5; // pixels tolerance
-            const wasAtBottom = chatbotMessages.scrollHeight - chatbotMessages.scrollTop - chatbotMessages.clientHeight <= scrollThreshold;
-            
-            if (wasAtBottom) {
-                // If already at bottom, instantly set scroll position (no animation)
-                // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
-                chatbotMessages.scrollTo({
-                    top: chatbotMessages.scrollHeight,
-                    behavior: 'auto'
-                });
+
+            chatbotMessages.appendChild(messageDiv);
+            // Scroll to bottom for new messages, but only if user was already at bottom
+            if (scrollToBottom) {
+                // Check if user was at bottom before adding message (with small tolerance)
+                const scrollThreshold = 5; // pixels tolerance
+                const wasAtBottom = chatbotMessages.scrollHeight - chatbotMessages.scrollTop - chatbotMessages.clientHeight <= scrollThreshold;
+
+                if (wasAtBottom) {
+                    // If already at bottom, instantly set scroll position (no animation)
+                    // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
+                    chatbotMessages.scrollTo({
+                        top: chatbotMessages.scrollHeight,
+                        behavior: 'auto'
+                    });
+                }
             }
+
+            return messageDiv;
         }
-        
-        return messageDiv;
-    }
-    
-    // Format message text
-    function formatChatbotMessage(text) {
-        text = text.replace(/\n\n/g, '</p><p class="mb-2">');
-        text = text.replace(/\n/g, '<br>');
-        text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-        text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-        return `<p class="mb-2">${text}</p>`;
-    }
-    
-    // Show loading/thinking indicator
-    function showChatbotLoading() {
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'chatbotLoading';
-        loadingDiv.className = 'chatbot-message bot-message';
-        const galaxyIconUrl = '/static/galaxyAI.png';
-        loadingDiv.innerHTML = `
+
+        // Format message text
+        function formatChatbotMessage(text) {
+            text = text.replace(/\n\n/g, '</p><p class="mb-2">');
+            text = text.replace(/\n/g, '<br>');
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            return `<p class="mb-2">${text}</p>`;
+        }
+
+        // Show loading/thinking indicator
+        function showChatbotLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'chatbotLoading';
+            loadingDiv.className = 'chatbot-message bot-message';
+            const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+            loadingDiv.innerHTML = `
             <div class="chatbot-avatar">
                 <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
@@ -708,203 +737,202 @@ body:has(#chatbotWidget.active) #pageLoader {
                 </div>
             </div>
         `;
-        chatbotMessages.appendChild(loadingDiv);
-        // Instantly scroll to bottom (no animation) when showing loading indicator
-        chatbotMessages.scrollTo({
-            top: chatbotMessages.scrollHeight,
-            behavior: 'auto'
-        });
-    }
-    
-    // Remove loading indicator
-    function removeChatbotLoading() {
-        const loading = document.getElementById('chatbotLoading');
-        if (loading) {
-            loading.remove();
-        }
-    }
-    
-    // Send message
-    // NOTE: This widget uses the same chatbot service as the main chatbot page
-    // Both use /api/chatbot/chat endpoint and share conversation history via localStorage
-    async function sendChatbotMessage(message) {
-        // Ensure page loader is hidden before starting
-        const pageLoader = document.getElementById('pageLoader');
-        if (pageLoader) {
-            pageLoader.classList.remove('active');
-            pageLoader.classList.remove('hiding');
-            pageLoader.style.display = 'none';
-            pageLoader.style.visibility = 'hidden';
-            pageLoader.style.opacity = '0';
-        }
-        
-        // Add user message
-        addChatbotMessage(message, 'user');
-        
-        // Add to history and save immediately
-        conversationHistory.push({
-            role: 'user',
-            content: message
-        });
-        localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
-        // Dispatch custom event for same-tab sync (main chatbot page)
-        window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-        
-        // Disable input
-        chatbotInput.disabled = true;
-        chatbotSendBtn.disabled = true;
-        
-        // Show thinking indicator
-        showChatbotLoading();
-        
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000);
-            
-            // Use the same chatbot service endpoint as the main chatbot page
-            // This routes to app/blueprints/chatbot.py which uses chatbot_service from app/services/chatbot_service.py
-            const response = await fetch('/api/chatbot/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                    history: conversationHistory.slice(-10)
-                }),
-                signal: controller.signal
+            chatbotMessages.appendChild(loadingDiv);
+            // Instantly scroll to bottom (no animation) when showing loading indicator
+            chatbotMessages.scrollTo({
+                top: chatbotMessages.scrollHeight,
+                behavior: 'auto'
             });
-            
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                let errorMsg = `HTTP error! status: ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData.error) {
-                        errorMsg = errorData.error;
-                    }
-                } catch (e) {
-                    if (response.status === 404) {
-                        errorMsg = 'Chatbot service not found.';
-                    } else if (response.status === 500) {
-                        errorMsg = 'Server error occurred.';
-                    }
-                }
-                throw new Error(errorMsg);
-            }
-            
-            const data = await response.json();
-            
-            // Remove loading indicator
-            removeChatbotLoading();
-            
-            if (data.success) {
-                addChatbotMessage(data.response, 'bot');
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: data.response
-                });
-                localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
-                // Dispatch custom event for same-tab sync (main chatbot page)
-                window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-            } else {
-                const errorMsg = data.error || 'Sorry, I encountered an error.';
-                addChatbotMessage(errorMsg, 'bot');
-            }
-        } catch (error) {
-            console.error('Chat error:', error);
-            
-            // Remove loading indicator on error
-            removeChatbotLoading();
-            
-            let errorMessage = 'Sorry, I encountered an error.';
-            if (error.name === 'AbortError') {
-                errorMessage = 'Request timed out. Please try again.';
-            } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
-                errorMessage = 'Connection error. Please check your internet connection and try again.';
-            } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
-                errorMessage = 'Connection was reset. Please try again.';
-            } else if (error.message && error.message.includes('404')) {
-                errorMessage = 'Chatbot service not available.';
-            } else if (error.message && !error.message.includes('HTTP error')) {
-                errorMessage = error.message;
-            }
-            
-            addChatbotMessage(errorMessage, 'bot');
-        } finally {
-            chatbotInput.disabled = false;
-            chatbotSendBtn.disabled = false;
-            chatbotInput.focus();
         }
-    }
-    
-    // Clear chat
-    function clearChatbot() {
-        if (confirm('Are you sure you want to clear the chat history?')) {
-            conversationHistory = [];
-            localStorage.removeItem('opic_chatbot_history');
-            
+
+        // Remove loading indicator
+        function removeChatbotLoading() {
+            const loading = document.getElementById('chatbotLoading');
+            if (loading) {
+                loading.remove();
+            }
+        }
+
+        // Send message
+        // NOTE: This widget uses the same chatbot service as the main chatbot page
+        // Both use /api/chatbot/chat endpoint and share conversation history via localStorage
+        async function sendChatbotMessage(message) {
+            // Ensure page loader is hidden before starting
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                pageLoader.classList.remove('active');
+                pageLoader.classList.remove('hiding');
+                pageLoader.style.display = 'none';
+                pageLoader.style.visibility = 'hidden';
+                pageLoader.style.opacity = '0';
+            }
+
+            // Add user message
+            addChatbotMessage(message, 'user');
+
+            // Add to history and save immediately
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+            localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
             // Dispatch custom event for same-tab sync (main chatbot page)
             window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-            
-            // Keep only welcome message
-            const welcomeMessage = chatbotMessages.querySelector('.bot-message');
-            chatbotMessages.innerHTML = '';
-            if (welcomeMessage) {
-                chatbotMessages.appendChild(welcomeMessage);
+
+            // Disable input
+            chatbotInput.disabled = true;
+            chatbotSendBtn.disabled = true;
+
+            // Show thinking indicator
+            showChatbotLoading();
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 90000);
+
+                // Use the same chatbot service endpoint as the main chatbot page
+                // This routes to app/blueprints/chatbot.py which uses chatbot_service from app/services/chatbot_service.py
+                const response = await fetch('/api/chatbot/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: conversationHistory.slice(-10)
+                    }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    let errorMsg = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error) {
+                            errorMsg = errorData.error;
+                        }
+                    } catch (e) {
+                        if (response.status === 404) {
+                            errorMsg = 'Chatbot service not found.';
+                        } else if (response.status === 500) {
+                            errorMsg = 'Server error occurred.';
+                        }
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+
+                // Remove loading indicator
+                removeChatbotLoading();
+
+                if (data.success) {
+                    addChatbotMessage(data.response, 'bot');
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: data.response
+                    });
+                    localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
+                    // Dispatch custom event for same-tab sync (main chatbot page)
+                    window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+                } else {
+                    const errorMsg = data.error || 'Sorry, I encountered an error.';
+                    addChatbotMessage(errorMsg, 'bot');
+                }
+            } catch (error) {
+                console.error('Chat error:', error);
+
+                // Remove loading indicator on error
+                removeChatbotLoading();
+
+                let errorMessage = 'Sorry, I encountered an error.';
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out. Please try again.';
+                } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
+                    errorMessage = 'Connection error. Please check your internet connection and try again.';
+                } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
+                    errorMessage = 'Connection was reset. Please try again.';
+                } else if (error.message && error.message.includes('404')) {
+                    errorMessage = 'Chatbot service not available.';
+                } else if (error.message && !error.message.includes('HTTP error')) {
+                    errorMessage = error.message;
+                }
+
+                addChatbotMessage(errorMessage, 'bot');
+            } finally {
+                chatbotInput.disabled = false;
+                chatbotSendBtn.disabled = false;
+                chatbotInput.focus();
             }
         }
-    }
-    
-    // Event listeners
-    chatbotToggle.addEventListener('click', toggleChatbot);
-    chatbotCloseBtn.addEventListener('click', closeChatbot);
-    chatbotClearBtn.addEventListener('click', clearChatbot);
-    
-    chatbotForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); // Prevent event bubbling
-        e.stopImmediatePropagation(); // Prevent other handlers from running
-        
-        // Immediately hide page loader if it exists
-        const pageLoader = document.getElementById('pageLoader');
-        if (pageLoader) {
-            pageLoader.classList.remove('active');
-            pageLoader.classList.remove('hiding');
-            pageLoader.style.display = 'none';
-            pageLoader.style.visibility = 'hidden';
-            pageLoader.style.opacity = '0';
-            pageLoader.style.pointerEvents = 'none';
+
+        // Clear chat
+        function clearChatbot() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                conversationHistory = [];
+                localStorage.removeItem('opic_chatbot_history');
+
+                // Dispatch custom event for same-tab sync (main chatbot page)
+                window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+
+                // Keep only welcome message
+                const welcomeMessage = chatbotMessages.querySelector('.bot-message');
+                chatbotMessages.innerHTML = '';
+                if (welcomeMessage) {
+                    chatbotMessages.appendChild(welcomeMessage);
+                }
+            }
         }
-        
-        const message = chatbotInput.value.trim();
-        if (!message) return;
-        
-        chatbotInput.value = '';
-        sendChatbotMessage(message);
-        
-        // Return false to prevent any default form behavior
-        return false;
-    }, true); // Use capture phase to intercept before other handlers
-    
-    // Close on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && isChatbotOpen) {
-            closeChatbot();
-        }
-    });
-    
-    // Close when clicking outside (on mobile)
-    document.addEventListener('click', function(e) {
-        if (isChatbotOpen && !chatbotWidget.contains(e.target) && !chatbotToggle.contains(e.target)) {
-            // Don't close on mobile - let user explicitly close
-            if (window.innerWidth > 768) {
+
+        // Event listeners
+        chatbotToggle.addEventListener('click', toggleChatbot);
+        chatbotCloseBtn.addEventListener('click', closeChatbot);
+        chatbotClearBtn.addEventListener('click', clearChatbot);
+
+        chatbotForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent event bubbling
+            e.stopImmediatePropagation(); // Prevent other handlers from running
+
+            // Immediately hide page loader if it exists
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                pageLoader.classList.remove('active');
+                pageLoader.classList.remove('hiding');
+                pageLoader.style.display = 'none';
+                pageLoader.style.visibility = 'hidden';
+                pageLoader.style.opacity = '0';
+                pageLoader.style.pointerEvents = 'none';
+            }
+
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+
+            chatbotInput.value = '';
+            sendChatbotMessage(message);
+
+            // Return false to prevent any default form behavior
+            return false;
+        }, true); // Use capture phase to intercept before other handlers
+
+        // Close on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && isChatbotOpen) {
                 closeChatbot();
             }
-        }
-    });
-})();
-</script>
+        });
 
+        // Close when clicking outside (on mobile)
+        document.addEventListener('click', function (e) {
+            if (isChatbotOpen && !chatbotWidget.contains(e.target) && !chatbotToggle.contains(e.target)) {
+                // Don't close on mobile - let user explicitly close
+                if (window.innerWidth > 768) {
+                    closeChatbot();
+                }
+            }
+        });
+    })();
+</script>

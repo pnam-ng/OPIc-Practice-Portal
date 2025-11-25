@@ -15,7 +15,8 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-11 col-xl-10 chatbot-card-wrapper">
-            <div class="card border-0 shadow-sm" style="height: calc(100vh - 180px); display: flex; flex-direction: column;">
+            <div class="card border-0 shadow-sm"
+                style="height: calc(100vh - 180px); display: flex; flex-direction: column;">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="fas fa-comments me-2"></i>Chat with AI Assistant
@@ -24,7 +25,7 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                
+
                 <!-- Chat Messages Container -->
                 <div class="card-body flex-grow-1 overflow-auto p-3 p-md-4" id="chatMessages" style="min-height: 60vh;">
                     <!-- Welcome Message -->
@@ -47,19 +48,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Chat Input -->
                 <div class="card-footer chat-footer border-top p-3 p-md-4">
                     <form id="chatForm" class="d-flex gap-2" data-ajax="true" data-has-inline-loader="true">
                         <div class="flex-grow-1">
-                            <input 
-                                type="text" 
-                                class="form-control form-control-lg" 
-                                id="chatInput" 
-                                placeholder="Type your question here..." 
-                                autocomplete="off"
-                                required
-                            >
+                            <input type="text" class="form-control form-control-lg" id="chatInput"
+                                placeholder="Type your question here..." autocomplete="off" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg px-4" id="sendButton">
                             <i class="fas fa-paper-plane me-2"></i>Send
@@ -76,244 +71,301 @@
 </div>
 
 <style>
-/* Force hide page loader on chatbot page */
-#pageLoader {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-#pageLoader.active {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-}
-
-.chat-message {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+    /* Force hide page loader on chatbot page */
+    #pageLoader {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    #pageLoader.active {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
-}
 
-.user-message {
-    flex-direction: row-reverse;
-}
-
-.message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 1.2rem;
-}
-
-.bot-message .message-avatar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.user-message .message-avatar {
-    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
-    color: white;
-}
-
-.message-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.user-message .message-content {
-    text-align: right;
-}
-
-.message-bubble {
-    display: inline-block;
-    padding: 0.75rem 1rem;
-    border-radius: 18px;
-    max-width: 85%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.bot-bubble {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border-bottom-left-radius: 4px;
-}
-
-.user-bubble {
-    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-[data-theme="dark"] .bot-bubble {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-}
-
-.message-bubble p {
-    margin-bottom: 0.5rem;
-}
-
-.message-bubble ul {
-    padding-left: 1.25rem;
-    margin-top: 0.5rem;
-}
-
-.message-bubble li {
-    margin-bottom: 0.25rem;
-}
-
-.message-time {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    opacity: 0.7;
-}
-
-.user-message .message-time {
-    text-align: right;
-}
-
-#chatMessages {
-    /* scroll-behavior removed to prevent animation when auto-scrolling */
-}
-
-#chatMessages::-webkit-scrollbar {
-    width: 6px;
-}
-
-#chatMessages::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-#chatMessages::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-}
-
-#chatMessages::-webkit-scrollbar-thumb:hover {
-    background: #999;
-}
-
-.loading-message {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.loading-dots {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.loading-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--text-secondary);
-    animation: bounce 1.4s infinite ease-in-out;
-}
-
-.loading-dot:nth-child(1) {
-    animation-delay: -0.32s;
-}
-
-.loading-dot:nth-child(2) {
-    animation-delay: -0.16s;
-}
-
-@keyframes bounce {
-    0%, 80%, 100% {
-        transform: scale(0);
-        opacity: 0.5;
+    .chat-message {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        animation: slideIn 0.3s ease-out;
     }
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
 
-@media (min-width: 992px) {
-    .chatbot-card-wrapper {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-    
-    .message-bubble {
-        max-width: 78%;
-    }
-    
-    .card-body {
-        padding: 1.5rem 2rem !important;
-    }
-    
-    .card-footer {
-        padding: 1.25rem 2rem !important;
-    }
-}
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
 
-@media (max-width: 768px) {
-    .message-bubble {
-        max-width: 90%;
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    
+
+    .user-message {
+        flex-direction: row-reverse;
+    }
+
     .message-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+        overflow: hidden;
     }
-}
+
+    .bot-message .message-avatar {
+        background: rgba(255, 255, 255, 0.95);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-message .message-avatar {
+        background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+        color: white;
+    }
+
+    .chatbot-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 4px;
+        filter: brightness(1.1) contrast(1.1);
+    }
+
+    .chatbot-avatar-icon-fallback {
+        display: none;
+    }
+
+    .message-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .user-message .message-content {
+        text-align: right;
+    }
+
+    .message-bubble {
+        display: inline-block;
+        padding: 0.75rem 1rem;
+        border-radius: 18px;
+        max-width: 85%;
+        word-wrap: break-word;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .bot-bubble {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border-bottom-left-radius: 4px;
+    }
+
+    .user-bubble {
+        background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    [data-theme="dark"] .bot-bubble {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+    }
+
+    .message-bubble p {
+        margin-bottom: 0.5rem;
+    }
+
+    .message-bubble ul {
+        padding-left: 1.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .message-bubble li {
+        margin-bottom: 0.25rem;
+    }
+
+    .message-time {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        opacity: 0.7;
+    }
+
+    .user-message .message-time {
+        text-align: right;
+    }
+
+    #chatMessages {
+        /* scroll-behavior removed to prevent animation when auto-scrolling */
+    }
+
+    #chatMessages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #chatMessages::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+    }
+
+    #chatMessages::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+    }
+
+    #chatMessages::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+
+    .loading-message {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .loading-dots {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .loading-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-secondary);
+        animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .loading-dot:nth-child(1) {
+        animation-delay: -0.32s;
+    }
+
+    .loading-dot:nth-child(2) {
+        animation-delay: -0.16s;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        80%,
+        100% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .chatbot-card-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .message-bubble {
+            max-width: 78%;
+        }
+
+        .card-body {
+            padding: 1.5rem 2rem !important;
+        }
+
+        .card-footer {
+            padding: 1.25rem 2rem !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .message-bubble {
+            max-width: 90%;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+        }
+    }
 </style>
 
 <style>
-/* Chat footer theme-aware styles */
-.chat-footer {
-    background-color: var(--bs-body-bg); /* fallback */
-}
+    /* Chat footer theme-aware styles */
+    .chat-footer {
+        background-color: var(--bs-body-bg);
+        /* fallback */
+    }
 
-[data-theme="dark"] .chat-footer {
-    background-color: var(--bg-card) !important;
-    border-top-color: var(--border-color) !important;
-}
+    [data-theme="dark"] .chat-footer {
+        background-color: var(--bg-card) !important;
+        border-top-color: var(--border-color) !important;
+    }
 
-[data-theme="dark"] .chat-footer .form-control,
-[data-theme="dark"] .chat-footer .btn {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    border-color: var(--border-color);
-}
+    [data-theme="dark"] .chat-footer .form-control,
+    [data-theme="dark"] .chat-footer .btn {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
 
-[data-theme="dark"] .chat-footer .btn.btn-primary {
-    background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%);
-    border-color: #1e88e5;
-}
+    [data-theme="dark"] .chat-footer .btn.btn-primary {
+        background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%);
+        border-color: #1e88e5;
+    }
 </style>
 
 <script>
-let conversationHistory = [];
+    let conversationHistory = [];
 
-// Hide page loader immediately when chatbot page loads (run as early as possible)
-(function() {
-    function forceHideLoader() {
+    // Hide page loader immediately when chatbot page loads (run as early as possible)
+    (function () {
+        function forceHideLoader() {
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                pageLoader.classList.remove('active');
+                pageLoader.classList.remove('hiding');
+                pageLoader.style.display = 'none';
+                pageLoader.style.opacity = '0';
+                pageLoader.style.visibility = 'hidden';
+            }
+        }
+
+        // Run immediately
+        forceHideLoader();
+
+        // Run on DOMContentLoaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', forceHideLoader);
+        } else {
+            forceHideLoader();
+        }
+
+        // Run on window load
+        window.addEventListener('load', forceHideLoader);
+
+        // Override any attempts to show loader
+        const originalAddEventListener = window.addEventListener;
+        window.addEventListener = function (type, listener, options) {
+            if (type === 'beforeunload') {
+                // Don't let beforeunload show the loader for this page
+                return;
+            }
+            return originalAddEventListener.call(this, type, listener, options);
+        };
+    })();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hide page loader if it's still showing
         const pageLoader = document.getElementById('pageLoader');
         if (pageLoader) {
             pageLoader.classList.remove('active');
@@ -322,83 +374,52 @@ let conversationHistory = [];
             pageLoader.style.opacity = '0';
             pageLoader.style.visibility = 'hidden';
         }
-    }
-    
-    // Run immediately
-    forceHideLoader();
-    
-    // Run on DOMContentLoaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', forceHideLoader);
-    } else {
-        forceHideLoader();
-    }
-    
-    // Run on window load
-    window.addEventListener('load', forceHideLoader);
-    
-    // Override any attempts to show loader
-    const originalAddEventListener = window.addEventListener;
-    window.addEventListener = function(type, listener, options) {
-        if (type === 'beforeunload') {
-            // Don't let beforeunload show the loader for this page
-            return;
-        }
-        return originalAddEventListener.call(this, type, listener, options);
-    };
-})();
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide page loader if it's still showing
-    const pageLoader = document.getElementById('pageLoader');
-    if (pageLoader) {
-        pageLoader.classList.remove('active');
-        pageLoader.classList.remove('hiding');
-        pageLoader.style.display = 'none';
-        pageLoader.style.opacity = '0';
-        pageLoader.style.visibility = 'hidden';
-    }
-    
-    const chatForm = document.getElementById('chatForm');
-    const chatInput = document.getElementById('chatInput');
-    const chatMessages = document.getElementById('chatMessages');
-    const sendButton = document.getElementById('sendButton');
-    
-    // Load conversation history from localStorage
-    function loadConversationHistory() {
-        const savedHistory = localStorage.getItem('opic_chatbot_history');
-        if (savedHistory) {
-            try {
-                conversationHistory = JSON.parse(savedHistory) || [];
-            } catch (e) {
-                console.error('Failed to load chat history:', e);
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const sendButton = document.getElementById('sendButton');
+
+        // Load conversation history from localStorage
+        function loadConversationHistory() {
+            const savedHistory = localStorage.getItem('opic_chatbot_history');
+            if (savedHistory) {
+                try {
+                    conversationHistory = JSON.parse(savedHistory) || [];
+                } catch (e) {
+                    console.error('Failed to load chat history:', e);
+                    conversationHistory = [];
+                }
+            } else {
                 conversationHistory = [];
             }
-        } else {
-            conversationHistory = [];
         }
-    }
-    
-    // Render conversation history to UI
-    function renderConversationHistory() {
-        // Use document fragment to batch DOM updates and prevent scroll jumping
-        const fragment = document.createDocumentFragment();
-        
-        // If there's history, render all messages to fragment first
-        if (conversationHistory.length > 0) {
-            for (const msg of conversationHistory) {
-                if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `chat-message ${msg.role === 'user' ? 'user' : 'bot'}-message mb-3`;
-                    
-                    const avatar = msg.role === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
-                    const time = new Date().toLocaleTimeString('en-US', { 
-                        hour: 'numeric', 
-                        minute: '2-digit',
-                        hour12: true 
-                    });
-                    
-                    messageDiv.innerHTML = `
+
+        // Render conversation history to UI
+        function renderConversationHistory() {
+            // Use document fragment to batch DOM updates and prevent scroll jumping
+            const fragment = document.createDocumentFragment();
+
+            // If there's history, render all messages to fragment first
+            if (conversationHistory.length > 0) {
+                for (const msg of conversationHistory) {
+                    if (msg && (msg.role === 'user' || msg.role === 'assistant')) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `chat-message ${msg.role === 'user' ? 'user' : 'bot'}-message mb-3`;
+
+                        const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+
+                        const avatar = (msg.role === 'bot' || msg.role === 'assistant')
+                            ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
+                            : '<i class="fas fa-user"></i>';
+
+                        const time = new Date().toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                        messageDiv.innerHTML = `
                         <div class="message-avatar">
                             ${avatar}
                         </div>
@@ -409,16 +430,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             <small class="message-time">${time}</small>
                         </div>
                     `;
-                    fragment.appendChild(messageDiv);
+                        fragment.appendChild(messageDiv);
+                    }
                 }
-            }
-        } else {
-            // Show welcome message if no history
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'chat-message bot-message mb-3';
-            welcomeDiv.innerHTML = `
+            } else {
+                // Show welcome message if no history
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'chat-message bot-message mb-3';
+                const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+                welcomeDiv.innerHTML = `
                 <div class="message-avatar">
-                    <i class="fas fa-robot"></i>
+                    <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
                 </div>
                 <div class="message-content">
                     <div class="message-bubble bot-bubble">
@@ -434,185 +457,189 @@ document.addEventListener('DOMContentLoaded', function() {
                     <small class="message-time">Just now</small>
                 </div>
             `;
-            fragment.appendChild(welcomeDiv);
-        }
-        
-        // Clear and append fragment in one operation to prevent scroll jumping
-        chatMessages.innerHTML = '';
-        chatMessages.appendChild(fragment);
-        
-        // Instantly scroll to bottom after rendering (no animation)
-        // Use requestAnimationFrame only to ensure DOM is ready
-        requestAnimationFrame(() => {
-            chatMessages.scrollTo({
-                top: chatMessages.scrollHeight,
-                behavior: 'auto'
+                fragment.appendChild(welcomeDiv);
+            }
+
+            // Clear and append fragment in one operation to prevent scroll jumping
+            chatMessages.innerHTML = '';
+            chatMessages.appendChild(fragment);
+
+            // Instantly scroll to bottom after rendering (no animation)
+            // Use requestAnimationFrame only to ensure DOM is ready
+            requestAnimationFrame(() => {
+                chatMessages.scrollTo({
+                    top: chatMessages.scrollHeight,
+                    behavior: 'auto'
+                });
             });
-        });
-    }
-    
-    // Initial load
-    loadConversationHistory();
-    renderConversationHistory();
-    
-    // Listen for storage changes from other tabs/components (e.g., chatbot widget)
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'opic_chatbot_history') {
-            console.log('[Chatbot Page] Storage event detected, syncing history');
-            loadConversationHistory();
-            renderConversationHistory();
         }
-    });
-    
-    // Also listen for custom events (for same-tab sync with widget)
-    window.addEventListener('opic_chatbot_history_updated', function() {
-        console.log('[Chatbot Page] Custom event detected, syncing history');
+
+        // Initial load
         loadConversationHistory();
         renderConversationHistory();
-    });
-    
-    chatForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Make sure page loader is hidden (force hide)
-        const pageLoader = document.getElementById('pageLoader');
-        if (pageLoader) {
-            pageLoader.classList.remove('active');
-            pageLoader.classList.remove('hiding');
-            pageLoader.style.display = 'none';
-        }
-        
-        const message = chatInput.value.trim();
-        if (!message) return;
-        
-        // Add user message to UI
-        addMessage(message, 'user');
-        
-        // Clear input
-        chatInput.value = '';
-        chatInput.focus();
-        
-        // Add to conversation history and persist immediately
-        conversationHistory.push({ role: 'user', content: message });
-        try { 
-            localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); 
-            // Dispatch custom event for same-tab sync (chatbot widget)
-            window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-        } catch(_) {}
-        
-        // Show loading indicator
-        const loadingId = showLoading();
-        
-        try {
-            // Create AbortController for timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
-            
-            // Call chatbot API
-            const response = await fetch('/api/chatbot/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                    history: conversationHistory.slice(-10)  // Send last 10 messages for context
-                }),
-                signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                // Try to get error message from response
-                let errorMsg = `HTTP error! status: ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData.error) {
-                        errorMsg = errorData.error;
-                    }
-                } catch (e) {
-                    // If JSON parsing fails, use status-based error message
-                    if (response.status === 404) {
-                        errorMsg = 'Chatbot service not found. Please make sure the server is running.';
-                    } else if (response.status === 500) {
-                        errorMsg = 'Server error occurred. Please try again later.';
-                    } else if (response.status === 401) {
-                        errorMsg = 'Please log in to use the chatbot.';
-                    } else {
-                        errorMsg = `Server returned error ${response.status}. Please try again.`;
-                    }
-                }
-                // Remove loading before throwing error
-                removeLoading(loadingId);
-                throw new Error(errorMsg);
-            }
-            
-            const data = await response.json();
-            
-            // Remove loading indicator after successfully parsing response
-            removeLoading(loadingId);
-            
-            if (data.success) {
-                // Add bot response to UI
-                addMessage(data.response, 'bot');
-                
-                // Add to conversation history and persist
-                conversationHistory.push({ role: 'assistant', content: data.response });
-                try { 
-                    localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory)); 
-                    // Dispatch custom event for same-tab sync (chatbot widget)
-                    window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-                } catch(_) {}
-            } else {
-                const errorMsg = data.error || 'Sorry, I encountered an error. Please try again later.';
-                addMessage(errorMsg, 'bot');
-            }
-        } catch (error) {
-            console.error('Chat error:', error);
-            removeLoading(loadingId);
-            
-            let errorMessage = 'Sorry, I encountered an error. Please try again later.';
-            
-            if (error.name === 'AbortError') {
-                errorMessage = 'Request timed out. The server may be taking too long to respond. Please try again with a shorter question.';
-            } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
-                errorMessage = 'Connection error. Please check your internet connection and try again.';
-            } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
-                errorMessage = 'Connection was reset. Please try again.';
-            } else if (error.message && error.message.includes('404')) {
-                errorMessage = 'Chatbot service not available. Please make sure the server is running and try again.';
-            } else if (error.message && (error.message.includes('JSON') || error.message.includes('Failed to fetch'))) {
-                errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
-            } else if (error.message && error.message.includes('500')) {
-                errorMessage = 'Server error. Please try again in a moment.';
-            } else if (error.message && !error.message.includes('HTTP error')) {
-                errorMessage = error.message;
-            }
-            
-            addMessage(errorMessage, 'bot');
-        }
-    });
-    
-    // Auto-focus input
-    chatInput.focus();
-});
 
-function addMessage(text, role, scrollToBottom = true) {
-    const chatMessages = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${role}-message mb-3`;
-    
-    const avatar = role === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
-    
-    const time = new Date().toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
+        // Listen for storage changes from other tabs/components (e.g., chatbot widget)
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'opic_chatbot_history') {
+                console.log('[Chatbot Page] Storage event detected, syncing history');
+                loadConversationHistory();
+                renderConversationHistory();
+            }
+        });
+
+        // Also listen for custom events (for same-tab sync with widget)
+        window.addEventListener('opic_chatbot_history_updated', function () {
+            console.log('[Chatbot Page] Custom event detected, syncing history');
+            loadConversationHistory();
+            renderConversationHistory();
+        });
+
+        chatForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Make sure page loader is hidden (force hide)
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                pageLoader.classList.remove('active');
+                pageLoader.classList.remove('hiding');
+                pageLoader.style.display = 'none';
+            }
+
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message to UI
+            addMessage(message, 'user');
+
+            // Clear input
+            chatInput.value = '';
+            chatInput.focus();
+
+            // Add to conversation history and persist immediately
+            conversationHistory.push({ role: 'user', content: message });
+            try {
+                localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
+                // Dispatch custom event for same-tab sync (chatbot widget)
+                window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+            } catch (_) { }
+
+            // Show loading indicator
+            const loadingId = showLoading();
+
+            try {
+                // Create AbortController for timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+
+                // Call chatbot API
+                const response = await fetch('/api/chatbot/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: conversationHistory.slice(-10)  // Send last 10 messages for context
+                    }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    // Try to get error message from response
+                    let errorMsg = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error) {
+                            errorMsg = errorData.error;
+                        }
+                    } catch (e) {
+                        // If JSON parsing fails, use status-based error message
+                        if (response.status === 404) {
+                            errorMsg = 'Chatbot service not found. Please make sure the server is running.';
+                        } else if (response.status === 500) {
+                            errorMsg = 'Server error occurred. Please try again later.';
+                        } else if (response.status === 401) {
+                            errorMsg = 'Please log in to use the chatbot.';
+                        } else {
+                            errorMsg = `Server returned error ${response.status}. Please try again.`;
+                        }
+                    }
+                    // Remove loading before throwing error
+                    removeLoading(loadingId);
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+
+                // Remove loading indicator after successfully parsing response
+                removeLoading(loadingId);
+
+                if (data.success) {
+                    // Add bot response to UI
+                    addMessage(data.response, 'bot');
+
+                    // Add to conversation history and persist
+                    conversationHistory.push({ role: 'assistant', content: data.response });
+                    try {
+                        localStorage.setItem('opic_chatbot_history', JSON.stringify(conversationHistory));
+                        // Dispatch custom event for same-tab sync (chatbot widget)
+                        window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+                    } catch (_) { }
+                } else {
+                    const errorMsg = data.error || 'Sorry, I encountered an error. Please try again later.';
+                    addMessage(errorMsg, 'bot');
+                }
+            } catch (error) {
+                console.error('Chat error:', error);
+                removeLoading(loadingId);
+
+                let errorMessage = 'Sorry, I encountered an error. Please try again later.';
+
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out. The server may be taking too long to respond. Please try again with a shorter question.';
+                } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    // Handle connection errors (ERR_CONNECTION_RESET, network issues, etc.)
+                    errorMessage = 'Connection error. Please check your internet connection and try again.';
+                } else if (error.message && error.message.includes('ERR_CONNECTION_RESET')) {
+                    errorMessage = 'Connection was reset. Please try again.';
+                } else if (error.message && error.message.includes('404')) {
+                    errorMessage = 'Chatbot service not available. Please make sure the server is running and try again.';
+                } else if (error.message && (error.message.includes('JSON') || error.message.includes('Failed to fetch'))) {
+                    errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
+                } else if (error.message && error.message.includes('500')) {
+                    errorMessage = 'Server error. Please try again in a moment.';
+                } else if (error.message && !error.message.includes('HTTP error')) {
+                    errorMessage = error.message;
+                }
+
+                addMessage(errorMessage, 'bot');
+            }
+        });
+
+        // Auto-focus input
+        chatInput.focus();
     });
-    
-    messageDiv.innerHTML = `
+
+    function addMessage(text, role, scrollToBottom = true) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${role}-message mb-3`;
+
+        const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+
+        const avatar = (role === 'bot' || role === 'assistant')
+            ? `<img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>`
+            : '<i class="fas fa-user"></i>';
+
+        const time = new Date().toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        messageDiv.innerHTML = `
         <div class="message-avatar">
             ${avatar}
         </div>
@@ -623,48 +650,50 @@ function addMessage(text, role, scrollToBottom = true) {
             <small class="message-time">${time}</small>
         </div>
     `;
-    
-    chatMessages.appendChild(messageDiv);
-    // Scroll to bottom for new messages, but only if user was already at bottom
-    if (scrollToBottom) {
-        // Check if user was at bottom before adding message (with small tolerance)
-        const scrollThreshold = 5; // pixels tolerance
-        const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight <= scrollThreshold;
-        
-        if (wasAtBottom) {
-            // If already at bottom, instantly set scroll position (no animation)
-            // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
-            chatMessages.scrollTo({
-                top: chatMessages.scrollHeight,
-                behavior: 'auto'
-            });
+
+        chatMessages.appendChild(messageDiv);
+        // Scroll to bottom for new messages, but only if user was already at bottom
+        if (scrollToBottom) {
+            // Check if user was at bottom before adding message (with small tolerance)
+            const scrollThreshold = 5; // pixels tolerance
+            const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight <= scrollThreshold;
+
+            if (wasAtBottom) {
+                // If already at bottom, instantly set scroll position (no animation)
+                // Use scrollTo with behavior: 'auto' to override any CSS smooth scrolling
+                chatMessages.scrollTo({
+                    top: chatMessages.scrollHeight,
+                    behavior: 'auto'
+                });
+            }
         }
     }
-}
 
-function formatMessage(text) {
-    // Simple markdown-like formatting
-    text = text.replace(/\n\n/g, '</p><p class="mb-2">');
-    text = text.replace(/\n/g, '<br>');
-    
-    // Convert **text** to <strong>text</strong>
-    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    
-    // Convert *text* to <em>text</em>
-    text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    
-    return `<p class="mb-2">${text}</p>`;
-}
+    function formatMessage(text) {
+        // Simple markdown-like formatting
+        text = text.replace(/\n\n/g, '</p><p class="mb-2">');
+        text = text.replace(/\n/g, '<br>');
 
-function showLoading() {
-    const chatMessages = document.getElementById('chatMessages');
-    const loadingDiv = document.createElement('div');
-    const loadingId = 'loading-' + Date.now();
-    loadingDiv.id = loadingId;
-    loadingDiv.className = 'chat-message bot-message mb-3';
-    loadingDiv.innerHTML = `
+        // Convert **text** to <strong>text</strong>
+        text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+        // Convert *text* to <em>text</em>
+        text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+        return `<p class="mb-2">${text}</p>`;
+    }
+
+    function showLoading() {
+        const chatMessages = document.getElementById('chatMessages');
+        const loadingDiv = document.createElement('div');
+        const loadingId = 'loading-' + Date.now();
+        loadingDiv.id = loadingId;
+        loadingDiv.className = 'chat-message bot-message mb-3';
+        const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+        loadingDiv.innerHTML = `
         <div class="message-avatar">
-            <i class="fas fa-robot"></i>
+            <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
         </div>
         <div class="message-content">
             <div class="message-bubble bot-bubble loading-message">
@@ -677,40 +706,42 @@ function showLoading() {
             </div>
         </div>
     `;
-    
-    chatMessages.appendChild(loadingDiv);
-    // Instantly scroll to bottom (no animation) when showing loading indicator
-    chatMessages.scrollTo({
-        top: chatMessages.scrollHeight,
-        behavior: 'auto'
-    });
-    
-    return loadingId;
-}
 
-function removeLoading(loadingId) {
-    const loadingDiv = document.getElementById(loadingId);
-    if (loadingDiv) {
-        loadingDiv.remove();
+        chatMessages.appendChild(loadingDiv);
+        // Instantly scroll to bottom (no animation) when showing loading indicator
+        chatMessages.scrollTo({
+            top: chatMessages.scrollHeight,
+            behavior: 'auto'
+        });
+
+        return loadingId;
     }
-}
 
-function clearChat() {
-    if (confirm('Are you sure you want to clear the chat history?')) {
-        conversationHistory = [];
-        localStorage.removeItem('opic_chatbot_history');
-        
-        // Dispatch custom event for same-tab sync (chatbot widget)
-        window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
-        
-        const chatMessages = document.getElementById('chatMessages');
-        // Show welcome message
-        chatMessages.innerHTML = '';
-        const welcomeDiv = document.createElement('div');
-        welcomeDiv.className = 'chat-message bot-message mb-3';
-        welcomeDiv.innerHTML = `
+    function removeLoading(loadingId) {
+        const loadingDiv = document.getElementById(loadingId);
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+    }
+
+    function clearChat() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            conversationHistory = [];
+            localStorage.removeItem('opic_chatbot_history');
+
+            // Dispatch custom event for same-tab sync (chatbot widget)
+            window.dispatchEvent(new CustomEvent('opic_chatbot_history_updated'));
+
+            const chatMessages = document.getElementById('chatMessages');
+            // Show welcome message
+            chatMessages.innerHTML = '';
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'chat-message bot-message mb-3';
+            const galaxyIconUrl = "{{ url_for('static', filename='galaxyAI.ico') }}";
+            welcomeDiv.innerHTML = `
             <div class="message-avatar">
-                <i class="fas fa-robot"></i>
+                <img src="${galaxyIconUrl}" alt="Galaxy AI" class="chatbot-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
             </div>
             <div class="message-content">
                 <div class="message-bubble bot-bubble">
@@ -726,9 +757,8 @@ function clearChat() {
                 <small class="message-time">Just now</small>
             </div>
         `;
-        chatMessages.appendChild(welcomeDiv);
+            chatMessages.appendChild(welcomeDiv);
+        }
     }
-}
 </script>
 {% endblock %}
-

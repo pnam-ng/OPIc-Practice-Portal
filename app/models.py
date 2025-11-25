@@ -23,7 +23,12 @@ class User(UserMixin, db.Model):
     last_active_date = db.Column(db.Date, default=date.today)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=now_hanoi)
+    created_at = db.Column(db.DateTime, default=now_hanoi)
     updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
+    
+    # User Level Tracking
+    current_level = db.Column(db.String(10), default='IM')  # Current estimated level (NL, NM, NH, IL, IM, IH, AL, AM, AH)
+    target_level = db.Column(db.String(10), default='AL')   # Target goal level
     
     # Relationships
     responses = db.relationship('Response', backref='user', lazy='dynamic', cascade='all, delete-orphan')
@@ -68,6 +73,20 @@ class User(UserMixin, db.Model):
     def is_active_today(self):
         """Check if user has been active today"""
         return self.last_active_date == date.today()
+
+    @property
+    def current_streak(self):
+        """
+        Get the current effective streak.
+        Returns 0 if the streak is broken (last active date was before yesterday).
+        Returns streak_count otherwise.
+        """
+        today = date.today()
+        yesterday = date.fromordinal(today.toordinal() - 1)
+        
+        if self.last_active_date == today or self.last_active_date == yesterday:
+            return self.streak_count
+        return 0
     
     def __repr__(self):
         return f'<User {self.username}>'
