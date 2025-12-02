@@ -882,7 +882,7 @@
             }
 
             // Then move to next question (whether submitted or skipped)
-            const nextQuestionIndex = current_question_index + 1;
+            const nextQuestionIndex = {{ current_question_index }} + 1;
             window.location.href = `/test/questions?q=${nextQuestionIndex}`;
         } catch (error) {
             console.error('Error in handleNext:', error);
