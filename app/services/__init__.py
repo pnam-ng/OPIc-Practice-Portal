@@ -221,6 +221,45 @@ class QuestionService(BaseService):
             query = query.filter_by(difficulty_level=level)
         return query.order_by(db.func.random()).limit(count).all()
 
+    def get_random_questions_excluding(self, count: int = 1, language: str = 'english', level: str = None, excluded_ids: List[int] = None) -> List[Question]:
+        """
+        Get random questions excluding specific IDs.
+        If the pool is exhausted (all questions excluded), it falls back to including them
+        but prioritizes those not in the excluded list if possible.
+        """
+        if not excluded_ids:
+            return self.get_random_questions_by_level(count, language, level)
+        
+        # Base query
+        base_query = Question.query.filter_by(language=language)
+        if level:
+            base_query = base_query.filter_by(difficulty_level=level)
+            
+        # Try to find questions NOT in excluded_ids
+        filtered_query = base_query.filter(~Question.id.in_(excluded_ids))
+        
+        # Check if we have enough questions
+        available_count = filtered_query.count()
+        
+        if available_count >= count:
+            # We have enough unseen questions
+            return filtered_query.order_by(db.func.random()).limit(count).all()
+        else:
+            # Not enough unseen questions. Get all unseen ones first.
+            questions = filtered_query.all()
+            
+            # Then fill the rest with seen questions (randomly)
+            needed = count - len(questions)
+            if needed > 0:
+                # Get seen questions that match criteria
+                seen_query = base_query.filter(Question.id.in_(excluded_ids))
+                seen_questions = seen_query.order_by(db.func.random()).limit(needed).all()
+                questions.extend(seen_questions)
+                
+            # Shuffle the combined list
+            random.shuffle(questions)
+            return questions
+
 
 class ResponseService(BaseService):
     """Service class for response-related operations"""

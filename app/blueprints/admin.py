@@ -419,187 +419,122 @@ def _collect_question_filter_options(language_filter):
 
 def _apply_question_sort(query, sort_key, sort_order):
     """Apply sorting to the question query"""
-    column = QUESTION_SORT_COLUMNS.get(sort_key, Question.updated_at)
-    sort_order = 'asc' if sort_order == 'asc' else 'desc'
+    if not sort_key:
+        return query.order_by(Question.updated_at.desc())
+
+    # Map sort keys to columns
+    ordering = None
+    if sort_key == 'id':
+        ordering = Question.id
+    elif sort_key == 'topic':
+        ordering = Question.topic
+    elif sort_key == 'language':
+        ordering = Question.language
+    elif sort_key == 'level':
+        ordering = Question.difficulty_level
+    elif sort_key == 'type':
+        ordering = Question.question_type
+    elif sort_key == 'updated':
+        ordering = Question.updated_at
     
-    ordered_column = column.asc() if sort_order == 'asc' else column.desc()
-    
-    if sort_key == 'updated':
-        ordered_column = ordered_column.nullslast()
-        secondary = Question.created_at.asc() if sort_order == 'asc' else Question.created_at.desc()
-        return query.order_by(ordered_column, secondary)
-    
-    return query.order_by(ordered_column)
+    if ordering is not None:
+        if sort_order == 'desc':
+            query = query.order_by(ordering.desc())
+        else:
+            query = query.order_by(ordering.asc())
+            
+    return query
 
 
-@admin_bp.route("/questions", methods=['GET'])
+@admin_bp.route("/questions")
 @login_required
-@admin_required
 def manage_questions():
-    """Render the question management console"""
+    """Admin interface for managing questions"""
+    # Parse filter query parameters
     filters = {
-        'q': request.args.get('q', '').strip(),
-        'topic': request.args.get('topic', '').strip(),
-        'language': request.args.get('language', 'english').strip().lower() or 'english',
-        'level': request.args.get('level', '').strip().upper(),
-        'question_type': request.args.get('question_type', '').strip().lower(),
+        'language': request.args.get('language'),
+        'topic': request.args.get('topic'),
+        'level': request.args.get('level'),
+        'question_type': request.args.get('question_type'),
+        'q': request.args.get('q', '').strip()
     }
     
-    sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
-    if sort_key not in QUESTION_SORT_COLUMNS:
-        sort_key = 'updated'
+    # Parse sort parameters
+    sort = {
+        'key': request.args.get('sort', 'updated'),
+        'order': request.args.get('order', 'desc')
+    }
     
-    sort_order = (request.args.get('order', 'desc') or 'desc').lower()
-    if sort_order not in ('asc', 'desc'):
-        sort_order = 'desc'
-
-    try:
-        page = max(int(request.args.get('page', 1)), 1)
-    except (TypeError, ValueError):
-        page = 1
-
-    try:
-        per_page = int(request.args.get('per_page', 50))
-    except (TypeError, ValueError):
-        per_page = 50
-
-    per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
-
-    query = _apply_question_filters(Question.query, filters)
-    query = _apply_question_sort(query, sort_key, sort_order)
-    total = query.count()
-    questions = (
-        query.offset((page - 1) * per_page)
-        .limit(per_page)
-        .all()
-    )
-
-    filter_options = _collect_question_filter_options(filters['language'])
-    filter_options['languages'].insert(0, 'all')
-
-    pages = (total + per_page - 1) // per_page
-
-    base_sort_args = request.args.to_dict()
+    # Pagination
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    # Build query
+    query = Question.query
+    query = _apply_question_filters(query, filters)
+    query = _apply_question_sort(query, sort['key'], sort['order'])
+    
+    # Execute pagination
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    questions = pagination.items
+    
+    # Get options for dropdowns
+    filter_options = _collect_question_filter_options(filters.get('language'))
+    
+    # Generate sort URLs helper
+    def toggle_order(key):
+        if sort['key'] == key and sort['order'] == 'asc':
+            return 'desc'
+        return 'asc'
+        
+    sort_controls = {
+        key: url_for('admin.manage_questions', 
+                   sort=key, 
+                   order=toggle_order(key), 
+                   **filters,
+                   per_page=per_page)
+        for key in ['id', 'topic', 'language', 'level', 'type', 'updated']
+    }
+    
+    stats = {
+        'showing': f"{pagination.page * pagination.per_page - pagination.per_page + 1}-{min(pagination.page * pagination.per_page, pagination.total)}" if pagination.total > 0 else "0",
+    }
     
     def page_url(p):
-        args = request.args.to_dict()
-        args['page'] = p
-        args['per_page'] = per_page
-        return url_for('admin.manage_questions', **args)
-    
-    def build_sort_link(field):
-        args = base_sort_args.copy()
-        args.pop('page', None)
-        args['sort'] = field
-        if sort_key == field and sort_order == 'asc':
-            args['order'] = 'desc'
-        elif sort_key == field and sort_order == 'desc':
-            args['order'] = 'asc'
-        else:
-            args['order'] = 'asc'
-        return url_for('admin.manage_questions', **args)
-    
-    sort_controls = {field: build_sort_link(field) for field in QUESTION_SORT_COLUMNS.keys()}
+        return url_for('admin.manage_questions', page=p, per_page=per_page, sort=sort['key'], order=sort['order'], **filters)
 
-    return render_template(
-        "admin/questions.html",
-        questions=questions,
-        filters=filters,
-        pagination={
-            'page': page,
-            'per_page': per_page,
-            'pages': pages,
-            'total': total,
-        },
-        filter_options=filter_options,
-        stats={
-            'total_questions': Question.query.count(),
-            'showing': len(questions),
-        },
-        page_url=page_url,
-        sort={
-            'key': sort_key,
-            'order': sort_order,
-        },
-        sort_controls=sort_controls,
-        request_args=base_sort_args,
-    )
+    return render_template('admin/questions.html',
+                         questions=questions,
+                         pagination=pagination,
+                         filters=filters,
+                         filter_options=filter_options,
+                         sort=sort,
+                         sort_controls=sort_controls,
+                         stats=stats,
+                         is_admin=current_user.is_admin,
+                         page_url=page_url)
 
-
-@admin_bp.route("/questions/api", methods=['GET', 'POST'])
+@admin_bp.route("/questions/api", methods=['POST'])
 @login_required
 @admin_required
 def questions_api():
-    """JSON API for question management"""
-    if request.method == 'GET':
-        filters = {
-            'q': request.args.get('q', '').strip(),
-            'topic': request.args.get('topic', '').strip(),
-            'language': request.args.get('language', 'all').strip().lower(),
-            'level': request.args.get('level', '').strip().upper(),
-            'question_type': request.args.get('question_type', '').strip().lower(),
-        }
-        
-        sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
-        if sort_key not in QUESTION_SORT_COLUMNS:
-            sort_key = 'updated'
-        
-        sort_order = (request.args.get('order', 'desc') or 'desc').lower()
-        if sort_order not in ('asc', 'desc'):
-            sort_order = 'desc'
-
-        try:
-            page = max(int(request.args.get('page', 1)), 1)
-        except (TypeError, ValueError):
-            page = 1
-
-        try:
-            per_page = int(request.args.get('per_page', 50))
-        except (TypeError, ValueError):
-            per_page = 50
-
-        per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
-
-        query = _apply_question_filters(Question.query, filters)
-        query = _apply_question_sort(query, sort_key, sort_order)
-        total = query.count()
-        questions = (
-            query.offset((page - 1) * per_page)
-            .limit(per_page)
-            .all()
-        )
-
-        return jsonify({
-            'success': True,
-            'pagination': {
-                'page': page,
-                'per_page': per_page,
-                'pages': (total + per_page - 1) // per_page,
-                'total': total,
-            },
-            'filters': filters,
-            'sort': {
-                'key': sort_key,
-                'order': sort_order,
-            },
-            'questions': [question.to_dict() for question in questions],
-        })
-
-    # POST: create new question
+    """Create a new question"""
     data = _get_question_request_data()
-    payload, error = _prepare_question_payload(data)
+    payload, error = _prepare_question_payload(data, partial=False)
+    
     if error:
         return jsonify({'success': False, 'error': error}), 400
 
+    new_question = Question(**payload)
+    
     try:
-        question = Question(**payload)
-        db.session.add(question)
+        db.session.add(new_question)
         db.session.commit()
         return jsonify({
             'success': True,
             'message': 'Question created successfully.',
-            'question': question.to_dict(),
-        }), 201
+            'question': new_question.to_dict(),
+        })
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -607,7 +542,6 @@ def questions_api():
 
 @admin_bp.route("/questions/api/<int:question_id>", methods=['GET', 'PUT', 'DELETE'])
 @login_required
-@admin_required
 def question_detail_api(question_id):
     """Retrieve, update, or delete a question"""
     question = Question.query.get(question_id)
@@ -616,6 +550,10 @@ def question_detail_api(question_id):
 
     if request.method == 'GET':
         return jsonify({'success': True, 'question': question.to_dict()})
+        
+    # Check admin for modification
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Admin access required'}), 403
 
     if request.method == 'DELETE':
         try:
@@ -625,6 +563,7 @@ def question_detail_api(question_id):
         except Exception as e:
             db.session.rollback()
             return jsonify({'success': False, 'error': str(e)}), 500
+
 
     # PUT
     data = _get_question_request_data()

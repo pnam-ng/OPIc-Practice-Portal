@@ -182,6 +182,11 @@ def create_app():
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+    # Serve question audio files directly from uploads/questions
+    @app.route('/questions/<path:filename>')
+    def question_file(filename):
+        return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'questions'), filename)
     
     # Add ngrok-skip-browser-warning header to all responses
     @app.after_request
