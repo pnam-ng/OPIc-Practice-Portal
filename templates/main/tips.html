@@ -28,67 +28,61 @@
         <div class="col-12 col-lg-10 offset-lg-1">
             <!-- PDF Resources Section -->
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-book me-2"></i>Recommended Reading Materials
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-book text-primary me-2"></i>Recommended Reading Materials
                     </h5>
                 </div>
                 <div class="card-body">
                     {% if pdf_resources %}
-                        <div class="row g-3">
-                            {% for resource in pdf_resources %}
-                            <div class="col-12 col-md-6">
-                                <div class="card h-100 border">
-                                    <div class="card-body">
-                                        <div class="mb-3 text-center">
-                                            {% set raw_thumb = (resource.thumbnail_path or '') %}
-                                            {% set norm_thumb = raw_thumb.replace('\\', '/') %}
-                                            {% set thumb_path = norm_thumb.replace('static/', '') if norm_thumb.startswith('static/') else norm_thumb %}
-                                            {% if thumb_path %}
-                                                <img 
-                                                    src="{{ url_for('static', filename=thumb_path) }}" 
-                                                    alt="{{ resource.title }}"
-                                                    class="img-fluid rounded shadow-sm"
-                                                    style="max-height: 250px; width: auto; object-fit: contain; cursor: pointer;"
-                                                    onclick="document.querySelector('[data-pdf-filename=\'{{ resource.filename }}\']').click()"
-                                                    onerror="this.style.display='none'; this.insertAdjacentHTML('beforebegin', '<div class=\'d-flex align-items-center justify-content-center\' style=\'height: 250px; background: #f8f9fa; border-radius: 0.25rem;\'><i class=\'fas fa-file-pdf text-danger\' style=\'font-size: 4rem;\'></i></div>');"
-                                                >
-                                            {% else %}
-                                                <div id="thumb-{{ resource.id }}-icon" class="d-flex align-items-center justify-content-center" style="height: 250px; background: #f8f9fa; border-radius: 0.25rem;">
-                                                    <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
-                                                </div>
-                                                <img 
-                                                    src="{{ url_for('main.file_preview', filename=resource.filename) }}" 
-                                                    alt="{{ resource.title }}"
-                                                    class="img-fluid rounded shadow-sm"
-                                                    style="max-height: 250px; width: auto; object-fit: contain; cursor: pointer; display:none;"
-                                                    onclick="document.querySelector('[data-pdf-filename=\'{{ resource.filename }}\']').click()"
-                                                    onload="var ic=document.getElementById('thumb-{{ resource.id }}-icon'); if(ic){ic.style.display='none';} this.style.display='inline-block';"
-                                                    onerror="this.style.display='none'; var ic=document.getElementById('thumb-{{ resource.id }}-icon'); if(ic){ic.style.display='flex';}"
-                                                >
-                                            {% endif %}
+                    <div class="row g-3">
+                        {% for resource in pdf_resources %}
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="mb-3 text-center">
+                                        {% set raw_thumb = (resource.thumbnail_path or '') %}
+                                        {% set norm_thumb = raw_thumb.replace('\\', '/') %}
+                                        {% set thumb_path = norm_thumb.replace('static/', '') if
+                                        norm_thumb.startswith('static/') else norm_thumb %}
+                                        {% if thumb_path %}
+                                        <img src="{{ url_for('static', filename=thumb_path) }}"
+                                            alt="{{ resource.title }}" class="img-fluid rounded shadow-sm"
+                                            style="max-height: 250px; width: auto; object-fit: contain; cursor: pointer;"
+                                            onclick="document.querySelector('[data-pdf-filename=\'{{ resource.filename }}\']').click()"
+                                            onerror="this.style.display='none'; this.insertAdjacentHTML('beforebegin', '<div class=\'d-flex align-items-center justify-content-center\' style=\'height: 250px; background: #f8f9fa; border-radius: 0.25rem;\'><i class=\'fas fa-file-pdf text-danger\' style=\'font-size: 4rem;\'></i></div>');">
+                                        {% else %}
+                                        <div id="thumb-{{ resource.id }}-icon"
+                                            class="d-flex align-items-center justify-content-center"
+                                            style="height: 250px; background: #f8f9fa; border-radius: 0.25rem;">
+                                            <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
                                         </div>
-                                        <h6 class="card-title mb-2">{{ resource.title }}</h6>
-                                        <span class="badge bg-info mb-2">{{ resource.category }}</span>
-                                        <p class="card-text text-muted small mb-3">{{ resource.description }}</p>
-                                        <button 
-                                            class="btn btn-sm btn-primary w-100 view-pdf-btn" 
-                                            data-pdf-id="{{ resource.id }}"
-                                            data-pdf-filename="{{ resource.filename }}"
-                                            data-pdf-title="{{ resource.title }}"
-                                        >
-                                            <i class="fas fa-eye me-2"></i>View PDF
-                                        </button>
+                                        <img src="{{ url_for('main.file_preview', filename=resource.filename) }}"
+                                            alt="{{ resource.title }}" class="img-fluid rounded shadow-sm"
+                                            style="max-height: 250px; width: auto; object-fit: contain; cursor: pointer; display:none;"
+                                            onclick="document.querySelector('[data-pdf-filename=\'{{ resource.filename }}\']').click()"
+                                            onload="var ic=document.getElementById('thumb-{{ resource.id }}-icon'); if(ic){ic.style.display='none';} this.style.display='inline-block';"
+                                            onerror="this.style.display='none'; var ic=document.getElementById('thumb-{{ resource.id }}-icon'); if(ic){ic.style.display='flex';}">
+                                        {% endif %}
                                     </div>
+                                    <h6 class="card-title mb-2">{{ resource.title }}</h6>
+                                    <span class="badge bg-info mb-2">{{ resource.category }}</span>
+                                    <p class="card-text text-muted small mb-3">{{ resource.description }}</p>
+                                    <button class="btn btn-sm btn-primary w-100 view-pdf-btn"
+                                        data-pdf-id="{{ resource.id }}" data-pdf-filename="{{ resource.filename }}"
+                                        data-pdf-title="{{ resource.title }}">
+                                        <i class="fas fa-eye me-2"></i>View PDF
+                                    </button>
                                 </div>
                             </div>
-                            {% endfor %}
                         </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle me-2"></i>
-                            No resources available at the moment. Check back later!
-                        </div>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No resources available at the moment. Check back later!
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -100,11 +94,11 @@
 <div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-labelledby="pdfViewerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="pdfViewerModalLabel">
-                    <i class="fas fa-file-pdf me-2"></i><span id="pdfTitle">PDF Viewer</span>
+            <div class="modal-header bg-transparent border-bottom py-3">
+                <h5 class="modal-title fw-bold" id="pdfViewerModalLabel">
+                    <i class="fas fa-file-pdf text-danger me-2"></i><span id="pdfTitle">PDF Viewer</span>
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0" style="background: #525252; height: calc(100vh - 120px);">
                 <div id="pdfContainer" style="height: 100%; width: 100%;">
@@ -117,10 +111,10 @@
 <style>
     .view-pdf-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
     }
-    
+
     /* Desktop PDF viewer - full height */
     #pdfViewerModal .modal-body {
         height: calc(100vh - 120px);
@@ -129,7 +123,7 @@
         flex-direction: column;
         padding: 0;
     }
-    
+
     #pdfContainer {
         height: 100%;
         width: 100%;
@@ -138,7 +132,7 @@
         overflow: hidden;
         position: relative;
     }
-    
+
     #pdfContainer embed,
     #pdfContainer iframe,
     #pdfContainer object {
@@ -148,8 +142,8 @@
         flex: 1;
         display: block;
     }
-    
-    
+
+
     /* Mobile-specific PDF viewer styles */
     @media (max-width: 768px) {
         #pdfViewerModal .modal-dialog {
@@ -157,19 +151,19 @@
             max-width: 100%;
             height: 100%;
         }
-        
+
         #pdfViewerModal .modal-content {
             height: 100%;
             border-radius: 0;
             display: flex;
             flex-direction: column;
         }
-        
+
         #pdfViewerModal .modal-header {
             flex-shrink: 0;
             padding: 0.75rem 1rem;
         }
-        
+
         #pdfViewerModal .modal-body {
             flex: 1;
             overflow: hidden;
@@ -177,7 +171,7 @@
             flex-direction: column;
             padding: 0;
         }
-        
+
         #pdfContainer {
             min-height: 0;
             flex: 1;
@@ -186,18 +180,18 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        
+
         #pdfContainer iframe {
             min-height: 50vh;
             max-height: 70vh;
         }
-        
+
         #pdfContainer object {
             min-height: 50vh;
             max-height: 70vh;
         }
-        
-        
+
+
         /* Ensure modal title doesn't overflow on small screens */
         #pdfViewerModal .modal-title {
             font-size: 0.9rem;
@@ -207,119 +201,132 @@
             max-width: calc(100vw - 120px);
         }
     }
-    
+
     .modal-fullscreen .modal-body {
         padding: 0;
     }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const pdfModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
-    const pdfTitle = document.getElementById('pdfTitle');
-    const pdfContainer = document.getElementById('pdfContainer');
-    
-    // Detect mobile device
-    function isMobileDevice() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-               (window.innerWidth <= 768);
-    }
-    
-    // Get full PDF URL for external viewers
-    function getFullPdfUrl(filename) {
-        // Get current origin (protocol + host)
-        const origin = window.location.origin;
-        return `${origin}/files/${encodeURIComponent(filename)}`;
-    }
-    
-    // Handle PDF view button clicks
-    document.querySelectorAll('.view-pdf-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const pdfId = this.getAttribute('data-pdf-id');
-            const pdfFilename = this.getAttribute('data-pdf-filename');
-            const pdfTitleText = this.getAttribute('data-pdf-title');
-            
-            // Set modal title
-            pdfTitle.textContent = pdfTitleText;
-            
-            // Set PDF URL (use the Flask route)
-            const pdfUrl = `/files/${encodeURIComponent(pdfFilename)}`;
-            const fullPdfUrl = getFullPdfUrl(pdfFilename);
-            
-            // Show modal first
-            pdfModal.show();
-            
-            // Clear previous content
-            pdfContainer.innerHTML = '';
-            
-            // For mobile devices, optimize layout for small screens
-            if (isMobileDevice()) {
-                console.log('[PDF Viewer] Mobile device detected, using mobile-optimized viewer');
-                
-                // Create a wrapper div for better mobile layout
-                const wrapper = document.createElement('div');
-                wrapper.style.display = 'flex';
-                wrapper.style.flexDirection = 'column';
-                wrapper.style.height = '100%';
-                wrapper.style.width = '100%';
-                
-                // Try iframe first (many modern mobile browsers support it)
-                const iframe = document.createElement('iframe');
-                iframe.src = pdfUrl;
-                iframe.style.width = '100%';
-                iframe.style.height = '60vh';
-                iframe.style.border = 'none';
-                iframe.style.flexShrink = '0';
-                iframe.setAttribute('type', 'application/pdf');
-                
-                let isLoading = true;
-                let iframeLoaded = false;
-                
-                iframe.onload = function() {
-                    if (isLoading && !iframeLoaded) {
-                        iframeLoaded = true;
-                        isLoading = false;
-                        console.log('[PDF Viewer] PDF iframe loaded successfully on mobile');
-                    }
-                };
-                
-                wrapper.appendChild(iframe);
-                pdfContainer.appendChild(wrapper);
-                
-                // If iframe doesn't load after 5 seconds, log but don't show fallback
-                setTimeout(() => {
-                    if (!iframeLoaded && isLoading) {
-                        console.log('[PDF Viewer] Iframe may not be loading');
-                        isLoading = false;
-                    }
-                }, 5000);
-                
-            } else {
-                // Desktop: Use iframe with direct PDF (works better on desktop)
-                console.log('[PDF Viewer] Desktop device detected, using direct iframe');
-                
-                const iframe = document.createElement('iframe');
-                iframe.src = pdfUrl;
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-                iframe.setAttribute('type', 'application/pdf');
-                
-                pdfContainer.appendChild(iframe);
-                console.log('[PDF Viewer] PDF iframe added');
-                
-                // Fallback: If iframe doesn't load, try embed
-                setTimeout(() => {
-                    const iframe = pdfContainer.querySelector('iframe');
-                    // Check if iframe exists and might not have loaded properly
-                    if (iframe) {
-                        try {
-                            // Try to access iframe content - if it fails, the PDF might not be loading
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-                            if (!iframeDoc || iframeDoc.readyState === 'loading') {
-                                console.log('[PDF Viewer] Iframe may not be loading, trying embed fallback');
+    document.addEventListener('DOMContentLoaded', function () {
+        const pdfModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+        const pdfTitle = document.getElementById('pdfTitle');
+        const pdfContainer = document.getElementById('pdfContainer');
+
+        // Detect mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                (window.innerWidth <= 768);
+        }
+
+        // Get full PDF URL for external viewers
+        function getFullPdfUrl(filename) {
+            // Get current origin (protocol + host)
+            const origin = window.location.origin;
+            return `${origin}/files/${encodeURIComponent(filename)}`;
+        }
+
+        // Handle PDF view button clicks
+        document.querySelectorAll('.view-pdf-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const pdfId = this.getAttribute('data-pdf-id');
+                const pdfFilename = this.getAttribute('data-pdf-filename');
+                const pdfTitleText = this.getAttribute('data-pdf-title');
+
+                // Set modal title
+                pdfTitle.textContent = pdfTitleText;
+
+                // Set PDF URL (use the Flask route)
+                const pdfUrl = `/files/${encodeURIComponent(pdfFilename)}`;
+                const fullPdfUrl = getFullPdfUrl(pdfFilename);
+
+                // Show modal first
+                pdfModal.show();
+
+                // Clear previous content
+                pdfContainer.innerHTML = '';
+
+                // For mobile devices, optimize layout for small screens
+                if (isMobileDevice()) {
+                    console.log('[PDF Viewer] Mobile device detected, using mobile-optimized viewer');
+
+                    // Create a wrapper div for better mobile layout
+                    const wrapper = document.createElement('div');
+                    wrapper.style.display = 'flex';
+                    wrapper.style.flexDirection = 'column';
+                    wrapper.style.height = '100%';
+                    wrapper.style.width = '100%';
+
+                    // Try iframe first (many modern mobile browsers support it)
+                    const iframe = document.createElement('iframe');
+                    iframe.src = pdfUrl;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '60vh';
+                    iframe.style.border = 'none';
+                    iframe.style.flexShrink = '0';
+                    iframe.setAttribute('type', 'application/pdf');
+
+                    let isLoading = true;
+                    let iframeLoaded = false;
+
+                    iframe.onload = function () {
+                        if (isLoading && !iframeLoaded) {
+                            iframeLoaded = true;
+                            isLoading = false;
+                            console.log('[PDF Viewer] PDF iframe loaded successfully on mobile');
+                        }
+                    };
+
+                    wrapper.appendChild(iframe);
+                    pdfContainer.appendChild(wrapper);
+
+                    // If iframe doesn't load after 5 seconds, log but don't show fallback
+                    setTimeout(() => {
+                        if (!iframeLoaded && isLoading) {
+                            console.log('[PDF Viewer] Iframe may not be loading');
+                            isLoading = false;
+                        }
+                    }, 5000);
+
+                } else {
+                    // Desktop: Use iframe with direct PDF (works better on desktop)
+                    console.log('[PDF Viewer] Desktop device detected, using direct iframe');
+
+                    const iframe = document.createElement('iframe');
+                    iframe.src = pdfUrl;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.setAttribute('type', 'application/pdf');
+
+                    pdfContainer.appendChild(iframe);
+                    console.log('[PDF Viewer] PDF iframe added');
+
+                    // Fallback: If iframe doesn't load, try embed
+                    setTimeout(() => {
+                        const iframe = pdfContainer.querySelector('iframe');
+                        // Check if iframe exists and might not have loaded properly
+                        if (iframe) {
+                            try {
+                                // Try to access iframe content - if it fails, the PDF might not be loading
+                                const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                                if (!iframeDoc || iframeDoc.readyState === 'loading') {
+                                    console.log('[PDF Viewer] Iframe may not be loading, trying embed fallback');
+                                    iframe.remove();
+
+                                    const embed = document.createElement('embed');
+                                    embed.src = pdfUrl;
+                                    embed.type = 'application/pdf';
+                                    embed.style.width = '100%';
+                                    embed.style.height = '100%';
+                                    pdfContainer.appendChild(embed);
+                                    console.log('[PDF Viewer] PDF embed fallback added');
+                                }
+                            } catch (e) {
+                                // Cross-origin or other error - embed might work better
+                                console.log('[PDF Viewer] Iframe access error, trying embed fallback');
                                 iframe.remove();
-                                
+
                                 const embed = document.createElement('embed');
                                 embed.src = pdfUrl;
                                 embed.type = 'application/pdf';
@@ -328,31 +335,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 pdfContainer.appendChild(embed);
                                 console.log('[PDF Viewer] PDF embed fallback added');
                             }
-                        } catch (e) {
-                            // Cross-origin or other error - embed might work better
-                            console.log('[PDF Viewer] Iframe access error, trying embed fallback');
-                            iframe.remove();
-                            
-                            const embed = document.createElement('embed');
-                            embed.src = pdfUrl;
-                            embed.type = 'application/pdf';
-                            embed.style.width = '100%';
-                            embed.style.height = '100%';
-                            pdfContainer.appendChild(embed);
-                            console.log('[PDF Viewer] PDF embed fallback added');
                         }
-                    }
-                }, 5000);
-            }
+                    }, 5000);
+                }
+            });
+        });
+
+        // Clean up when modal is closed
+        document.getElementById('pdfViewerModal').addEventListener('hidden.bs.modal', function () {
+            // Clear content when modal is closed
+            pdfContainer.innerHTML = '';
         });
     });
-    
-    // Clean up when modal is closed
-    document.getElementById('pdfViewerModal').addEventListener('hidden.bs.modal', function() {
-        // Clear content when modal is closed
-        pdfContainer.innerHTML = '';
-    });
-});
 </script>
 {% endblock %}
-

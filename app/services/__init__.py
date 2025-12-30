@@ -9,9 +9,11 @@ from datetime import date, datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
+import random
 
 from app import db
 from app.models import User, Question, Response, Survey
+from sqlalchemy import desc, func
 
 
 class BaseService(ABC):
@@ -61,10 +63,14 @@ class UserService(BaseService):
             user.set_password(password)
             
             self.db.session.add(user)
-            if self.commit():
+            try:
+                self.db.session.commit()
                 return user
-            return None
-            
+            except Exception as commit_error:
+                self.db.session.rollback()
+                current_app.logger.error(f"Database commit failed: {commit_error}")
+                raise RuntimeError(f"Database error: {commit_error}")
+                
         except ValueError as ve:
             # Re-raise ValueError for username/email already exists
             current_app.logger.warning(f"User creation failed: {ve}")
@@ -85,8 +91,10 @@ class UserService(BaseService):
                 else:
                     raise ValueError("This account already exists. Please try a different username or email.")
             
-            # For other database errors, return None
-            return None
+            # Re-raise the exception with a more descriptive message if it's not already handled
+            if not isinstance(e, (ValueError, RuntimeError)):
+                raise RuntimeError(f"An unexpected error occurred during account creation: {e}")
+            raise
     
     def get_user_by_username(self, username: str) -> Optional[User]:
         """Get user by username"""
@@ -140,6 +148,27 @@ class UserService(BaseService):
             'streak_count': user.current_streak,
             'target_language': user.target_language
         }
+    
+    def get_leaderboard_users(self, limit: int = 5) -> List[User]:
+        """Get top users by streak count"""
+        return User.query.filter(User.streak_count > 0).order_by(desc(User.streak_count)).limit(limit).all()
+
+    def get_top_respondents(self, limit: int = 5) -> List[Dict[str, Any]]:
+        """Get top users by total response count"""
+        # Query to count responses per user
+        results = db.session.query(
+            User, 
+            func.count(Response.id).label('response_count')
+        ).join(Response).group_by(User.id).order_by(desc('response_count')).limit(limit).all()
+        
+        # Format results
+        top_respondents = []
+        for user, count in results:
+            top_respondents.append({
+                'user': user,
+                'count': count
+            })
+        return top_respondents
 
 
 class QuestionService(BaseService):
@@ -149,9 +178,12 @@ class QuestionService(BaseService):
         """Get question by ID"""
         return Question.query.get(question_id)
     
-    def get_questions_by_topic(self, topic: str, language: str = 'english') -> List[Question]:
+    def get_questions_by_topic(self, topic: str, language: str = 'english', limit: int = None) -> List[Question]:
         """Get questions by topic and language"""
-        return Question.query.filter_by(topic=topic, language=language).all()
+        query = Question.query.filter_by(topic=topic, language=language)
+        if limit:
+            query = query.limit(limit)
+        return query.all()
     
     def get_questions_by_level(self, level: str, language: str = 'english') -> List[Question]:
         """Get questions by CEFR-style difficulty level (IM/IH/AL)"""
@@ -220,6 +252,62 @@ class QuestionService(BaseService):
         if level:
             query = query.filter_by(difficulty_level=level)
         return query.order_by(db.func.random()).limit(count).all()
+
+    def get_topics_by_level(self, level: str) -> List[str]:
+        """Get all distinct topics for a specific difficulty level"""
+        try:
+            # Query distinct topics for the given level
+            topics = self.db.session.query(Question.topic)\
+                .filter(Question.difficulty_level == level)\
+                .distinct()\
+                .all()
+            # Return list of strings (first element of tuple)
+            return [t[0] for t in topics if t[0]]
+        except Exception as e:
+            current_app.logger.error(f"Error fetching topics: {e}")
+            return []
+
+    def get_random_questions_excluding(self, count: int = 1, language: str = 'english', level: str = None, topic: str = None, excluded_ids: List[int] = None) -> List[Question]:
+        """
+        Get random questions excluding specific IDs.
+        If the pool is exhausted (all questions excluded), it falls back to including them
+        but prioritizes those not in the excluded list if possible.
+        """
+        # Base query
+        base_query = Question.query.filter_by(language=language)
+        if level:
+            base_query = base_query.filter_by(difficulty_level=level)
+        if topic:
+            base_query = base_query.filter_by(topic=topic)
+            
+        # If no excluded IDs, just return random
+        if not excluded_ids:
+            return base_query.order_by(db.func.random()).limit(count).all()
+            
+        # Try to find questions NOT in excluded_ids
+        filtered_query = base_query.filter(~Question.id.in_(excluded_ids))
+        
+        # Check if we have enough questions
+        available_count = filtered_query.count()
+        
+        if available_count >= count:
+            # We have enough unseen questions
+            return filtered_query.order_by(db.func.random()).limit(count).all()
+        else:
+            # Not enough unseen questions. Get all unseen ones first.
+            questions = filtered_query.all()
+            
+            # Then fill the rest with seen questions (randomly)
+            needed = count - len(questions)
+            if needed > 0:
+                # Get seen questions that match criteria
+                seen_query = base_query.filter(Question.id.in_(excluded_ids))
+                seen_questions = seen_query.order_by(db.func.random()).limit(needed).all()
+                questions.extend(seen_questions)
+                
+            # Shuffle the combined list
+            random.shuffle(questions)
+            return questions
 
 
 class ResponseService(BaseService):
@@ -334,7 +422,7 @@ class AuthService(BaseService):
             current_app.logger.error(f"Registration error: {e}")
             return {
                 'success': False,
-                'message': 'An unexpected error occurred.'
+                'message': f"Registration error: {str(e)}"
             }
     
     def login_user(self, username: str, password: str) -> Dict[str, Any]:
@@ -356,5 +444,5 @@ class AuthService(BaseService):
             current_app.logger.error(f"Login error: {e}")
             return {
                 'success': False,
-                'message': 'An unexpected error occurred.'
+                'message': f"Login error: {str(e)}"
             }

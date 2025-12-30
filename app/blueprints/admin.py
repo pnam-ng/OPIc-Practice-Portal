@@ -419,440 +419,39 @@ def _collect_question_filter_options(language_filter):
 
 def _apply_question_sort(query, sort_key, sort_order):
     """Apply sorting to the question query"""
-    column = QUESTION_SORT_COLUMNS.get(sort_key, Question.updated_at)
-    sort_order = 'asc' if sort_order == 'asc' else 'desc'
+    if not sort_key:
+        return query.order_by(Question.updated_at.desc())
+
+    # Map sort keys to columns
+    ordering = None
+    if sort_key == 'id':
+        ordering = Question.id
+    elif sort_key == 'topic':
+        ordering = Question.topic
+    elif sort_key == 'language':
+        ordering = Question.language
+    elif sort_key == 'level':
+        ordering = Question.difficulty_level
+    elif sort_key == 'type':
+        ordering = Question.question_type
+    elif sort_key == 'updated':
+        ordering = Question.updated_at
     
-    ordered_column = column.asc() if sort_order == 'asc' else column.desc()
-    
-    if sort_key == 'updated':
-        ordered_column = ordered_column.nullslast()
-        secondary = Question.created_at.asc() if sort_order == 'asc' else Question.created_at.desc()
-        return query.order_by(ordered_column, secondary)
-    
-    return query.order_by(ordered_column)
-
-
-@admin_bp.route("/questions", methods=['GET'])
-@login_required
-@admin_required
-def manage_questions():
-    """Render the question management console"""
-    filters = {
-        'q': request.args.get('q', '').strip(),
-        'topic': request.args.get('topic', '').strip(),
-        'language': request.args.get('language', 'english').strip().lower() or 'english',
-        'level': request.args.get('level', '').strip().upper(),
-        'question_type': request.args.get('question_type', '').strip().lower(),
-    }
-    
-    sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
-    if sort_key not in QUESTION_SORT_COLUMNS:
-        sort_key = 'updated'
-    
-    sort_order = (request.args.get('order', 'desc') or 'desc').lower()
-    if sort_order not in ('asc', 'desc'):
-        sort_order = 'desc'
-
-    try:
-        page = max(int(request.args.get('page', 1)), 1)
-    except (TypeError, ValueError):
-        page = 1
-
-    try:
-        per_page = int(request.args.get('per_page', 50))
-    except (TypeError, ValueError):
-        per_page = 50
-
-    per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
-
-    query = _apply_question_filters(Question.query, filters)
-    query = _apply_question_sort(query, sort_key, sort_order)
-    total = query.count()
-    questions = (
-        query.offset((page - 1) * per_page)
-        .limit(per_page)
-        .all()
-    )
-
-    filter_options = _collect_question_filter_options(filters['language'])
-    filter_options['languages'].insert(0, 'all')
-
-    pages = (total + per_page - 1) // per_page
-
-    base_sort_args = request.args.to_dict()
-    
-    def page_url(p):
-        args = request.args.to_dict()
-        args['page'] = p
-        args['per_page'] = per_page
-        return url_for('admin.manage_questions', **args)
-    
-    def build_sort_link(field):
-        args = base_sort_args.copy()
-        args.pop('page', None)
-        args['sort'] = field
-        if sort_key == field and sort_order == 'asc':
-            args['order'] = 'desc'
-        elif sort_key == field and sort_order == 'desc':
-            args['order'] = 'asc'
+    if ordering is not None:
+        if sort_order == 'desc':
+            query = query.order_by(ordering.desc())
         else:
-            args['order'] = 'asc'
-        return url_for('admin.manage_questions', **args)
-    
-    sort_controls = {field: build_sort_link(field) for field in QUESTION_SORT_COLUMNS.keys()}
-
-    return render_template(
-        "admin/questions.html",
-        questions=questions,
-        filters=filters,
-        pagination={
-            'page': page,
-            'per_page': per_page,
-            'pages': pages,
-            'total': total,
-        },
-        filter_options=filter_options,
-        stats={
-            'total_questions': Question.query.count(),
-            'showing': len(questions),
-        },
-        page_url=page_url,
-        sort={
-            'key': sort_key,
-            'order': sort_order,
-        },
-        sort_controls=sort_controls,
-        request_args=base_sort_args,
-    )
-
-
-@admin_bp.route("/questions/api", methods=['GET', 'POST'])
-@login_required
-@admin_required
-def questions_api():
-    """JSON API for question management"""
-    if request.method == 'GET':
-        filters = {
-            'q': request.args.get('q', '').strip(),
-            'topic': request.args.get('topic', '').strip(),
-            'language': request.args.get('language', 'all').strip().lower(),
-            'level': request.args.get('level', '').strip().upper(),
-            'question_type': request.args.get('question_type', '').strip().lower(),
-        }
-        
-        sort_key = (request.args.get('sort', 'updated') or 'updated').lower()
-        if sort_key not in QUESTION_SORT_COLUMNS:
-            sort_key = 'updated'
-        
-        sort_order = (request.args.get('order', 'desc') or 'desc').lower()
-        if sort_order not in ('asc', 'desc'):
-            sort_order = 'desc'
-
-        try:
-            page = max(int(request.args.get('page', 1)), 1)
-        except (TypeError, ValueError):
-            page = 1
-
-        try:
-            per_page = int(request.args.get('per_page', 50))
-        except (TypeError, ValueError):
-            per_page = 50
-
-        per_page = max(10, min(per_page, MAX_QUESTIONS_PER_PAGE))
-
-        query = _apply_question_filters(Question.query, filters)
-        query = _apply_question_sort(query, sort_key, sort_order)
-        total = query.count()
-        questions = (
-            query.offset((page - 1) * per_page)
-            .limit(per_page)
-            .all()
-        )
-
-        return jsonify({
-            'success': True,
-            'pagination': {
-                'page': page,
-                'per_page': per_page,
-                'pages': (total + per_page - 1) // per_page,
-                'total': total,
-            },
-            'filters': filters,
-            'sort': {
-                'key': sort_key,
-                'order': sort_order,
-            },
-            'questions': [question.to_dict() for question in questions],
-        })
-
-    # POST: create new question
-    data = _get_question_request_data()
-    payload, error = _prepare_question_payload(data)
-    if error:
-        return jsonify({'success': False, 'error': error}), 400
-
-    try:
-        question = Question(**payload)
-        db.session.add(question)
-        db.session.commit()
-        return jsonify({
-            'success': True,
-            'message': 'Question created successfully.',
-            'question': question.to_dict(),
-        }), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@admin_bp.route("/questions/api/<int:question_id>", methods=['GET', 'PUT', 'DELETE'])
-@login_required
-@admin_required
-def question_detail_api(question_id):
-    """Retrieve, update, or delete a question"""
-    question = Question.query.get(question_id)
-    if not question:
-        return jsonify({'success': False, 'error': 'Question not found'}), 404
-
-    if request.method == 'GET':
-        return jsonify({'success': True, 'question': question.to_dict()})
-
-    if request.method == 'DELETE':
-        try:
-            db.session.delete(question)
-            db.session.commit()
-            return jsonify({'success': True, 'message': 'Question deleted successfully.'})
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({'success': False, 'error': str(e)}), 500
-
-    # PUT
-    data = _get_question_request_data()
-    payload, error = _prepare_question_payload(data, partial=False)
-    if error:
-        return jsonify({'success': False, 'error': error}), 400
-
-    for field, value in payload.items():
-        setattr(question, field, value)
-
-    if not (question.text or question.audio_url):
-        return jsonify({'success': False, 'error': 'Question must contain text or audio.'}), 400
-
-    try:
-        db.session.commit()
-        return jsonify({
-            'success': True,
-            'message': 'Question updated successfully.',
-            'question': question.to_dict(),
-        })
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@admin_bp.route("/questions/generate-audio-preview", methods=['POST'])
-@login_required
-@admin_required
-def generate_audio_preview():
-    """Generate TTS audio preview for new questions"""
-    data = request.get_json()
-    text = data.get('text')
-
-    if not text:
-        return jsonify({'success': False, 'error': 'Text is required'}), 400
-
-    try:
-        from app.services.tts_service import TTSService
-        tts_service = TTSService()
-
-        # Generate filename
-        filename = f"preview_{int(time.time())}_{current_user.id}.mp3"
-
-        # Resolve paths
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        upload_dir = os.path.join(base_dir, 'uploads', 'questions')
-        os.makedirs(upload_dir, exist_ok=True)
-        output_path = os.path.join(upload_dir, filename)
-
-        # URL path
-        audio_url = f"/uploads/questions/{filename}"
-
-        # Generate
-        success = tts_service.generate_audio(text, output_path, voice_key='ava')
-
-        if success:
-            return jsonify({
-                'success': True,
-                'audio_url': audio_url
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Failed to generate audio'}), 500
-
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@admin_bp.route("/questions/<int:question_id>/generate-audio", methods=['POST'])
-@login_required
-@admin_required
-def generate_question_audio(question_id):
-    """Generate TTS audio for a question"""
-    question = Question.query.get(question_id)
-    if not question:
-        return jsonify({'success': False, 'error': 'Question not found'}), 404
-        
-    if not question.text:
-        return jsonify({'success': False, 'error': 'Question has no text content'}), 400
-        
-    try:
-        from app.services.tts_service import TTSService
-        tts_service = TTSService()
-        
-        # Generate filename
-        filename = f"question_{question.id}_{int(time.time())}.mp3"
-        
-        # Resolve paths
-        # Use absolute path for saving file
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        upload_dir = os.path.join(base_dir, 'uploads', 'questions')
-        output_path = os.path.join(upload_dir, filename)
-        
-        # URL path for database (relative to root)
-        audio_url = f"/uploads/questions/{filename}"
-        
-        # Generate audio
-        success = tts_service.generate_audio(question.text, output_path, voice_key='ava')
-        
-        if success:
-            # Update question
-            question.audio_url = audio_url
-            db.session.commit()
+            query = query.order_by(ordering.asc())
             
-            return jsonify({
-                'success': True, 
-                'message': 'Audio generated successfully',
-                'audio_url': audio_url
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Failed to generate audio file'}), 500
-            
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    return query
 
 
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 
-@admin_bp.route("/questions/import", methods=['POST'])
-@login_required
-@admin_required
-def import_questions():
-    """Bulk import questions from CSV/Excel"""
-    if 'file' not in request.files:
-        return jsonify({'success': False, 'error': 'No file uploaded'}), 400
-        
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'success': False, 'error': 'No file selected'}), 400
-        
-    auto_generate_audio = request.form.get('auto_generate_audio') == 'true'
-    
-    try:
-        import pandas as pd
-        from app.services.tts_service import TTSService
-        
-        # Determine file type
-        filename = secure_filename(file.filename)
-        if filename.endswith('.csv'):
-            df = pd.read_csv(file)
-        elif filename.endswith(('.xls', '.xlsx')):
-            df = pd.read_excel(file)
-        else:
-            return jsonify({'success': False, 'error': 'Invalid file type. Use CSV or Excel.'}), 400
-            
-        # Validate columns
-        required_cols = ['topic', 'text']
-        missing_cols = [col for col in required_cols if col not in df.columns]
-        if missing_cols:
-            return jsonify({'success': False, 'error': f'Missing required columns: {", ".join(missing_cols)}'}), 400
-            
-        # Initialize TTS if needed
-        tts_service = None
-        if auto_generate_audio:
-            tts_service = TTSService()
-            
-        success_count = 0
-        errors = []
-        
-        # Process rows
-        for index, row in df.iterrows():
-            try:
-                # Basic data
-                topic = str(row['topic']).strip()
-                text = str(row['text']).strip()
-                
-                if not topic or not text:
-                    continue
-                    
-                # Optional fields with defaults
-                language = str(row.get('language', 'english')).strip().lower()
-                level = str(row.get('level', '')).strip().upper() or None
-                q_type = str(row.get('type', 'question')).strip().lower()
-                
-                question = Question(
-                    topic=topic,
-                    text=text,
-                    language=language,
-                    difficulty_level=level,
-                    question_type=q_type,
-                    created_by=current_user.id
-                )
-                
-                # Auto-generate Audio
-                if auto_generate_audio and tts_service:
-                    # Generate filename
-                    filename = f"question_import_{int(time.time())}_{index}.mp3"
-                    
-                    # Resolve paths
-                    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                    upload_dir = os.path.join(base_dir, 'uploads', 'questions')
-                    output_path = os.path.join(upload_dir, filename)
-                    audio_url = f"/uploads/questions/{filename}"
-                    
-                    if tts_service.generate_audio(text, output_path, voice_key='ava'):
-                        question.audio_url = audio_url
-                
-                db.session.add(question)
-                success_count += 1
-                
-            except Exception as e:
-                errors.append(f"Row {index + 1}: {str(e)}")
-                
-        if success_count > 0:
-            db.session.commit()
-            
-        return jsonify({
-            'success': True,
-            'message': f'Successfully imported {success_count} questions.',
-            'errors': errors[:10]  # Limit error details
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': f"Import failed: {str(e)}"}), 500
 
 
-@admin_bp.route("/questions/template")
-@login_required
-@admin_required
-def get_import_template():
-    """Download CSV template for bulk import"""
-    csv_content = "topic,text,level,language,type\nExample Topic,This is an example question text.,IM,english,question"
-    return Response(
-        csv_content,
-        mimetype="text/csv",
-        headers={"Content-disposition": "attachment; filename=questions_template.csv"}
-    )
+
+
 
 
 @admin_bp.route("/users")
@@ -986,3 +585,84 @@ def users_api():
             "created_at": u.created_at.isoformat() if u.created_at else None,
             "last_active_date": u.last_active_date.isoformat() if u.last_active_date else None,
         })
+    return jsonify({"success": True, "users": data, "total": total, "page": page, "pages": (total + per_page - 1) // per_page})
+
+
+# --- User Management Actions ---
+@admin_bp.route("/users/<int:user_id>/toggle-admin", methods=["POST"])
+@login_required
+@admin_required
+def toggle_admin(user_id):
+    """Toggle admin status for a user"""
+    if user_id == current_user.id:
+        return jsonify({"success": False, "error": "Cannot modify your own admin status"}), 400
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+    
+    try:
+        user.is_admin = not user.is_admin
+        db.session.commit()
+        action = "granted" if user.is_admin else "revoked"
+        return jsonify({"success": True, "message": f"Admin status {action} for {user.username}", "is_admin": user.is_admin})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/users/<int:user_id>/reset-password", methods=["POST"])
+@login_required
+@admin_required
+def reset_password(user_id):
+    """Reset password for a user"""
+    if user_id == current_user.id:
+        return jsonify({"success": False, "error": "Use the profile page to change your own password"}), 400
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+    
+    data = request.get_json() or {}
+    new_password = data.get("password", "").strip()
+    
+    if not new_password or len(new_password) < 6:
+        return jsonify({"success": False, "error": "Password must be at least 6 characters"}), 400
+    
+    try:
+        user.set_password(new_password)
+        db.session.commit()
+        return jsonify({"success": True, "message": f"Password reset for {user.username}"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@login_required
+@admin_required
+def delete_user(user_id):
+    """Delete a user and all their data"""
+    if user_id == current_user.id:
+        return jsonify({"success": False, "error": "Cannot delete your own account"}), 400
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+    
+    # Don't allow deleting other admins
+    if user.is_admin:
+        return jsonify({"success": False, "error": "Cannot delete admin users. Revoke admin status first."}), 400
+    
+    try:
+        # Delete related data first (responses, surveys, etc.)
+        UserResponse.query.filter_by(user_id=user_id).delete()
+        Survey.query.filter_by(user_id=user_id).delete()
+        
+        # Delete the user
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"success": True, "message": f"User {user.username} deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500

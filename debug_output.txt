@@ -1,0 +1,22 @@
+[OK] Chatbot blueprint registered successfully
+--- Database Debug: Questions ---
+Total Questions: 1001
+
+--- Difficulty Levels ---
+Level 'AL': 384 questions
+Level 'IH': 352 questions
+Level 'IM': 265 questions
+
+--- Topics by Level ---
+Level 'IM' Topics (30): ['01. Restaurants', '02. Bars', '03. Gatherings', '04. Health', '05. Country']...
+Level 'IH' Topics (39): ['01. Internet', '02. Phones + Technology', '03. Messages', '04. Shopping', '05. Housing 1']...
+Level 'AL' Topics (39): ['01. Newspapers', '02. Television', '03. Internet', '04. Phones + Technology', '05. Music']...
+Level 'NM' Topics (0): []...
+Level 'NH' Topics (0): []...
+
+--- First 5 Questions Sample ---
+ID: 1, Topic: 01. Restaurants, Level: IM, Lang: english
+ID: 2, Topic: 01. Restaurants, Level: IM, Lang: english
+ID: 3, Topic: 01. Restaurants, Level: IM, Lang: english
+ID: 4, Topic: 01. Restaurants, Level: IM, Lang: english
+ID: 5, Topic: 01. Restaurants, Level: IM, Lang: english

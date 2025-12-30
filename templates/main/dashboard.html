@@ -4,463 +4,996 @@
 
 {% block content %}
 <style>
-    /* Ensure heading icons are always visible */
-    h2 {
-        display: flex !important;
+    /* Dashboard specific overrides */
+    .stat-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
         align-items: center;
-        flex-wrap: wrap;
-    }
-
-    h2 i.fas,
-    h2 i.far {
+        justify-content: center;
+        border-radius: 50%;
+        background-color: var(--bg-subtle);
+        color: var(--primary);
         flex-shrink: 0;
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
     }
 
-    h2 small {
-        margin-left: 10px;
+    /* Hide scrollbar for clean horizontal scrolling if needed */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
     }
 
-    /* Streak fire animations */
-    .streak-active {
-        animation: fireGlow 2s ease-in-out infinite;
-        color: #ff9800 !important;
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 
-    .streak-faded {
-        opacity: 0.4;
-        filter: grayscale(100%);
-    }
-
-    @keyframes fireGlow {
-
-        0%,
-        100% {
-            text-shadow: 0 0 4px rgba(255, 152, 0, 0.6), 0 0 6px rgba(255, 152, 0, 0.4);
-            opacity: 1;
-        }
-
-        50% {
-            text-shadow: 0 0 6px rgba(255, 152, 0, 0.8), 0 0 8px rgba(255, 152, 0, 0.6), 0 0 10px rgba(255, 87, 34, 0.4);
-            opacity: 1;
-        }
-    }
-
+    /* Mobile: Compact stat cards */
     @media (max-width: 768px) {
-        .container-fluid {
-            padding-left: 1rem;
-            padding-right: 1rem;
+
+        /* Compact hero section on mobile */
+        .hero-bg-pattern {
+            margin-bottom: 0.75rem !important;
+            padding: 0 !important;
         }
 
-        h2 {
-            font-size: 1.5rem !important;
-            margin-bottom: 1rem !important;
+        .hero-bg-pattern h1.display-6 {
+            font-size: 1.25rem !important;
         }
 
-        h2 i.fas,
-        h2 i.far {
-            font-size: 1.5rem !important;
-            margin-right: 10px !important;
-            display: inline-block !important;
-            visibility: visible !important;
+        .hero-bg-pattern .lead {
+            font-size: 0.8rem !important;
+            margin-bottom: 0.25rem !important;
         }
 
-        h2 small {
-            font-size: 0.9rem;
-            display: block;
-            width: 100%;
-            margin-left: 0;
-            margin-top: 0.5rem;
+        .hero-bg-pattern .btn {
+            padding: 0.25rem 0.75rem !important;
+            font-size: 0.75rem !important;
         }
 
-        .card-body {
-            padding: 1rem !important;
+        /* Container padding */
+        .container-fluid.py-4 {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
         }
 
-        .card-title {
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
+        /* Compact stat cards on mobile */
+        .stat-card .card-body {
+            padding: 0.75rem !important;
         }
 
-        .btn {
-            padding: 0.625rem 1rem;
-            font-size: 0.9375rem;
+        /* Equal height stat cards - ONLY top 4 stats grid */
+        #statsGrid .col-6 .stat-card {
+            height: 120px !important;
         }
 
-        .h4 {
-            font-size: 1.5rem;
+        #statsGrid .col-6 .stat-card .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0.5rem !important;
+        }
+
+        /* Hide badge on mobile to keep cards equal height */
+        #statsGrid .stat-card .badge {
+            display: none !important;
+        }
+
+        .stat-card .icon-box {
+            padding: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .stat-card .icon-box i {
+            font-size: 1rem !important;
+        }
+
+        .stat-card h3 {
+            font-size: 1.25rem !important;
+            margin-bottom: 0 !important;
+        }
+
+        .stat-card .text-muted.small {
+            font-size: 0.7rem !important;
+        }
+
+        .stat-card .badge {
+            font-size: 0.6rem !important;
+            padding: 0.2rem 0.4rem !important;
+            margin-top: 0.25rem !important;
+        }
+
+        /* Reduce gap between stat cards */
+        .row.g-3.g-md-4.mb-5 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* Study Modes cards - allow natural height and proper layout */
+        #studyModesGrid .card-body {
+            padding: 0.75rem !important;
+            height: auto !important;
+        }
+
+        #studyModesGrid .card {
+            height: auto !important;
+            min-height: auto !important;
+        }
+
+        #studyModesGrid h5.card-title {
+            font-size: 0.8rem !important;
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        #studyModesGrid p.text-muted {
+            font-size: 0.7rem !important;
+            margin-bottom: 0.5rem !important;
+            line-height: 1.3;
+        }
+
+        #studyModesGrid .d-flex.align-items-center.mb-3 {
+            margin-bottom: 0.5rem !important;
+        }
+
+        #studyModesGrid .icon-box {
+            padding: 0.4rem !important;
+        }
+
+        #studyModesGrid .icon-box i {
+            font-size: 0.75rem !important;
+        }
+
+        #studyModesGrid .btn {
+            padding: 0.35rem 0.5rem !important;
+            font-size: 0.7rem !important;
+        }
+
+        /* Section headers */
+        h4.fw-bold {
+            font-size: 1rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Fix section header overlap - higher z-index than cards */
+        .d-flex.align-items-center.justify-content-between.mb-4 {
+            position: relative;
+            z-index: 10;
+            background-color: var(--bg-body);
+            padding-top: 0.5rem;
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Cards should be below headers */
+        .card.border-0.shadow-sm {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure row sections don't overlap */
+        .row.g-4.mb-5 {
+            position: relative;
+            z-index: 1;
+            margin-top: 1rem !important;
+            overflow: visible;
+        }
+
+        /* Leaderboard section on mobile - full width and clear */
+        .col-12.col-lg-4 {
+            margin-top: 1.5rem;
+        }
+
+        /* Recent Activity section */
+        .col-12.col-lg-8 {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Compact Recent Activity for mobile */
+        .list-group-item.p-3 {
+            padding: 0.75rem !important;
+        }
+
+        /* Hide timeline icon on mobile - not necessary */
+        .timeline-icon {
+            display: none !important;
+        }
+
+        .list-group-item h6 {
+            font-size: 0.8rem !important;
+            line-height: 1.3 !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* Compact audio player on mobile */
+        .audio-player-custom {
+            padding: 0.4rem !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .audio-player-custom .play-btn i {
+            font-size: 0.9rem !important;
+        }
+
+        .audio-player-custom .time-display {
+            font-size: 0.65rem !important;
+            min-width: 30px !important;
+        }
+
+        /* Hide volume control on mobile */
+        .audio-player-custom .volume-control {
+            display: none !important;
         }
     }
 
-    @media (max-width: 576px) {
-        .container-fluid {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-        }
+    /* ===== LEADERBOARD STYLES ===== */
+
+    /* Compact pill tabs */
+    .leaderboard-tab {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.4rem 0.75rem;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        transition: all 0.2s ease;
     }
 
-    @media (max-width: 576px) {
+    .leaderboard-tab.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
 
-        h2 i.fas,
-        h2 i.far {
-            font-size: 1.4rem !important;
-            margin-right: 8px !important;
-        }
+    .leaderboard-tab i {
+        font-size: 0.8rem;
+    }
+
+    /* Make icon white when tab is active */
+    .leaderboard-tab.active i {
+        color: white !important;
+    }
+
+    /* Rank styling */
+    .leaderboard-rank {
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .medal {
+        font-size: 1.1rem;
+    }
+
+    .rank-number {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    /* Avatar styling */
+    .leaderboard-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .leaderboard-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .leaderboard-avatar .avatar-fallback {
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Fix for d-none fallback - use flex when shown */
+    .leaderboard-avatar .avatar-fallback.d-none {
+        display: none !important;
+    }
+
+    .leaderboard-avatar .avatar-fallback:not(.d-none) {
+        display: flex !important;
+    }
+
+    .leaderboard-avatar.avatar-top {
+        width: 36px;
+        height: 36px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Top 3 highlighting */
+    .leaderboard-top-1 {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+    }
+
+    .leaderboard-top-2 {
+        background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(156, 163, 175, 0.05) 100%);
+    }
+
+    .leaderboard-top-3 {
+        background: linear-gradient(135deg, rgba(205, 127, 50, 0.1) 0%, rgba(180, 83, 9, 0.05) 100%);
+    }
+
+    /* Current user highlight */
+    .leaderboard-current-user {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        border-left: 3px solid var(--primary) !important;
+    }
+
+    /* Score badges */
+    .streak-badge,
+    .active-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+    }
+
+    .streak-badge {
+        background: rgba(249, 115, 22, 0.15);
+        color: #ea580c;
+    }
+
+    .streak-badge i {
+        font-size: 0.7rem;
+    }
+
+    .active-badge {
+        background: rgba(34, 197, 94, 0.15);
+        color: #16a34a;
+    }
+
+    .active-badge i {
+        font-size: 0.65rem;
+    }
+
+    /* Min width for text truncation */
+    .min-width-0 {
+        min-width: 0;
+    }
+
+    /* Dark mode adjustments */
+    [data-bs-theme="dark"] .leaderboard-tab:not(.active) {
+        color: var(--text-muted);
+    }
+
+    [data-bs-theme="dark"] .leaderboard-top-1,
+    [data-bs-theme="dark"] .leaderboard-top-2,
+    [data-bs-theme="dark"] .leaderboard-top-3,
+    [data-bs-theme="dark"] .leaderboard-current-user {
+        opacity: 0.9;
     }
 </style>
 
 <script>
-    // Function to request notification permission manually
+    // Keep original notification logic
     async function requestNotificationPermissionManual() {
         if (!('Notification' in window)) {
             alert('Your browser does not support notifications');
             return;
         }
-
         const button = document.getElementById('enableNotificationsBtn');
-
-        if (Notification.permission === 'granted') {
-            button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
-            button.classList.remove('btn-outline-primary');
-            button.classList.add('btn-success');
-            button.disabled = true;
-            return;
-        }
-
+        if (Notification.permission === 'granted') return;
         try {
             const permission = await Notification.requestPermission();
-
             if (permission === 'granted') {
-                button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
-                button.classList.remove('btn-outline-primary');
-                button.classList.add('btn-success');
+                button.innerHTML = '<i class="fas fa-check me-2"></i>Enabled';
+                button.classList.replace('btn-outline-primary', 'btn-success');
                 button.disabled = true;
-
-                // Show confirmation notification
                 new Notification('Streak Reminders Enabled! 🔥', {
                     body: 'We\'ll remind you at 8 PM if you haven\'t practiced today.',
-                    icon: '/static/icons/icon-192x192.png',
-                    badge: '/static/icons/icon-96x96.png'
+                    icon: '/static/icons/icon-192x192.png'
                 });
-
-                // Start daily reminders
-                if (window.scheduleDailyReminder) {
-                    window.scheduleDailyReminder();
-                }
-            } else if (permission === 'denied') {
-                alert('Notifications blocked. Please enable them in your browser settings.');
+            } else {
+                alert('Notifications blocked. Please enable them in settings.');
             }
         } catch (error) {
-            console.error('Error requesting notification permission:', error);
-            alert('Failed to enable notifications. Please try again.');
+            console.error(error);
+            alert('Failed to enable notifications.');
         }
     }
-
-    // Check notification permission on page load
-    document.addEventListener('DOMContentLoaded', function () {
-        const button = document.getElementById('enableNotificationsBtn');
-
-        if (!button) return;
-
-        if (!('Notification' in window)) {
-            button.style.display = 'none';
-            return;
-        }
-
-        if (Notification.permission === 'granted') {
-            button.innerHTML = '<i class="fas fa-check me-2"></i>Notifications Enabled';
-            button.classList.remove('btn-outline-primary');
-            button.classList.add('btn-success');
-            button.disabled = true;
-        } else if (Notification.permission === 'denied') {
-            button.innerHTML = '<i class="fas fa-times me-2"></i>Notifications Blocked';
-            button.classList.remove('btn-outline-primary');
-            button.classList.add('btn-secondary');
-            button.disabled = true;
-        }
-    });
 </script>
-<div class="container-fluid py-3 py-md-4 px-3 px-md-4">
-    <div class="row">
+
+<div class="container-fluid py-4 px-3 px-md-4">
+
+    <!-- Hero Header - Compact on mobile -->
+    <div class="d-flex flex-row justify-content-between align-items-center mb-3 hero-bg-pattern">
+        <div>
+            <h1 class="display-6 fw-bold text-main mb-0">
+                Hello, <span class="text-gradient-primary">{{ user_stats.user.name }}</span>!
+            </h1>
+            <p class="text-muted small mb-0 d-none d-md-block">Ready to boost your OPIc score today?</p>
+        </div>
+        <div class="flex-shrink-0 ms-2">
+            <button class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="modal"
+                data-bs-target="#editLevelsModal">
+                <i class="fas fa-sliders-h me-1"></i><span class="d-none d-sm-inline">Adjust</span> Goals
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div id="statsGrid" class="row g-3 g-md-4 mb-3">
+        <!-- Streak -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card-orange h-100 border-0 shadow-sm">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div
+                        class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle icon-box icon-box-orange mb-3">
+                        <i class="fas fa-fire fa-lg"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ user_stats.streak_count }}</h3>
+                    <p class="text-muted small mb-0 fw-medium">Day Streak</p>
+                    {% if is_active_today %}
+                    <span class="badge bg-success-subtle text-success rounded-pill mt-2 px-2 py-1"
+                        style="font-size: 0.7rem;">Active Today</span>
+                    {% else %}
+                    <span class="badge bg-danger-subtle text-danger rounded-pill mt-2 px-2 py-1"
+                        style="font-size: 0.7rem;">Practice Needed</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action: Practice (moved to top row) -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card-indigo h-100 border-0 shadow-sm"
+                onclick="location.href='{{ url_for('practice_mode.index') }}';" role="button" style="cursor: pointer;">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div
+                        class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle icon-box icon-box-indigo mb-3">
+                        <i class="fas fa-play fa-lg"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Go!</h3>
+                    <p class="text-muted small mb-0 fw-medium">Start Practice</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Level -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card-blue h-100 border-0 shadow-sm">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div
+                        class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle icon-box icon-box-blue mb-3">
+                        <i class="fas fa-layer-group fa-lg"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ current_user.current_level }}</h3>
+                    <p class="text-muted small mb-0 fw-medium">Current Level</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Level -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card stat-card-red h-100 border-0 shadow-sm">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div
+                        class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle icon-box icon-box-red mb-3">
+                        <i class="fas fa-flag-checkered fa-lg"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ current_user.target_level }}</h3>
+                    <p class="text-muted small mb-0 fw-medium">Target Level</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Column: Modes & Activity -->
         <div class="col-12">
-            <h2 class="mb-3 mb-md-4 dashboard-heading">
-                <i class="fas fa-tachometer-alt"></i>
-                <span class="ms-2">Dashboard</span>
-                <small class="text-muted d-block d-md-inline">Welcome back, {{ user_stats.user.name }}!</small>
-            </h2>
-        </div>
-    </div>
-
-    <!-- Streak Card -->
-    <div class="row mb-3 mb-md-4 g-3" data-streak-status="{{ streak_status }}">
-        <div class="col-12 col-md-6">
-            <div class="card border-0 shadow-sm h-100 {% if streak_status == 'at_risk' %}border-warning{% endif %}">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title mb-0">
-                            <i
-                                class="fas fa-fire me-2 {% if is_active_today %}text-warning streak-active{% else %}text-muted streak-faded{% endif %}"></i>Daily
-                            Streak
-                        </h5>
-                        <span class="badge {% if is_active_today %}bg-success{% else %}bg-secondary{% endif %} fs-6">
-                            {{ user_stats.streak_count }} days
-                        </span>
-                    </div>
-                    <div class="progress mb-2" style="height: 20px;">
-                        <div class="progress-bar {% if is_active_today %}bg-success{% else %}bg-secondary{% endif %}"
-                            role="progressbar"
-                            style="width: {{ (user_stats.streak_count / 30) * 100 if user_stats.streak_count <= 30 else 100 }}%">
-                        </div>
-                    </div>
-                    <small
-                        class="{% if is_active_today %}text-success{% elif streak_status == 'at_risk' %}text-warning{% else %}text-muted{% endif %}">
-                        {% if user_stats.streak_count == 0 %}
-                        <i class="fas fa-exclamation-circle me-1"></i>Start practicing to build your streak!
-                        {% elif is_active_today %}
-                        <i class="fas fa-check-circle me-1"></i>Great! You've practiced today! Keep it up! 🔥
-                        {% elif streak_status == 'at_risk' %}
-                        <i class="fas fa-bell me-1"></i>Practice today to keep your {{ user_stats.streak_count }}-day
-                        streak alive!
-                        {% else %}
-                        <i class="fas fa-info-circle me-1"></i>Keep practicing daily to maintain your streak!
-                        {% endif %}
-                    </small>
-
-                    <!-- Notification permission button (only show on mobile) -->
-                    <div class="mt-3 d-lg-none">
-                        <button id="enableNotificationsBtn" class="btn btn-sm btn-outline-primary w-100"
-                            onclick="requestNotificationPermissionManual()">
-                            <i class="fas fa-bell me-2"></i>Enable Streak Reminders
-                        </button>
-                    </div>
-                </div>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="fw-bold mb-0">Study Modes</h4>
             </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-bullseye text-danger me-2"></i>My Goals
-                        </h5>
-                        <button class="btn btn-sm btn-outline-primary py-0" data-bs-toggle="modal"
-                            data-bs-target="#editLevelsModal">
-                            <i class="fas fa-edit me-1"></i>Edit
-                        </button>
-                    </div>
-                    <div class="row text-center g-2">
-                        <div class="col-6">
-                            <div class="p-2 bg-light rounded-3">
-                                <small class="text-muted d-block mb-1" style="font-size: 0.8rem;">Current</small>
-                                <div class="h4 mb-0 text-primary">{{ current_user.current_level }}</div>
+
+            <!-- All 4 Action Cards in One Row -->
+            <div id="studyModesGrid" class="row g-3 g-md-4 mb-5">
+                <!-- Test Mode Card -->
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card stat-card-indigo h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="p-2 rounded icon-box icon-box-indigo me-3">
+                                    <i class="fas fa-clipboard-list fa-fw"></i>
+                                </span>
+                                <h5 class="card-title mb-0">Test Mode</h5>
                             </div>
+                            <p class="text-muted small flex-grow-1">Simulate a full OPIc test with personalized
+                                questions.</p>
+                            <a href="{{ url_for('main.test_mode') }}"
+                                class="btn btn-outline-primary w-100 mt-auto">Start Simulation</a>
                         </div>
-                        <div class="col-6">
-                            <div class="p-2 bg-light rounded-3">
-                                <small class="text-muted d-block mb-1" style="font-size: 0.8rem;">Target</small>
-                                <div class="h4 mb-0 text-danger">{{ current_user.target_level }}</div>
+                    </div>
+                </div>
+
+                <!-- Practice Mode Card -->
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card stat-card-green h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="p-2 rounded icon-box icon-box-green me-3">
+                                    <i class="fas fa-dumbbell fa-fw"></i>
+                                </span>
+                                <h5 class="card-title mb-0">Practice Mode</h5>
                             </div>
+                            <p class="text-muted small flex-grow-1">Focus on specific topics without the pressure of a
+                                test.</p>
+                            <a href="{{ url_for('main.practice_mode') }}"
+                                class="btn btn-outline-primary w-100 mt-auto">Start Practice</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pro Tip Card -->
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card stat-card-orange h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="p-2 rounded icon-box icon-box-orange me-3">
+                                    <i class="fas fa-lightbulb fa-fw"></i>
+                                </span>
+                                <h5 class="card-title mb-0">Pro Tip</h5>
+                            </div>
+                            <p class="text-muted small flex-grow-1">Speaking aloud for just 10 minutes a day improves
+                                fluency.</p>
+                            <a href="{{ url_for('main.tips') }}" class="btn btn-outline-primary w-100 mt-auto">Read More
+                                Tips</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chatbot Card -->
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card stat-card-blue h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="p-2 rounded icon-box icon-box-blue me-3">
+                                    <i class="fas fa-robot fa-fw"></i>
+                                </span>
+                                <h5 class="card-title mb-0">Need Help?</h5>
+                            </div>
+                            <p class="text-muted small flex-grow-1">Ask our AI chatbot about OPIc strategies.</p>
+                            <a href="{{ url_for('main.chatbot') }}" class="btn btn-outline-primary w-100 mt-auto">Chat
+                                with AI</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
+            <div class="row g-4 mb-5">
+                <!-- Recent Activity Timeline (Left Column) -->
+                <div class="col-12 col-lg-8">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h4 class="fw-bold mb-0">Recent Activity</h4>
+                        <a href="{{ url_for('main.history') }}" class="text-decoration-none small fw-medium">View
+                            All</a>
+                    </div>
 
-
-<!-- Mode Selection -->
-<div class="row mb-3 mb-md-4 g-3">
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">
-                    <i class="fas fa-clipboard-list text-primary me-2"></i>Test Mode
-                </h5>
-                <p class="card-text flex-grow-1">
-                    Complete a simulated OPIc test with personalized questions based on your survey responses.
-                </p>
-                <div class="mt-auto">
-                    <a href="{{ url_for('main.test_mode') }}" class="btn btn-primary w-100">
-                        <i class="fas fa-play me-2"></i>Start Test Mode
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-3">
-                    <i class="fas fa-dumbbell text-success me-2"></i>Practice Mode
-                </h5>
-                <p class="card-text flex-grow-1 mb-3">
-                    Practice specific topics or random questions to improve your speaking skills.
-                </p>
-                <div class="mt-auto">
-                    <a href="{{ url_for('main.practice_mode') }}" class="btn btn-success w-100">
-                        <i class="fas fa-play me-2"></i>Start Practice Mode
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Tips & Resources and Chatbot Cards -->
-<div class="row mb-3 mb-md-4 g-3">
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex flex-column">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-lightbulb text-warning me-2" style="font-size: 2rem;"></i>
-                    <h5 class="card-title mb-0">Tips & Resources</h5>
-                </div>
-                <p class="card-text flex-grow-1">
-                    Access useful study materials, PDF guides, and tips for OPIc test preparation.
-                </p>
-                <div class="mt-auto">
-                    <a href="{{ url_for('main.tips') }}" class="btn btn-warning w-100">
-                        <i class="fas fa-book me-2"></i>View Resources
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex flex-column">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="me-2" style="display:inline-flex; align-items:center;">
-                        <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Chatbot Icon"
-                            class="chatbot-icon-img" style="width: 32px; height: 32px; object-fit: contain;"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                        <i class="fas fa-robot text-info" style="display:none; font-size: 2rem;"></i>
-                    </span>
-                    <h5 class="card-title mb-0">OPIc Chatbot</h5>
-                </div>
-                <p class="card-text flex-grow-1">
-                    Ask questions about OPIc test format, preparation tips, or how to use this app. Get instant
-                    AI-powered answers!
-                </p>
-                <div class="mt-auto">
-                    <a href="{{ url_for('main.chatbot') }}" class="btn btn-info w-100">
-                        <i class="fas fa-comments me-2"></i>Open Chatbot
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Activity -->
-{% if user_stats.recent_responses %}
-<div class="row mb-3 mb-md-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-history me-2"></i>Recent Activity
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Question</th>
-                                <th>Topic</th>
-                                <th>Level</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    {% if user_stats.recent_responses %}
+                    <div class="card border-0 shadow-sm overflow-hidden">
+                        <div class="list-group list-group-flush">
                             {% for response in user_stats.recent_responses %}
-                            <tr>
-                                <td>{{ (response.question.text|unescape_html)[:50] if response.question.text else
-                                    'No text available' }}...</td>
-                                <td><span class="badge bg-secondary">{{ response.question.topic if
-                                        response.question.topic else 'N/A' }}</span></td>
-                                <td>
-                                    {% if response.question.difficulty_level %}
-                                    <span class="badge bg-primary">{{ response.question.difficulty_level }}</span>
-                                    {% else %}
-                                    <span class="badge bg-secondary">N/A</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ response.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>
+                            <div
+                                class="list-group-item p-3 p-md-4 d-flex flex-column flex-sm-row align-items-start align-items-sm-center hover-bg-light">
+                                <!-- Icon -->
+                                <div class="timeline-icon me-3 mb-2 mb-sm-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="flex-grow-1 me-3 d-flex flex-column" style="min-width: 0;">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="badge bg-secondary-subtle text-body-emphasis me-2"
+                                            style="font-size: 0.7rem;">{{ response.question.topic or 'General' }}</span>
+                                        <span class="text-muted small" style="font-size: 0.75rem;">{{
+                                            response.created_at.strftime('%b %d, %I:%M %p') }}</span>
+                                    </div>
+                                    <h6 class="mb-2 text-wrap text-break" style="line-height: 1.4;">
+                                        {{ response.question.text }}
+                                    </h6>
+
+                                    <!-- Custom Audio Player -->
                                     {% if response.audio_url %}
-                                    <button class="btn btn-sm btn-outline-primary"
-                                        onclick="playAudio('{{ response.audio_url }}')">
-                                        <i class="fas fa-play"></i>
-                                    </button>
-                                    {% else %}
-                                    <span class="text-muted">No audio</span>
+                                    <div class="audio-player-custom d-flex align-items-center bg-body-tertiary rounded p-2 mt-2 border"
+                                        data-src="{{ response.audio_url }}">
+                                        <button
+                                            class="btn btn-sm btn-icon btn-link text-decoration-none p-0 me-2 play-btn">
+                                            <i class="fas fa-play fa-lg text-primary"></i>
+                                        </button>
+                                        <div class="flex-grow-1 me-2 position-relative d-flex align-items-center">
+                                            <input type="range" class="form-range w-100 audio-progress" min="0"
+                                                max="100" value="0" step="0.1">
+                                        </div>
+                                        <span class="small text-muted font-monospace time-display me-2"
+                                            style="font-size: 0.75rem; min-width: 35px;">00:00</span>
+                                        <div class="volume-control d-flex align-items-center">
+                                            <button
+                                                class="btn btn-sm btn-link text-decoration-none p-0 me-1 volume-btn text-muted">
+                                                <i class="fas fa-volume-up"></i>
+                                            </button>
+                                            <input type="range" class="form-range volume-slider" min="0" max="100"
+                                                value="100" style="width: 60px; height: 4px;">
+                                        </div>
+                                        <audio class="d-none" preload="none"></audio>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-ghost fa-2x mb-3 opacity-50"></i>
+                        <p>No recent activity yet. Start a test!</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Leaderboard (Right Column) -->
+                <div class="col-12 col-lg-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-trophy text-warning me-2"></i>Leaderboard</h4>
+                    </div>
+
+                    <div class="card border-0 shadow-sm" id="leaderboardCard">
+                        <!-- Compact pill tabs -->
+                        <div class="card-header bg-transparent border-0 p-2">
+                            <div class="d-flex gap-1 bg-light rounded-pill p-1">
+                                <button class="btn btn-sm flex-fill rounded-pill leaderboard-tab active"
+                                    data-bs-toggle="pill" data-bs-target="#streak" type="button">
+                                    <i class="fas fa-fire-flame-curved text-orange"></i>
+                                    <span class="ms-1">Streaks</span>
+                                </button>
+                                <button class="btn btn-sm flex-fill rounded-pill leaderboard-tab" data-bs-toggle="pill"
+                                    data-bs-target="#active" type="button">
+                                    <i class="fas fa-comments text-primary"></i>
+                                    <span class="ms-1">Active</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <div class="tab-content">
+                                <!-- Top Streaks Tab -->
+                                <div class="tab-pane fade show active" id="streak" role="tabpanel">
+                                    <div class="list-group list-group-flush">
+                                        {% for user in leaderboard_users %}
+                                        <div class="list-group-item px-3 py-2 d-flex align-items-center border-0 
+                                            {% if loop.index <= 3 %}leaderboard-top-{{ loop.index }}{% endif %}
+                                            {% if user.id == current_user.id %}leaderboard-current-user{% endif %}">
+                                            <!-- Rank with medal for top 3 -->
+                                            <div class="leaderboard-rank me-2">
+                                                {% if loop.index == 1 %}
+                                                <span class="medal medal-gold">🥇</span>
+                                                {% elif loop.index == 2 %}
+                                                <span class="medal medal-silver">🥈</span>
+                                                {% elif loop.index == 3 %}
+                                                <span class="medal medal-bronze">🥉</span>
+                                                {% else %}
+                                                <span class="rank-number">#{{ loop.index }}</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Avatar -->
+                                            <div
+                                                class="leaderboard-avatar me-2 {% if loop.index <= 3 %}avatar-top{% endif %}">
+                                                {% if user.avatar and user.avatar not in ['default1.svg',
+                                                'default2.svg', '', None] %}
+                                                {% if user.avatar.startswith('uploads/') %}
+                                                <img src="/{{ user.avatar }}" alt="{{ user.name }}"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                {% else %}
+                                                <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}"
+                                                    alt="{{ user.name }}"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                {% endif %}
+                                                <span class="avatar-fallback" style="display: none;">{{ user.name[0] |
+                                                    upper }}</span>
+                                                {% else %}
+                                                <span class="avatar-fallback">{{ user.name[0] | upper }}</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Name -->
+                                            <div class="flex-grow-1 min-width-0">
+                                                <div class="fw-semibold text-truncate" style="font-size: 0.85rem;">{{
+                                                    user.name }}</div>
+                                            </div>
+
+                                            <!-- Streak count -->
+                                            <div class="leaderboard-score">
+                                                <span class="streak-badge">
+                                                    <i class="fas fa-fire-flame-curved"></i>{{ user.streak_count }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Top Active Tab -->
+                                <div class="tab-pane fade" id="active" role="tabpanel">
+                                    <div class="list-group list-group-flush">
+                                        {% for item in leaderboard_responses %}
+                                        <div
+                                            class="list-group-item px-3 py-2 d-flex align-items-center border-0
+                                            {% if loop.index <= 3 %}leaderboard-top-{{ loop.index }}{% endif %}
+                                            {% if item.user.id == current_user.id %}leaderboard-current-user{% endif %}">
+                                            <!-- Rank -->
+                                            <div class="leaderboard-rank me-2">
+                                                {% if loop.index == 1 %}
+                                                <span class="medal medal-gold">🥇</span>
+                                                {% elif loop.index == 2 %}
+                                                <span class="medal medal-silver">🥈</span>
+                                                {% elif loop.index == 3 %}
+                                                <span class="medal medal-bronze">🥉</span>
+                                                {% else %}
+                                                <span class="rank-number">#{{ loop.index }}</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Avatar -->
+                                            <div
+                                                class="leaderboard-avatar me-2 {% if loop.index <= 3 %}avatar-top{% endif %}">
+                                                {% if item.user.avatar and item.user.avatar not in ['default1.svg',
+                                                'default2.svg', '', None] %}
+                                                {% if item.user.avatar.startswith('uploads/') %}
+                                                <img src="/{{ item.user.avatar }}" alt="{{ item.user.name }}"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                {% else %}
+                                                <img src="{{ url_for('static', filename='avatars/' + item.user.avatar) }}"
+                                                    alt="{{ item.user.name }}"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                {% endif %}
+                                                <span class="avatar-fallback" style="display: none;">{{
+                                                    item.user.name[0] | upper }}</span>
+                                                {% else %}
+                                                <span class="avatar-fallback">{{ item.user.name[0] | upper }}</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Name -->
+                                            <div class="flex-grow-1 min-width-0">
+                                                <div class="fw-semibold text-truncate" style="font-size: 0.85rem;">{{
+                                                    item.user.name }}</div>
+                                            </div>
+
+                                            <!-- Response count -->
+                                            <div class="leaderboard-score">
+                                                <span class="active-badge">
+                                                    <i class="fas fa-comments"></i>{{ item.count }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-{% endif %}
-</div>
 
-<script>
-    function playAudio(audioUrl) {
-        const audio = new Audio(audioUrl);
-        audio.play().catch(e => console.log('Audio playback failed:', e));
-    }
-</script>
 
-<!-- Edit Levels Modal -->
-<div class="modal fade" id="editLevelsModal" tabindex="-1" aria-labelledby="editLevelsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editLevelsModalLabel">Update Your Levels</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const audioPlayers = document.querySelectorAll('.audio-player-custom');
+
+                audioPlayers.forEach(player => {
+                    const audio = player.querySelector('audio');
+                    const playBtn = player.querySelector('.play-btn');
+                    const icon = playBtn.querySelector('i');
+                    const progressBar = player.querySelector('.audio-progress');
+                    const timeDisplay = player.querySelector('.time-display');
+                    const src = player.dataset.src;
+
+                    audio.src = src;
+
+                    // Play/Pause
+                    playBtn.addEventListener('click', () => {
+                        if (audio.paused) {
+                            // Pause all other audios
+                            document.querySelectorAll('audio').forEach(a => {
+                                if (a !== audio) {
+                                    a.pause();
+                                    a.currentTime = 0; // Optional: reset others
+                                }
+                            });
+                            document.querySelectorAll('.play-btn i').forEach(i => {
+                                if (i !== icon) {
+                                    i.classList.remove('fa-pause');
+                                    i.classList.add('fa-play');
+                                }
+                            });
+
+                            audio.play();
+                            icon.classList.remove('fa-play');
+                            icon.classList.add('fa-pause');
+                        } else {
+                            audio.pause();
+                            icon.classList.remove('fa-pause');
+                            icon.classList.add('fa-play');
+                        }
+                    });
+
+                    // Update Progress
+                    audio.addEventListener('timeupdate', () => {
+                        const percent = (audio.currentTime / audio.duration) * 100;
+                        progressBar.value = percent || 0;
+
+                        // Update time display
+                        const current = formatTime(audio.currentTime);
+                        const total = formatTime(audio.duration || 0);
+                        timeDisplay.textContent = `${current} / ${total}`;
+                    });
+
+                    // Seek
+                    progressBar.addEventListener('input', () => {
+                        const time = (progressBar.value / 100) * audio.duration;
+                        audio.currentTime = time;
+                    });
+
+                    // Reset on end
+                    audio.addEventListener('ended', () => {
+                        icon.classList.remove('fa-pause');
+                        icon.classList.add('fa-play');
+                        progressBar.value = 0;
+                        timeDisplay.textContent = `00:00 / ${formatTime(audio.duration)}`;
+                    });
+
+                    // Load metadata for duration
+                    audio.addEventListener('loadedmetadata', () => {
+                        timeDisplay.textContent = `00:00 / ${formatTime(audio.duration)}`;
+                    });
+
+                    // Volume Control
+                    const volumeSlider = player.querySelector('.volume-slider');
+                    const volumeBtn = player.querySelector('.volume-btn');
+                    const volumeIcon = volumeBtn ? volumeBtn.querySelector('i') : null;
+
+                    if (volumeSlider) {
+                        volumeSlider.addEventListener('input', () => {
+                            audio.volume = volumeSlider.value / 100;
+                            updateVolumeIcon(audio.volume);
+                        });
+                    }
+
+                    if (volumeBtn) {
+                        volumeBtn.addEventListener('click', () => {
+                            if (audio.volume > 0) {
+                                audio.dataset.prevVolume = audio.volume;
+                                audio.volume = 0;
+                                if (volumeSlider) volumeSlider.value = 0;
+                            } else {
+                                audio.volume = audio.dataset.prevVolume || 1;
+                                if (volumeSlider) volumeSlider.value = audio.volume * 100;
+                            }
+                            updateVolumeIcon(audio.volume);
+                        });
+                    }
+
+                    function updateVolumeIcon(vol) {
+                        if (!volumeIcon) return;
+                        volumeIcon.className = 'fas';
+                        if (vol === 0) {
+                            volumeIcon.classList.add('fa-volume-mute');
+                        } else if (vol < 0.5) {
+                            volumeIcon.classList.add('fa-volume-down');
+                        } else {
+                            volumeIcon.classList.add('fa-volume-up');
+                        }
+                    }
+                });
+
+                function formatTime(seconds) {
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60);
+                    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
+            });
+
+            // Leaderboard tab toggle
+            document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+                tab.addEventListener('click', function () {
+                    // Remove active from all tabs
+                    document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+                    // Add active to clicked tab
+                    this.classList.add('active');
+
+                    // Get target pane and switch content
+                    const targetId = this.getAttribute('data-bs-target');
+                    const tabContent = document.querySelector('#leaderboardCard .tab-content');
+                    if (tabContent) {
+                        // Hide all panes
+                        tabContent.querySelectorAll('.tab-pane').forEach(pane => {
+                            pane.classList.remove('show', 'active');
+                        });
+                        // Show target pane
+                        const targetPane = document.querySelector(targetId);
+                        if (targetPane) {
+                            targetPane.classList.add('show', 'active');
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <!-- Keep Edit Levels Modal same but styled if needed, logic is identical -->
+        <div class="modal fade" id="editLevelsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 1rem;">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Update Goals</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for('main.update_levels') }}" method="POST">
+                        <div class="modal-body">
+                            <p class="text-muted small mb-4">Set your target level to personalize your AI feedback.</p>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Current</label>
+                                    <select class="form-select form-select-lg bg-light border-0" name="current_level">
+                                        {% for level in ['NL', 'NM', 'NH', 'IL', 'IM', 'IH', 'AL', 'AM', 'AH'] %}
+                                        <option value="{{ level }}" {% if current_user.current_level==level %}selected{%
+                                            endif %}>{{ level }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Target</label>
+                                    <select class="form-select form-select-lg bg-light border-0" name="target_level">
+                                        {% for level in ['NL', 'NM', 'NH', 'IL', 'IM', 'IH', 'AL', 'AM', 'AH'] %}
+                                        <option value="{{ level }}" {% if current_user.target_level==level %}selected{%
+                                            endif %}>{{ level }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-link text-muted text-decoration-none"
+                                data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary px-4 rounded-pill">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form action="{{ url_for('main.update_levels') }}" method="POST">
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">Select your current estimated level and your target goal. The AI
-                        will use this to provide personalized feedback.</p>
-
-                    <div class="mb-3">
-                        <label for="current_level" class="form-label">Current Level</label>
-                        <select class="form-select" id="current_level" name="current_level">
-                            {% for level in ['NL', 'NM', 'NH', 'IL', 'IM', 'IH', 'AL', 'AM', 'AH'] %}
-                            <option value="{{ level }}" {% if current_user.current_level==level %}selected{% endif %}>{{
-                                level }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="target_level" class="form-label">Target Level</label>
-                        <select class="form-select" id="target_level" name="target_level">
-                            {% for level in ['NL', 'NM', 'NH', 'IL', 'IM', 'IH', 'AL', 'AM', 'AH'] %}
-                            <option value="{{ level }}" {% if current_user.target_level==level %}selected{% endif %}>{{
-                                level }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
-{% endblock %}
+        {% endblock %}

@@ -17,184 +17,163 @@
 {%- endmacro %}
 
 <div class="container-fluid py-4 px-3 px-md-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Mobile-optimized header -->
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
         <div>
-            <h2 class="mb-1">
+            <h2 class="mb-1 h4 h2-md">
                 <i class="fas fa-question-circle text-primary me-2"></i>Question Bank
             </h2>
-            <p class="text-muted mb-0">Manage practice questions, audio prompts, and sample answers.</p>
+            <p class="text-muted mb-0 small">Manage practice questions, audio prompts, and sample answers.</p>
         </div>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-success" onclick="openImportModal()">
-                <i class="fas fa-file-import me-2"></i>Import
+        {% if is_admin %}
+        <div class="d-flex gap-2 flex-shrink-0">
+            <button type="button" class="btn btn-outline-success btn-sm" onclick="openImportModal()">
+                <i class="fas fa-file-import me-1"></i>Import
             </button>
-            <button type="button" class="btn btn-primary" onclick="openQuestionModal('create')">
-                <i class="fas fa-plus me-2"></i>Add Question
+            <button type="button" class="btn btn-primary btn-sm" onclick="openQuestionModal('create')">
+                <i class="fas fa-plus me-1"></i>Add Question
             </button>
         </div>
+        {% endif %}
     </div>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body bg-light">
-            <form class="row g-3 align-items-end" method="GET" action="{{ url_for('admin.manage_questions') }}">
+    <div class="card mb-4">
+        <div class="card-body bg-light border-bottom">
+            <form method="GET" action="{{ url_for('questions.index') }}" class="row g-2 align-items-center">
+                <!-- Search -->
                 <div class="col-md-4">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Search</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" class="form-control" name="q" value="{{ filters.q }}"
-                            placeholder="Search topic, text...">
+                        <span class="input-group-text bg-white text-muted"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control border-start-0 ps-0" name="search"
+                            placeholder="Search questions..." value="{{ current_filters.search or '' }}">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Language</label>
-                    <select class="form-select" name="language">
-                        {% for lang in filter_options.languages %}
-                        {% if lang == 'all' %}
-                        <option value="all" {% if filters.language=='all' %}selected{% endif %}>All Languages</option>
-                        {% else %}
-                        <option value="{{ lang }}" {% if filters.language==lang %}selected{% endif %}>{{ lang|capitalize
-                            }}
-                        </option>
-                        {% endif %}
+
+                <!-- Topic Filter -->
+                <div class="col-md-3">
+                    <select class="form-select" name="topic" onchange="this.form.submit()">
+                        <option value="">All Topics</option>
+                        {% for t in topics %}
+                        <option value="{{ t }}" {% if current_filters.topic==t %}selected{% endif %}>{{ t }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Topic</label>
-                    <select class="form-select" name="topic">
-                        <option value="" {% if not filters.topic %}selected{% endif %}>All Topics</option>
-                        {% for topic in filter_options.topics %}
-                        <option value="{{ topic }}" {% if filters.topic==topic %}selected{% endif %}>{{ topic }}
-                        </option>
+
+                <!-- Level Filter -->
+                <div class="col-md-3">
+                    <select class="form-select" name="level" onchange="this.form.submit()">
+                        <option value="">All Levels</option>
+                        {% for l in filter_options.levels %}
+                        <option value="{{ l }}" {% if current_filters.level==l %}selected{% endif %}>{{ l }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Level</label>
-                    <select class="form-select" name="level">
-                        <option value="" {% if not filters.level %}selected{% endif %}>Any Level</option>
-                        {% for level in filter_options.levels %}
-                        <option value="{{ level }}" {% if filters.level==level %}selected{% endif %}>{{ level }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Type</label>
-                    <select class="form-select" name="question_type">
-                        <option value="" {% if not filters.question_type %}selected{% endif %}>Any Type</option>
-                        {% for qtype in filter_options.question_types %}
-                        <option value="{{ qtype }}" {% if filters.question_type==qtype %}selected{% endif %}>{{
-                            qtype|capitalize }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-12 d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                    <div class="d-flex align-items-center gap-2">
-                        <label class="form-label mb-0 text-muted small">Per page:</label>
-                        <select class="form-select form-select-sm w-auto" name="per_page" onchange="this.form.submit()">
-                            {% for size in [10, 25, 50, 100, 200] %}
-                            <option value="{{ size }}" {% if pagination.per_page==size %}selected{% endif %}>{{ size }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-light border">
-                            Reset
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter me-2"></i>Apply Filters
-                        </button>
-                    </div>
+
+                <!-- Reset -->
+                <div class="col-md-2 text-end">
+                    {% if current_filters %}
+                    <a href="{{ url_for('questions.index') }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-1"></i>Reset
+                    </a>
+                    {% endif %}
                 </div>
             </form>
         </div>
-    </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <strong>Showing {{ stats.showing }}</strong> of {{ pagination.total }} filtered questions
-            </div>
-            <div class="text-muted small">
-                Page {{ pagination.page }} / {{ pagination.pages or 1 }}
-            </div>
-        </div>
-        <div class="card-body">
-            {% if questions %}
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>{{ sortable_header('id', 'ID') }}</th>
-                            <th>{{ sortable_header('topic', 'Topic') }}</th>
-                            <th>Question Text</th>
-                            <th>{{ sortable_header('language', 'Language') }}</th>
-                            <th>{{ sortable_header('level', 'Level') }}</th>
-                            <th>{{ sortable_header('type', 'Type') }}</th>
-                            <th>{{ sortable_header('updated', 'Updated') }}</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for question in questions %}
-                        <tr>
-                            <td><code>#{{ question.id }}</code></td>
-                            <td>
-                                <div class="fw-semibold">{{ question.topic }}</div>
-                            </td>
-                            <td style="max-width: 350px;">
-                                <div class="d-flex align-items-start gap-2">
-                                    {% if question.audio_url %}
-                                    <button class="btn btn-sm btn-outline-primary flex-shrink-0"
-                                        onclick="playAudio('{{ question.audio_url }}')" title="Play Audio">
-                                        <i class="fas fa-volume-up"></i>
-                                    </button>
-                                    {% endif %}
-                                    <div class="small text-truncate-2">
-                                        {% if question.text %}
-                                        {{ question.text }}
-                                        {% else %}
-                                        <em>No text — audio only</em>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{{ question.language or '—' }}</td>
-                            <td>{{ question.difficulty_level or '—' }}</td>
-                            <td>
-                                <span class="badge bg-light text-dark border">{{ question.question_type|capitalize
-                                    }}</span>
-                            </td>
-                            <td>
-                                {% if question.updated_at %}
-                                {{ question.updated_at.strftime('%Y-%m-%d') }}
-                                {% else %}
-                                {{ question.created_at.strftime('%Y-%m-%d') if question.created_at else '—' }}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th style="width: 5%">{{ sortable_header('id', 'ID') }}</th>
+                        <th style="width: 15%">{{ sortable_header('topic', 'Topic') }}</th>
+                        <th style="width: 50%">Content</th>
+                        <th style="width: 10%">{{ sortable_header('level', 'Level') }}</th>
+                        <th style="width: 10%">{{ sortable_header('updated', 'Updated') }}</th>
+                        {% if is_admin %}
+                        <th style="width: 10%" class="text-end">Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr>
+                        <td><span class="text-muted">#{{ q.id }}</span></td>
+                        <td>
+                            <div class="fw-medium text-primary">{{ q.topic }}</div>
+                            <small class="text-muted">{{ q.question_type|title }}</small>
+                        </td>
+                        <td>
+                            {% if q.text %}
+                            <div class="text-truncate-2 mb-1 question-content-text cursor-pointer"
+                                onclick='openDetailModal(this.closest("td").nextElementSibling.nextElementSibling.nextElementSibling.querySelector(".btn-outline-info").getAttribute("data-question"))'
+                                title="Click to view details">
+                                {{ q.text }}
+                            </div>
+                            {% endif %}
+                            <div class="d-flex gap-2">
+                                {% if q.audio_url %}
+                                <button class="btn btn-sm btn-outline-info rounded-pill px-2 py-0"
+                                    onclick="playAudio('{{ q.audio_url }}')">
+                                    <i class="fas fa-play me-1"></i>Audio
+                                </button>
                                 {% endif %}
-                            </td>
-                            <td class="text-end">
-                                <button type="button" class="btn btn-sm btn-primary me-2"
-                                    data-question='{{ question.to_dict() | tojson | safe }}'
-                                    onclick="openQuestionModal('edit', this.dataset.question)">
+                                {% if q.sample_answer_text or q.sample_answer_audio_url %}
+                                <span class="badge bg-secondary opacity-50">Has Sample</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if q.difficulty_level == 'IM' %}
+                            <span class="badge bg-info bg-opacity-10 text-info">IM</span>
+                            {% elif q.difficulty_level == 'IH' %}
+                            <span class="badge bg-warning bg-opacity-10 text-warning">IH</span>
+                            {% elif q.difficulty_level == 'AL' %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">AL</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ q.difficulty_level or 'N/A' }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small text-muted" title="{{ q.updated_at }}">
+                                {{ q.updated_at.strftime('%Y-%m-%d') }}
+                            </div>
+                        </td>
+                        {% if is_admin %}
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end align-items-center">
+                                <button class="btn btn-sm btn-outline-info"
+                                    data-question="{{ q.to_dict()|tojson|forceescape }}"
+                                    onclick='openDetailModal(this.getAttribute("data-question"))' title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary"
+                                    data-question="{{ q.to_dict()|tojson|forceescape }}"
+                                    onclick='openQuestionModal("edit", this.getAttribute("data-question"))'
+                                    title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-danger"
-                                    onclick="deleteQuestion({{ question.id }})">
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestion({{ q.id }})"
+                                    title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="alert alert-info mb-0">
-                <i class="fas fa-info-circle me-2"></i>No questions found for the selected filters.
-            </div>
-            {% endif %}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{{ '6' if is_admin else '5' }}" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-search fa-3x mb-3 opacity-25"></i>
+                                <p class="mb-0">No questions found matching your criteria.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         {% if pagination.pages > 1 %}
         <div class="card-footer d-flex justify-content-between align-items-center">
@@ -317,7 +296,7 @@
                         <input type="file" class="form-control" id="importFile" accept=".csv, .xlsx, .xls">
                         <div class="form-text">
                             Supported formats: CSV, Excel.
-                            <a href="{{ url_for('admin.get_import_template') }}" class="text-decoration-none">
+                            <a href="{{ url_for('questions.get_import_template') }}" class="text-decoration-none">
                                 <i class="fas fa-download me-1"></i>Download Template
                             </a>
                         </div>
@@ -347,18 +326,144 @@
     </div>
 </div>
 
+<!-- Question Detail Modal -->
+<div class="modal fade" id="questionDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle me-2"></i>Question Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-uppercase text-muted fw-bold mb-0">Question Content</h6>
+                        <span id="detailBadge" class="badge"></span>
+                    </div>
+                    <div id="detailTopic" class="h5 text-primary mb-2"></div>
+                    <div class="p-3 bg-light rounded border">
+                        <div id="detailText" class="mb-3"></div>
+                        <div id="detailAudioSection">
+                            <button class="btn btn-sm btn-outline-info rounded-pill" id="detailPlayQuestionBtn">
+                                <i class="fas fa-play me-1"></i>Play Question Audio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="detailSampleSection">
+                    <h6 class="text-uppercase text-muted fw-bold mb-2">Sample Answer</h6>
+                    <div class="p-3 bg-light rounded border">
+                        <div id="detailSampleText" class="mb-3 font-italic text-secondary"></div>
+                        <div id="detailSampleAudioSection">
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="detailPlaySampleBtn">
+                                <i class="fas fa-play me-1"></i>Play Sample Audio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if is_admin %}
+                <button type="button" class="btn btn-primary" id="detailEditBtn">
+                    <i class="fas fa-edit me-2"></i>Edit Question
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    const QUESTIONS_API_URL = "{{ url_for('admin.questions_api') }}";
+    const QUESTIONS_API_URL = "{{ url_for('questions.questions_api') }}";
     const DEFAULT_LANGUAGE = "{{ filters.language }}";
 
     let questionModal;
+    let detailModal;
     const modalElement = document.getElementById('questionModal');
+    const detailModalElement = document.getElementById('questionDetailModal');
     const questionForm = document.getElementById('questionForm');
 
     document.addEventListener('DOMContentLoaded', () => {
         questionModal = new bootstrap.Modal(modalElement);
+        detailModal = new bootstrap.Modal(detailModalElement);
         questionForm.addEventListener('submit', handleQuestionSubmit);
+
+        // Detail Modal Audio Handlers
+        document.getElementById('detailPlayQuestionBtn').addEventListener('click', function () {
+            const url = this.getAttribute('data-url');
+            if (url) playAudio(url);
+        });
+
+        document.getElementById('detailPlaySampleBtn').addEventListener('click', function () {
+            const url = this.getAttribute('data-url');
+            if (url) playAudio(url);
+        });
+
+        const detailEditBtn = document.getElementById('detailEditBtn');
+        if (detailEditBtn) {
+            detailEditBtn.addEventListener('click', function () {
+                const questionData = this.getAttribute('data-question');
+                detailModal.hide();
+                openQuestionModal('edit', questionData);
+            });
+        }
     });
+
+    function openDetailModal(questionDataString) {
+        const questionData = typeof questionDataString === 'string' ? JSON.parse(questionDataString) : questionDataString;
+
+        // Fill basic info
+        document.getElementById('detailTopic').textContent = questionData.topic || 'No Topic';
+        document.getElementById('detailText').textContent = questionData.text || 'No question text provided.';
+
+        // Set up badge
+        const badge = document.getElementById('detailBadge');
+        badge.textContent = questionData.difficulty_level || 'N/A';
+        badge.className = 'badge';
+        if (questionData.difficulty_level === 'IM') badge.classList.add('bg-info', 'bg-opacity-10', 'text-info');
+        else if (questionData.difficulty_level === 'IH') badge.classList.add('bg-warning', 'bg-opacity-10', 'text-warning');
+        else if (questionData.difficulty_level === 'AL') badge.classList.add('bg-danger', 'bg-opacity-10', 'text-danger');
+        else badge.classList.add('bg-secondary');
+
+        // Question Audio
+        const qAudioBtn = document.getElementById('detailPlayQuestionBtn');
+        if (questionData.audio_url) {
+            document.getElementById('detailAudioSection').style.display = 'block';
+            qAudioBtn.setAttribute('data-url', questionData.audio_url);
+        } else {
+            document.getElementById('detailAudioSection').style.display = 'none';
+        }
+
+        // Sample Answer
+        const sampleSection = document.getElementById('detailSampleSection');
+        if (questionData.sample_answer_text || questionData.sample_answer_audio_url) {
+            sampleSection.style.display = 'block';
+            document.getElementById('detailSampleText').textContent = questionData.sample_answer_text || '';
+
+            const sAudioBtn = document.getElementById('detailPlaySampleBtn');
+            if (questionData.sample_answer_audio_url) {
+                document.getElementById('detailSampleAudioSection').style.display = 'block';
+                sAudioBtn.setAttribute('data-url', questionData.sample_answer_audio_url);
+            } else {
+                document.getElementById('detailSampleAudioSection').style.display = 'none';
+            }
+        } else {
+            sampleSection.style.display = 'none';
+        }
+
+        // Edit button data
+        const editBtn = document.getElementById('detailEditBtn');
+        if (editBtn) {
+            editBtn.setAttribute('data-question', JSON.stringify(questionData));
+        }
+
+        detailModal.show();
+    }
 
     function openQuestionModal(mode, questionDataString = null) {
         questionForm.reset();
@@ -494,7 +599,7 @@
 
             // ALWAYS use the preview endpoint to ensure we use the current text in the input
             // This unifies the behavior for Add and Edit, and ensures WYSIWYG
-            response = await fetch('/admin/questions/generate-audio-preview', {
+            response = await fetch("{{ url_for('questions.generate_audio_preview') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -567,7 +672,7 @@
         document.getElementById('importProgress').classList.remove('d-none');
 
         try {
-            const response = await fetch("{{ url_for('admin.import_questions') }}", {
+            const response = await fetch("{{ url_for('questions.import_questions') }}", {
                 method: 'POST',
                 body: formData
             });
@@ -622,8 +727,18 @@
     .text-truncate-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .cursor-pointer:hover {
+        text-decoration: underline;
+        color: var(--bs-primary);
     }
 
     .table thead th {
@@ -632,6 +747,65 @@
 
     .badge {
         font-weight: 500;
+    }
+
+    /* Dark Mode support for Detail Modal */
+    [data-theme="dark"] .modal-content {
+        background-color: #161b22;
+        color: #e6edf3;
+        border-color: #30363d;
+    }
+
+    [data-theme="dark"] .modal-header {
+        border-bottom-color: #30363d;
+    }
+
+    [data-theme="dark"] .modal-footer {
+        border-top-color: #30363d;
+    }
+
+    [data-theme="dark"] .bg-light {
+        background-color: #0d1117 !important;
+        border-color: #30363d !important;
+    }
+
+    [data-theme="dark"] .border {
+        border-color: #30363d !important;
+    }
+
+    [data-theme="dark"] #detailText,
+    [data-theme="dark"] #detailSampleText {
+        color: #e6edf3;
+    }
+
+    [data-theme="dark"] .text-secondary {
+        color: #8b949e !important;
+    }
+
+    [data-theme="dark"] .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    /* PWA Gap Fit for Detail Modal */
+    @media (max-width: 991px) {
+        #questionDetailModal .modal-dialog {
+            margin-top: 65px;
+            margin-bottom: 85px;
+            height: calc(100vh - 150px);
+            display: flex;
+            align-items: center;
+        }
+
+        #questionDetailModal .modal-content {
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #questionDetailModal .modal-body {
+            overflow-y: auto;
+            flex: 1;
+        }
     }
 </style>
 {% endblock %}

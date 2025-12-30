@@ -1,0 +1,17 @@
+[
+    {
+        "topic": "Family",
+        "text": "Tell me about your family members.",
+        "language": "english",
+        "difficulty_level": "IM",
+        "question_type": "question",
+        "sample_answer_text": "I have a small family with just my parents and one sister..."
+    },
+    {
+        "topic": "Holidays",
+        "text": "What is your favorite holiday and why?",
+        "language": "english",
+        "difficulty_level": "IH",
+        "question_type": "question"
+    }
+]

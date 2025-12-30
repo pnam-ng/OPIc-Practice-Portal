@@ -182,6 +182,11 @@ def create_app():
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+    # Serve question audio files directly from uploads/questions
+    @app.route('/questions/<path:filename>')
+    def question_file(filename):
+        return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'questions'), filename)
     
     # Add ngrok-skip-browser-warning header to all responses
     @app.after_request
@@ -239,6 +244,7 @@ def register_blueprints(app):
     from app.blueprints.admin import admin_bp
     from app.blueprints.comments import comments_bp
     from app.blueprints.notifications import notifications_bp
+    from app.blueprints.questions import questions_bp
     
     # Import chatbot blueprint (with error handling)
     try:
@@ -257,6 +263,7 @@ def register_blueprints(app):
     app.register_blueprint(comments_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(questions_bp, url_prefix='/questions')
 
 def create_celery(app=None):
     """Create Celery instance"""

@@ -3,14 +3,14 @@
 {% block title %}Profile - OPIc Practice Portal{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container-fluid py-3 py-md-4 px-3 px-md-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-user me-2"></i>User Profile
-                    </h3>
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-user text-primary me-2"></i>User Profile
+                    </h5>
                 </div>
                 <div class="card-body">
                     <!-- Avatar Section -->
@@ -18,57 +18,63 @@
                         <div class="col-12 text-center">
                             <div class="avatar-preview-container">
                                 {% if current_user.avatar and current_user.avatar.startswith('uploads/') %}
-                                    <img src="/{{ current_user.avatar }}" alt="User Avatar" class="avatar-preview" id="currentAvatar">
+                                <img src="/{{ current_user.avatar }}" alt="User Avatar" class="avatar-preview"
+                                    id="currentAvatar">
                                 {% else %}
-                                    <img src="{{ url_for('static', filename='avatars/' + (current_user.avatar or 'default1.svg')) }}" alt="User Avatar" class="avatar-preview" id="currentAvatar">
+                                <img src="{{ url_for('static', filename='avatars/' + (current_user.avatar or 'default1.svg')) }}"
+                                    alt="User Avatar" class="avatar-preview" id="currentAvatar">
                                 {% endif %}
                             </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal"
+                                data-bs-target="#avatarModal">
                                 <i class="fas fa-camera me-2"></i>Change Avatar
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- Profile Form -->
                     <form method="POST" action="{{ url_for('main.profile') }}" id="profileForm">
-                        <input type="hidden" name="avatar" id="selectedAvatar" value="{{ current_user.avatar or 'default1.svg' }}">
+                        <input type="hidden" name="avatar" id="selectedAvatar"
+                            value="{{ current_user.avatar or 'default1.svg' }}">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" 
-                                           value="{{ current_user.username }}" disabled>
+                                    <input type="text" class="form-control" id="username"
+                                        value="{{ current_user.username }}" disabled>
                                     <div class="form-text">Username cannot be changed</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           value="{{ current_user.email }}" required>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ current_user.email }}" required>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" 
-                                           value="{{ current_user.name }}" required>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ current_user.name }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="target_language" class="form-label">Target Language</label>
                                     <select class="form-select" id="target_language" name="target_language">
-                                        <option value="english" {% if current_user.target_language == 'english' %}selected{% endif %}>English</option>
-                                        <option value="korean" {% if current_user.target_language == 'korean' %}selected{% endif %}>Korean</option>
+                                        <option value="english" {% if current_user.target_language=='english'
+                                            %}selected{% endif %}>English</option>
+                                        <option value="korean" {% if current_user.target_language=='korean' %}selected{%
+                                            endif %}>Korean</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Update Profile
@@ -77,13 +83,13 @@
                     </form>
                 </div>
             </div>
-            
+
             <!-- Change Password Card -->
-            <div class="card shadow mt-4">
-                <div class="card-header bg-warning text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-key me-2"></i>Change Password
-                    </h3>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-key text-warning me-2"></i>Change Password
+                    </h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('main.change_password') }}">
@@ -95,15 +101,17 @@
                                         <span class="input-group-text">
                                             <i class="fas fa-lock"></i>
                                         </span>
-                                        <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                        <button class="btn btn-outline-secondary" type="button" id="toggle-current-password" title="Show/Hide Password">
+                                        <input type="password" class="form-control" id="current_password"
+                                            name="current_password" required>
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            id="toggle-current-password" title="Show/Hide Password">
                                             <i class="fas fa-eye" id="current-password-eye"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -112,8 +120,10 @@
                                         <span class="input-group-text">
                                             <i class="fas fa-key"></i>
                                         </span>
-                                        <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" id="toggle-new-password" title="Show/Hide Password">
+                                        <input type="password" class="form-control" id="new_password"
+                                            name="new_password" required minlength="6">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggle-new-password"
+                                            title="Show/Hide Password">
                                             <i class="fas fa-eye" id="new-password-eye"></i>
                                         </button>
                                     </div>
@@ -127,16 +137,19 @@
                                         <span class="input-group-text">
                                             <i class="fas fa-key" id="new-password-match-icon"></i>
                                         </span>
-                                        <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" id="toggle-confirm-new-password" title="Show/Hide Password">
+                                        <input type="password" class="form-control" id="confirm_new_password"
+                                            name="confirm_new_password" required minlength="6">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            id="toggle-confirm-new-password" title="Show/Hide Password">
                                             <i class="fas fa-eye" id="confirm-new-password-eye"></i>
                                         </button>
                                     </div>
-                                    <small class="form-text" id="new-password-match-message">Re-enter new password</small>
+                                    <small class="form-text" id="new-password-match-message">Re-enter new
+                                        password</small>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-warning text-white">
                                 <i class="fas fa-key me-2"></i>Change Password
@@ -145,63 +158,73 @@
                     </form>
                 </div>
             </div>
-            
+
             <!-- User Statistics Card -->
-            <div class="card shadow mt-4">
-                <div class="card-header bg-success text-white">
-                    <h4 class="card-title mb-0">
-                        <i class="fas fa-chart-line me-2"></i>Your Statistics
-                    </h4>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>Your Statistics
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="stat-circle bg-primary text-white">
-                                    <i class="fas fa-fire fa-2x"></i>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="card h-100 border-0 shadow-sm stat-card-profile">
+                                <div class="card-body p-3 text-center">
+                                    <span class="p-3 rounded-3 d-inline-flex mb-2 icon-box-orange">
+                                        <i class="fas fa-fire fa-lg"></i>
+                                    </span>
+                                    <h4 class="fw-bold mb-1">{{ user_stats.streak_count or 0 }}</h4>
+                                    <small class="text-muted">Day Streak</small>
                                 </div>
-                                <h5 class="mt-2">{{ user_stats.streak_count or 0 }}</h5>
-                                <p class="text-muted">Day Streak</p>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="stat-circle bg-info text-white">
-                                    <i class="fas fa-microphone fa-2x"></i>
+                        <div class="col-6 col-md-3">
+                            <div class="card h-100 border-0 shadow-sm stat-card-profile">
+                                <div class="card-body p-3 text-center">
+                                    <span class="p-3 rounded-3 d-inline-flex mb-2 icon-box-blue">
+                                        <i class="fas fa-microphone fa-lg"></i>
+                                    </span>
+                                    <h4 class="fw-bold mb-1">{{ user_stats.total_responses or 0 }}</h4>
+                                    <small class="text-muted">Responses</small>
                                 </div>
-                                <h5 class="mt-2">{{ user_stats.total_responses or 0 }}</h5>
-                                <p class="text-muted">Total Responses</p>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="stat-circle bg-warning text-white">
-                                    <i class="fas fa-calendar fa-2x"></i>
+                        <div class="col-6 col-md-3">
+                            <div class="card h-100 border-0 shadow-sm stat-card-profile">
+                                <div class="card-body p-3 text-center">
+                                    <span class="p-3 rounded-3 d-inline-flex mb-2 icon-box-purple">
+                                        <i class="fas fa-calendar fa-lg"></i>
+                                    </span>
+                                    <h5 class="fw-bold mb-1" style="font-size: 0.9rem;">{{
+                                        current_user.created_at.strftime('%Y-%m-%d') }}</h5>
+                                    <small class="text-muted">Member Since</small>
                                 </div>
-                                <h5 class="mt-2">{{ current_user.created_at.strftime('%Y-%m-%d') }}</h5>
-                                <p class="text-muted">Member Since</p>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="stat-circle bg-success text-white">
-                                    <i class="fas fa-language fa-2x"></i>
+                        <div class="col-6 col-md-3">
+                            <div class="card h-100 border-0 shadow-sm stat-card-profile">
+                                <div class="card-body p-3 text-center">
+                                    <span class="p-3 rounded-3 d-inline-flex mb-2 icon-box-green">
+                                        <i class="fas fa-language fa-lg"></i>
+                                    </span>
+                                    <h5 class="fw-bold mb-1">{{ current_user.target_language.title() if
+                                        current_user.target_language else 'English' }}</h5>
+                                    <small class="text-muted">Target Language</small>
                                 </div>
-                                <h5 class="mt-2">{{ current_user.target_language.title() if current_user.target_language else 'English' }}</h5>
-                                <p class="text-muted">Target Language</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Recent Activity Card -->
             {% if user_stats.recent_responses %}
-            <div class="card shadow mt-4">
-                <div class="card-header">
-                    <h4 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i>Recent Activity
-                    </h4>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-history text-primary me-2"></i>Recent Activity
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
@@ -211,13 +234,14 @@
                                 <h6 class="mb-1">{{ response.question.topic }}</h6>
                                 <small>{{ response.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
                             </div>
-                            <p class="mb-1">{{ (response.question.text|unescape_html)[:100] }}{% if response.question.text|length > 100 %}...{% endif %}</p>
+                            <p class="mb-1">{{ (response.question.text|unescape_html)[:100] }}{% if
+                                response.question.text|length > 100 %}...{% endif %}</p>
                             <small class="text-muted">
                                 <i class="fas fa-clock me-1"></i>
                                 {% if response.duration %}
-                                    {{ "%.1f"|format(response.duration) }} seconds
+                                {{ "%.1f"|format(response.duration) }} seconds
                                 {% else %}
-                                    Duration not recorded
+                                Duration not recorded
                                 {% endif %}
                             </small>
                         </div>
@@ -226,13 +250,13 @@
                 </div>
             </div>
             {% endif %}
-            
+
             <!-- Quick Actions Card -->
-            <div class="card shadow mt-4">
-                <div class="card-header bg-secondary text-white">
-                    <h4 class="card-title mb-0">
-                        <i class="fas fa-bolt me-2"></i>Quick Actions
-                    </h4>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bolt text-secondary me-2"></i>Quick Actions
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -286,13 +310,14 @@
                         </small>
                     </form>
                     <div id="uploadProgress" class="progress mt-2" style="display: none;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: 0%"></div>
                     </div>
                     <div id="uploadMessage"></div>
                 </div>
-                
+
                 <hr>
-                
+
                 <!-- Default Avatars -->
                 <div>
                     <h6 class="mb-3">
@@ -302,8 +327,8 @@
                         {% for i in range(1, 7) %}
                         <div class="col-4 col-md-2">
                             <div class="avatar-option" data-avatar="default{{ i }}.svg">
-                                <img src="{{ url_for('static', filename='avatars/default' + i|string + '.svg') }}" 
-                                     alt="Default Avatar {{ i }}" class="img-fluid rounded-circle">
+                                <img src="{{ url_for('static', filename='avatars/default' + i|string + '.svg') }}"
+                                    alt="Default Avatar {{ i }}" class="img-fluid rounded-circle">
                                 <div class="avatar-checkmark">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
@@ -324,472 +349,509 @@
 </div>
 
 <style>
-/* Avatar Styles */
-.avatar-preview-container {
-    position: relative;
-    display: inline-block;
-}
+    /* Icon Box Styles (matching dashboard) */
+    .icon-box-orange {
+        background: rgba(249, 115, 22, 0.15);
+        color: #f97316;
+    }
 
-.avatar-preview {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #0d6efd;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    .icon-box-blue {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
 
-.avatar-option {
-    position: relative;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 3px solid transparent;
-    border-radius: 50%;
-    overflow: hidden;
-}
+    .icon-box-purple {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+    }
 
-.avatar-option:hover {
-    transform: scale(1.1);
-    border-color: #0d6efd;
-}
+    .icon-box-green {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
 
-.avatar-option.selected {
-    border-color: #0d6efd;
-}
+    .stat-card-profile {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-.avatar-option img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
+    .stat-card-profile:hover {
+        transform: translateY(-2px);
+    }
 
-.avatar-checkmark {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #0d6efd;
-    color: white;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-}
+    /* Avatar Styles */
+    .avatar-preview-container {
+        position: relative;
+        display: inline-block;
+    }
 
-.avatar-option.selected .avatar-checkmark {
-    display: flex;
-}
+    .avatar-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #0d6efd;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-.stat-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
+    .avatar-option {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+        border-radius: 50%;
+        overflow: hidden;
+    }
 
-.card {
-    border: none;
-    border-radius: 10px;
-}
+    .avatar-option:hover {
+        transform: scale(1.1);
+        border-color: #0d6efd;
+    }
 
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-}
+    .avatar-option.selected {
+        border-color: #0d6efd;
+    }
 
-.form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
+    .avatar-option img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
 
-.btn {
-    border-radius: 6px;
-}
+    .avatar-checkmark {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
 
-.list-group-item {
-    border-left: none;
-    border-right: none;
-}
+    .avatar-option.selected .avatar-checkmark {
+        display: flex;
+    }
 
-.list-group-item:first-child {
-    border-top: none;
-}
-
-.list-group-item:last-child {
-    border-bottom: none;
-}
-
-@media (max-width: 768px) {
     .stat-circle {
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
     }
-    
-    .stat-circle i {
-        font-size: 1.5rem !important;
+
+    .card {
+        border: none;
+        border-radius: 10px;
     }
-}
 
-.is-valid {
-    border-color: #198754 !important;
-}
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
 
-.is-invalid {
-    border-color: #dc3545 !important;
-}
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
 
-#new-password-match-icon {
-    transition: all 0.3s ease;
-}
+    /* Dark mode fix for disabled inputs */
+    [data-bs-theme="dark"] .form-control:disabled,
+    [data-bs-theme="dark"] .form-control[disabled] {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.75);
+        border-color: rgba(255, 255, 255, 0.15);
+        opacity: 1;
+    }
 
-#confirm_new_password {
-    transition: border-color 0.3s ease;
-}
+    .btn {
+        border-radius: 6px;
+    }
 
-/* Password toggle button styles */
-#toggle-current-password,
-#toggle-new-password,
-#toggle-confirm-new-password {
-    border-left: none;
-    padding: 0.375rem 0.75rem;
-    cursor: pointer;
-}
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
 
-#toggle-current-password:hover,
-#toggle-new-password:hover,
-#toggle-confirm-new-password:hover {
-    background-color: #e9ecef;
-}
+    .list-group-item:first-child {
+        border-top: none;
+    }
 
-#toggle-current-password:focus,
-#toggle-new-password:focus,
-#toggle-confirm-new-password:focus {
-    box-shadow: none;
-    border-color: #ced4da;
-}
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
 
-.input-group > .form-control:not(:last-child) {
-    border-right: none;
-}
+    @media (max-width: 768px) {
+        .stat-circle {
+            width: 60px;
+            height: 60px;
+        }
+
+        .stat-circle i {
+            font-size: 1.5rem !important;
+        }
+    }
+
+    .is-valid {
+        border-color: #198754 !important;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+
+    #new-password-match-icon {
+        transition: all 0.3s ease;
+    }
+
+    #confirm_new_password {
+        transition: border-color 0.3s ease;
+    }
+
+    /* Password toggle button styles */
+    #toggle-current-password,
+    #toggle-new-password,
+    #toggle-confirm-new-password {
+        border-left: none;
+        padding: 0.375rem 0.75rem;
+        cursor: pointer;
+    }
+
+    #toggle-current-password:hover,
+    #toggle-new-password:hover,
+    #toggle-confirm-new-password:hover {
+        background-color: #e9ecef;
+    }
+
+    #toggle-current-password:focus,
+    #toggle-new-password:focus,
+    #toggle-confirm-new-password:focus {
+        box-shadow: none;
+        border-color: #ced4da;
+    }
+
+    .input-group>.form-control:not(:last-child) {
+        border-right: none;
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Avatar functionality
-    let selectedAvatarValue = document.getElementById('selectedAvatar').value;
-    
-    // Handle default avatar selection
-    document.querySelectorAll('.avatar-option').forEach(option => {
-        // Mark currently selected avatar
-        if (option.dataset.avatar === selectedAvatarValue) {
-            option.classList.add('selected');
-        }
-        
-        option.addEventListener('click', function() {
-            // Remove selected class from all options
-            document.querySelectorAll('.avatar-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            // Add selected class to clicked option
-            this.classList.add('selected');
-            selectedAvatarValue = this.dataset.avatar;
-        });
-    });
-    
-    // Handle avatar upload - Direct upload on button click
-    document.getElementById('uploadAvatarBtn').addEventListener('click', async function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const fileInput = document.getElementById('avatarFile');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            alert('Please select an image file');
-            return;
-        }
-        
-        // Validate file size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size must be less than 5MB');
-            return;
-        }
-        
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            alert('Please select a valid image file');
-            return;
-        }
-        
-        const formData = new FormData();
-        formData.append('avatar_file', file);
-        
-        const progressBar = document.getElementById('uploadProgress');
-        const progressBarInner = progressBar.querySelector('.progress-bar');
-        const uploadBtn = this;
-        const originalHTML = uploadBtn.innerHTML;
-        
-        // Show loading state
-        progressBar.style.display = 'block';
-        progressBarInner.style.width = '30%';
-        uploadBtn.disabled = true;
-        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
-        
-        try {
-            const response = await fetch('{{ url_for("main.upload_avatar") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            progressBarInner.style.width = '70%';
-            
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
+    document.addEventListener('DOMContentLoaded', function () {
+        // Avatar functionality
+        let selectedAvatarValue = document.getElementById('selectedAvatar').value;
+
+        // Handle default avatar selection
+        document.querySelectorAll('.avatar-option').forEach(option => {
+            // Mark currently selected avatar
+            if (option.dataset.avatar === selectedAvatarValue) {
+                option.classList.add('selected');
             }
-            
-            const data = await response.json();
-            
-            progressBarInner.style.width = '100%';
-            
-            if (data.success) {
-                selectedAvatarValue = data.avatar_url;
-                
-                // Update preview immediately
-                const currentAvatar = document.getElementById('currentAvatar');
-                currentAvatar.src = '/' + data.avatar_url + '?t=' + new Date().getTime();
-                
-                // Clear selected default avatars
+
+            option.addEventListener('click', function () {
+                // Remove selected class from all options
                 document.querySelectorAll('.avatar-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
-                
-                // Show success message in modal
-                const uploadMessage = document.getElementById('uploadMessage');
-                uploadMessage.innerHTML = `
+
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                selectedAvatarValue = this.dataset.avatar;
+            });
+        });
+
+        // Handle avatar upload - Direct upload on button click
+        document.getElementById('uploadAvatarBtn').addEventListener('click', async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const fileInput = document.getElementById('avatarFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select an image file');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('avatar_file', file);
+
+            const progressBar = document.getElementById('uploadProgress');
+            const progressBarInner = progressBar.querySelector('.progress-bar');
+            const uploadBtn = this;
+            const originalHTML = uploadBtn.innerHTML;
+
+            // Show loading state
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '30%';
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+
+            try {
+                const response = await fetch('{{ url_for("main.upload_avatar") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                progressBarInner.style.width = '70%';
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                progressBarInner.style.width = '100%';
+
+                if (data.success) {
+                    selectedAvatarValue = data.avatar_url;
+
+                    // Update preview immediately
+                    const currentAvatar = document.getElementById('currentAvatar');
+                    currentAvatar.src = '/' + data.avatar_url + '?t=' + new Date().getTime();
+
+                    // Clear selected default avatars
+                    document.querySelectorAll('.avatar-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+
+                    // Show success message in modal
+                    const uploadMessage = document.getElementById('uploadMessage');
+                    uploadMessage.innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show mt-2">
                         <i class="fas fa-check-circle me-2"></i>
                         Avatar uploaded successfully! Click "Save Avatar" to apply.
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 `;
-                
-                // Clear file input
-                fileInput.value = '';
-                
-                setTimeout(() => {
-                    const alert = uploadMessage.querySelector('.alert');
-                    if (alert) {
-                        alert.remove();
-                    }
-                }, 5000);
-            } else {
-                const uploadMessage = document.getElementById('uploadMessage');
-                uploadMessage.innerHTML = `
+
+                    // Clear file input
+                    fileInput.value = '';
+
+                    setTimeout(() => {
+                        const alert = uploadMessage.querySelector('.alert');
+                        if (alert) {
+                            alert.remove();
+                        }
+                    }, 5000);
+                } else {
+                    const uploadMessage = document.getElementById('uploadMessage');
+                    uploadMessage.innerHTML = `
                     <div class="alert alert-danger alert-dismissible fade show mt-2">
                         <i class="fas fa-exclamation-circle me-2"></i>
                         ${data.error || 'Upload failed'}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 `;
-            }
-        } catch (error) {
-            console.error('Upload error:', error);
-            const uploadMessage = document.getElementById('uploadMessage');
-            uploadMessage.innerHTML = `
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                const uploadMessage = document.getElementById('uploadMessage');
+                uploadMessage.innerHTML = `
                 <div class="alert alert-danger alert-dismissible fade show mt-2">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     Error: ${error.message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             `;
-        } finally {
-            // Always reset the UI
-            progressBar.style.display = 'none';
-            progressBarInner.style.width = '0%';
-            uploadBtn.disabled = false;
-            uploadBtn.innerHTML = originalHTML;
-        }
-    });
-    
-    // Handle save avatar button
-    document.getElementById('saveAvatarBtn').addEventListener('click', function() {
-        // Update the hidden input in the profile form
-        document.getElementById('selectedAvatar').value = selectedAvatarValue;
-        
-        // Update the preview
-        const currentAvatar = document.getElementById('currentAvatar');
-        if (selectedAvatarValue.startsWith('uploads/')) {
-            currentAvatar.src = '/' + selectedAvatarValue;
-        } else {
-            currentAvatar.src = '{{ url_for("static", filename="avatars/") }}' + selectedAvatarValue;
-        }
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('avatarModal'));
-        modal.hide();
-        
-        // Show message to save profile
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-info alert-dismissible fade show';
-        alertDiv.innerHTML = `
+            } finally {
+                // Always reset the UI
+                progressBar.style.display = 'none';
+                progressBarInner.style.width = '0%';
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = originalHTML;
+            }
+        });
+
+        // Handle save avatar button
+        document.getElementById('saveAvatarBtn').addEventListener('click', function () {
+            // Update the hidden input in the profile form
+            document.getElementById('selectedAvatar').value = selectedAvatarValue;
+
+            // Update the preview
+            const currentAvatar = document.getElementById('currentAvatar');
+            if (selectedAvatarValue.startsWith('uploads/')) {
+                currentAvatar.src = '/' + selectedAvatarValue;
+            } else {
+                currentAvatar.src = '{{ url_for("static", filename="avatars/") }}' + selectedAvatarValue;
+            }
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('avatarModal'));
+            modal.hide();
+
+            // Show message to save profile
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-info alert-dismissible fade show';
+            alertDiv.innerHTML = `
             <i class="fas fa-info-circle me-2"></i>
             Avatar selected! Click "Update Profile" to save your changes.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
-        
-        const cardBody = document.querySelector('.card-body');
-        cardBody.insertBefore(alertDiv, cardBody.firstChild);
-        
-        // Auto-dismiss after 5 seconds
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 5000);
-    });
-    
-    // Prevent global loading spinner on profile form submission
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) {
-        profileForm.addEventListener('submit', function(e) {
-            // Prevent the global loading spinner
-            e.stopPropagation();
-            
-            // Show our custom loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                const originalHTML = submitBtn.innerHTML;
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
-                
-                // Re-enable after a timeout as fallback
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalHTML;
-                }, 5000);
-            }
+
+            const cardBody = document.querySelector('.card-body');
+            cardBody.insertBefore(alertDiv, cardBody.firstChild);
+
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
         });
-    }
-    
-    // Password visibility toggles
-    const currentPasswordInput = document.getElementById('current_password');
-    const newPasswordInput = document.getElementById('new_password');
-    const confirmNewPasswordInput = document.getElementById('confirm_new_password');
-    
-    const toggleCurrentPassword = document.getElementById('toggle-current-password');
-    const toggleNewPassword = document.getElementById('toggle-new-password');
-    const toggleConfirmNewPassword = document.getElementById('toggle-confirm-new-password');
-    
-    const currentPasswordEye = document.getElementById('current-password-eye');
-    const newPasswordEye = document.getElementById('new-password-eye');
-    const confirmNewPasswordEye = document.getElementById('confirm-new-password-eye');
-    
-    // Toggle current password
-    if (toggleCurrentPassword) {
-        toggleCurrentPassword.addEventListener('click', function() {
-            const type = currentPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            currentPasswordInput.setAttribute('type', type);
-            
-            if (type === 'text') {
-                currentPasswordEye.classList.remove('fa-eye');
-                currentPasswordEye.classList.add('fa-eye-slash');
-            } else {
-                currentPasswordEye.classList.remove('fa-eye-slash');
-                currentPasswordEye.classList.add('fa-eye');
-            }
-        });
-    }
-    
-    // Toggle new password
-    if (toggleNewPassword) {
-        toggleNewPassword.addEventListener('click', function() {
-            const type = newPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            newPasswordInput.setAttribute('type', type);
-            
-            if (type === 'text') {
-                newPasswordEye.classList.remove('fa-eye');
-                newPasswordEye.classList.add('fa-eye-slash');
-            } else {
-                newPasswordEye.classList.remove('fa-eye-slash');
-                newPasswordEye.classList.add('fa-eye');
-            }
-        });
-    }
-    
-    // Toggle confirm new password
-    if (toggleConfirmNewPassword) {
-        toggleConfirmNewPassword.addEventListener('click', function() {
-            const type = confirmNewPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            confirmNewPasswordInput.setAttribute('type', type);
-            
-            if (type === 'text') {
-                confirmNewPasswordEye.classList.remove('fa-eye');
-                confirmNewPasswordEye.classList.add('fa-eye-slash');
-            } else {
-                confirmNewPasswordEye.classList.remove('fa-eye-slash');
-                confirmNewPasswordEye.classList.add('fa-eye');
-            }
-        });
-    }
-    
-    // Real-time password match checking for Change Password form
-    const matchMessage = document.getElementById('new-password-match-message');
-    const matchIcon = document.getElementById('new-password-match-icon');
-    
-    if (newPasswordInput && confirmNewPasswordInput) {
-        function checkNewPasswordMatch() {
-            const newPassword = newPasswordInput.value;
-            const confirmNewPassword = confirmNewPasswordInput.value;
-            
-            // Only check if confirm password field has content
-            if (confirmNewPassword.length === 0) {
-                // Reset to default state
-                matchMessage.textContent = 'Re-enter new password';
-                matchMessage.className = 'form-text text-muted';
-                confirmNewPasswordInput.classList.remove('is-valid', 'is-invalid');
-                matchIcon.className = 'fas fa-key';
-                return;
-            }
-            
-            // Check if passwords match
-            if (newPassword === confirmNewPassword && newPassword.length >= 6) {
-                // Passwords match and meet length requirement
-                matchMessage.textContent = '✓ Passwords match';
-                matchMessage.className = 'form-text text-success';
-                confirmNewPasswordInput.classList.remove('is-invalid');
-                confirmNewPasswordInput.classList.add('is-valid');
-                matchIcon.className = 'fas fa-check-circle text-success';
-            } else if (newPassword === confirmNewPassword && newPassword.length < 6) {
-                // Passwords match but too short
-                matchMessage.textContent = '⚠ Passwords match but too short (min 6 characters)';
-                matchMessage.className = 'form-text text-warning';
-                confirmNewPasswordInput.classList.remove('is-valid');
-                confirmNewPasswordInput.classList.add('is-invalid');
-                matchIcon.className = 'fas fa-exclamation-circle text-warning';
-            } else {
-                // Passwords don't match
-                matchMessage.textContent = '✗ Passwords do not match';
-                matchMessage.className = 'form-text text-danger';
-                confirmNewPasswordInput.classList.remove('is-valid');
-                confirmNewPasswordInput.classList.add('is-invalid');
-                matchIcon.className = 'fas fa-times-circle text-danger';
-            }
+
+        // Prevent global loading spinner on profile form submission
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', function (e) {
+                // Prevent the global loading spinner
+                e.stopPropagation();
+
+                // Show our custom loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    const originalHTML = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+
+                    // Re-enable after a timeout as fallback
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalHTML;
+                    }, 5000);
+                }
+            });
         }
-        
-        // Add event listeners for real-time checking
-        newPasswordInput.addEventListener('input', checkNewPasswordMatch);
-        confirmNewPasswordInput.addEventListener('input', checkNewPasswordMatch);
-        
-        // Also check on blur (when user leaves the field)
-        confirmNewPasswordInput.addEventListener('blur', checkNewPasswordMatch);
-    }
-});
+
+        // Password visibility toggles
+        const currentPasswordInput = document.getElementById('current_password');
+        const newPasswordInput = document.getElementById('new_password');
+        const confirmNewPasswordInput = document.getElementById('confirm_new_password');
+
+        const toggleCurrentPassword = document.getElementById('toggle-current-password');
+        const toggleNewPassword = document.getElementById('toggle-new-password');
+        const toggleConfirmNewPassword = document.getElementById('toggle-confirm-new-password');
+
+        const currentPasswordEye = document.getElementById('current-password-eye');
+        const newPasswordEye = document.getElementById('new-password-eye');
+        const confirmNewPasswordEye = document.getElementById('confirm-new-password-eye');
+
+        // Toggle current password
+        if (toggleCurrentPassword) {
+            toggleCurrentPassword.addEventListener('click', function () {
+                const type = currentPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                currentPasswordInput.setAttribute('type', type);
+
+                if (type === 'text') {
+                    currentPasswordEye.classList.remove('fa-eye');
+                    currentPasswordEye.classList.add('fa-eye-slash');
+                } else {
+                    currentPasswordEye.classList.remove('fa-eye-slash');
+                    currentPasswordEye.classList.add('fa-eye');
+                }
+            });
+        }
+
+        // Toggle new password
+        if (toggleNewPassword) {
+            toggleNewPassword.addEventListener('click', function () {
+                const type = newPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                newPasswordInput.setAttribute('type', type);
+
+                if (type === 'text') {
+                    newPasswordEye.classList.remove('fa-eye');
+                    newPasswordEye.classList.add('fa-eye-slash');
+                } else {
+                    newPasswordEye.classList.remove('fa-eye-slash');
+                    newPasswordEye.classList.add('fa-eye');
+                }
+            });
+        }
+
+        // Toggle confirm new password
+        if (toggleConfirmNewPassword) {
+            toggleConfirmNewPassword.addEventListener('click', function () {
+                const type = confirmNewPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmNewPasswordInput.setAttribute('type', type);
+
+                if (type === 'text') {
+                    confirmNewPasswordEye.classList.remove('fa-eye');
+                    confirmNewPasswordEye.classList.add('fa-eye-slash');
+                } else {
+                    confirmNewPasswordEye.classList.remove('fa-eye-slash');
+                    confirmNewPasswordEye.classList.add('fa-eye');
+                }
+            });
+        }
+
+        // Real-time password match checking for Change Password form
+        const matchMessage = document.getElementById('new-password-match-message');
+        const matchIcon = document.getElementById('new-password-match-icon');
+
+        if (newPasswordInput && confirmNewPasswordInput) {
+            function checkNewPasswordMatch() {
+                const newPassword = newPasswordInput.value;
+                const confirmNewPassword = confirmNewPasswordInput.value;
+
+                // Only check if confirm password field has content
+                if (confirmNewPassword.length === 0) {
+                    // Reset to default state
+                    matchMessage.textContent = 'Re-enter new password';
+                    matchMessage.className = 'form-text text-muted';
+                    confirmNewPasswordInput.classList.remove('is-valid', 'is-invalid');
+                    matchIcon.className = 'fas fa-key';
+                    return;
+                }
+
+                // Check if passwords match
+                if (newPassword === confirmNewPassword && newPassword.length >= 6) {
+                    // Passwords match and meet length requirement
+                    matchMessage.textContent = '✓ Passwords match';
+                    matchMessage.className = 'form-text text-success';
+                    confirmNewPasswordInput.classList.remove('is-invalid');
+                    confirmNewPasswordInput.classList.add('is-valid');
+                    matchIcon.className = 'fas fa-check-circle text-success';
+                } else if (newPassword === confirmNewPassword && newPassword.length < 6) {
+                    // Passwords match but too short
+                    matchMessage.textContent = '⚠ Passwords match but too short (min 6 characters)';
+                    matchMessage.className = 'form-text text-warning';
+                    confirmNewPasswordInput.classList.remove('is-valid');
+                    confirmNewPasswordInput.classList.add('is-invalid');
+                    matchIcon.className = 'fas fa-exclamation-circle text-warning';
+                } else {
+                    // Passwords don't match
+                    matchMessage.textContent = '✗ Passwords do not match';
+                    matchMessage.className = 'form-text text-danger';
+                    confirmNewPasswordInput.classList.remove('is-valid');
+                    confirmNewPasswordInput.classList.add('is-invalid');
+                    matchIcon.className = 'fas fa-times-circle text-danger';
+                }
+            }
+
+            // Add event listeners for real-time checking
+            newPasswordInput.addEventListener('input', checkNewPasswordMatch);
+            confirmNewPasswordInput.addEventListener('input', checkNewPasswordMatch);
+
+            // Also check on blur (when user leaves the field)
+            confirmNewPasswordInput.addEventListener('blur', checkNewPasswordMatch);
+        }
+    });
 </script>
 {% endblock %}
-
