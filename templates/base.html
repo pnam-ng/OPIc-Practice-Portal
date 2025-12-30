@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <meta name="description"
         content="OPIc Practice Portal - Practice English and Korean speaking tests with AI-powered feedback">
     <meta name="keywords" content="OPIc, English, Korean, speaking, practice, test, language learning">
@@ -52,28 +53,29 @@
     <link href="{{ url_for('static', filename='css/all.min.css') }}" rel="stylesheet">
 
     <!-- Custom Mobile Styles -->
+    <link href="{{ url_for('static', filename='css/modern-theme.css') }}" rel="stylesheet">
     <style>
-        /* CSS Variables for Theme Support */
-        :root {
-            /* Light Mode (Default) */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-card: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --text-muted: #adb5bd;
-            --border-color: #dee2e6;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --navbar-bg: #0d6efd;
-            --navbar-text: #ffffff;
-            --input-bg: #ffffff;
-            --input-border: #ced4da;
-            --dropdown-bg: #ffffff;
-            --dropdown-hover: #f8f9fa;
-            --modal-bg: #ffffff;
-            --code-bg: #f8f9fa;
-            --table-bg: #ffffff;
-            --table-stripe: #f2f2f2;
+        /* Component Specific Styles (PageLoader, PWA) */
+
+        /* Light Mode (Default) */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-card: #ffffff;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-muted: #adb5bd;
+        --border-color: #dee2e6;
+        --shadow: rgba(0, 0, 0, 0.1);
+        --navbar-bg: #0d6efd;
+        --navbar-text: #ffffff;
+        --input-bg: #ffffff;
+        --input-border: #ced4da;
+        --dropdown-bg: #ffffff;
+        --dropdown-hover: #f8f9fa;
+        --modal-bg: #ffffff;
+        --code-bg: #f8f9fa;
+        --table-bg: #ffffff;
+        --table-stripe: #f2f2f2;
         }
 
         /* Dark Mode - Enhanced for Better Readability */
@@ -355,13 +357,30 @@
         /* Mobile alignment for dark mode toggle */
         @media (max-width: 991px) {
             .theme-toggle {
-                padding: 0.375rem 0.5rem;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 0.5rem;
                 font-size: 1.1rem;
                 margin-right: 0.5rem !important;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--radius-md);
+            }
+
+            .nav-link-mobile {
+                min-width: 48px;
+                min-height: 48px;
+                padding: 0.5rem !important;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .navbar-toggler {
-                padding: 0.375rem 0.5rem;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 0.5rem;
             }
 
             /* Ensure buttons are vertically aligned */
@@ -1397,24 +1416,24 @@
         }
 
         .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border-color);
-            border-top-color: #0d6efd;
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border-medium);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 1rem;
         }
 
         [data-theme="dark"] .loader-spinner {
-            border-color: var(--border-color);
+            border-color: var(--border-medium);
             border-top-color: #58a6ff;
         }
 
         .loader-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 600;
         }
 
         @keyframes spin {
@@ -1446,7 +1465,14 @@
         #pwaInstallBtn {
             opacity: 0.9;
             transition: all 0.3s ease;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: 50%;
         }
 
         #pwaInstallBtn:hover {
@@ -1478,82 +1504,94 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary" {% if current_user.is_authenticated
         %}data-user-logged-in="true" {% endif %}>
-        <div class="container-fluid">
+        <div class="container-fluid px-3 px-md-4">
             <a class="navbar-brand"
                 href="{% if current_user.is_authenticated %}{{ url_for('main.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}">
                 <i class="fas fa-microphone-alt me-2"></i>OPIc Practice Portal
             </a>
 
             <!-- Bootstrap Navbar Toggler -->
-            <!-- PWA Install Button (mobile only) -->
-            <button class="btn btn-sm btn-light me-2 d-none" id="pwaInstallBtn" aria-label="Install app"
-                title="Install app">
-                <i class="fas fa-download"></i>
-            </button>
+            <!-- Mobile Nav Buttons Group (Aligned with brand on small screens) -->
+            <div class="d-flex align-items-center ms-2 ms-lg-auto">
+                <!-- PWA Install Button (mobile only) -->
+                <button class="btn btn-sm btn-light me-2 d-none" id="pwaInstallBtn" aria-label="Install app"
+                    title="Install app">
+                    <i class="fas fa-download"></i>
+                </button>
 
-            <!-- Dark Mode Toggle (visible on all screens) -->
-            <button class="theme-toggle me-2" id="themeToggle" aria-label="Toggle dark mode">
-                <i class="fas fa-moon" id="themeIcon"></i>
-            </button>
+                <!-- Dark Mode Toggle (visible on all screens) -->
+                <button class="theme-toggle me-2" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
 
-            <!-- Notifications Icon (visible on mobile outside hamburger menu) -->
-            {% if current_user.is_authenticated %}
-            <div class="d-lg-none dropdown me-2">
-                <a class="nav-link-mobile position-relative" href="#" id="mobileNotificationsDropdown" role="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge bg-danger rounded-pill position-absolute" id="mobileNotificationBadge"
-                        style="top: -5px; right: -8px; font-size: 0.65rem; display: none;">0</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end notifications-dropdown"
-                    aria-labelledby="mobileNotificationsDropdown">
-                    <!-- Same content as desktop notifications -->
-                    <li class="px-3 py-2 border-bottom">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-link btn-sm text-decoration-none p-0 d-lg-none"
-                                    id="closeMobileNotifications">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <h6 class="mb-0">Notifications</h6>
-                            </div>
-                            <button class="btn btn-link btn-sm text-decoration-none p-0" id="mobileMarkAllReadBtn"
-                                style="display: none;">
-                                <small>Mark all read</small>
-                            </button>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-secondary active" data-filter="all"
-                                    id="mobileFilterAll">
-                                    All
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" data-filter="unread"
-                                    id="mobileFilterUnread">
-                                    Unread
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" data-filter="read"
-                                    id="mobileFilterRead">
-                                    Read
+                <!-- Notifications Icon (visible on mobile outside hamburger menu) -->
+                {% if current_user.is_authenticated %}
+                <div class="d-lg-none dropdown me-2">
+                    <a class="nav-link-mobile position-relative" href="#" id="mobileNotificationsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-danger rounded-pill position-absolute" id="mobileNotificationBadge"
+                            style="top: -5px; right: -8px; font-size: 0.65rem; display: none;">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end notifications-dropdown"
+                        aria-labelledby="mobileNotificationsDropdown">
+                        <!-- Same content as desktop notifications -->
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-link btn-sm text-decoration-none p-0 d-lg-none"
+                                        id="closeMobileNotifications">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <h6 class="mb-0">Notifications</h6>
+                                </div>
+                                <button class="btn btn-link btn-sm text-decoration-none p-0" id="mobileMarkAllReadBtn"
+                                    style="display: none;">
+                                    <small>Mark all read</small>
                                 </button>
                             </div>
-                            <small class="text-muted" id="mobileNotificationCount"></small>
-                        </div>
-                    </li>
-                    <div id="mobileNotificationsList">
-                        <li class="px-3 py-4 text-center text-muted">
-                            <i class="fas fa-bell-slash fa-2x mb-2"></i>
-                            <p>No notifications</p>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active" data-filter="all"
+                                        id="mobileFilterAll">
+                                        All
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-filter="unread"
+                                        id="mobileFilterUnread">
+                                        Unread
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-filter="read"
+                                        id="mobileFilterRead">
+                                        Read
+                                    </button>
+                                </div>
+                                <small class="text-muted" id="mobileNotificationCount"></small>
+                            </div>
                         </li>
-                    </div>
-                    <li id="mobileLoadMoreContainer" class="px-3 py-2 text-center border-top" style="display: none;">
-                        <button class="btn btn-sm btn-link text-decoration-none" id="mobileLoadMoreBtn">
-                            Load more
-                        </button>
-                    </li>
-                </ul>
+                        <div id="mobileNotificationsList">
+                            <li class="px-3 py-4 text-center text-muted">
+                                <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                                <p>No notifications</p>
+                            </li>
+                        </div>
+                        <li id="mobileLoadMoreContainer" class="px-3 py-2 text-center border-top"
+                            style="display: none;">
+                            <button class="btn btn-sm btn-link text-decoration-none" id="mobileLoadMoreBtn">
+                                Load more
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Mobile Hamburger Menu Button (after notifications) -->
+                {% if current_user.is_authenticated %}
+                <button class="btn btn-sm btn-light d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileNavMenu" aria-controls="mobileNavMenu" aria-label="Open menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                {% endif %}
             </div>
-            {% endif %}
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -1580,12 +1618,12 @@
                             <i class="fas fa-users-cog me-1"></i>Admin
                         </a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.manage_questions') }}">
+                        <a class="nav-link" href="{{ url_for('questions.index') }}">
                             <i class="fas fa-question-circle me-1"></i>Questions
                         </a>
                     </li>
-                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.test_mode') }}">
                             <i class="fas fa-clipboard-list me-1"></i>Test Mode
@@ -1963,18 +2001,20 @@
             // Create install banner
             const installBanner = document.createElement('div');
             installBanner.id = 'pwa-install-banner';
-            installBanner.className = 'alert alert-info position-fixed shadow-lg';
+            installBanner.className = 'alert alert-info position-fixed shadow-lg pwa-banner-solid';
             installBanner.style.cssText = `
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 1050;
-                max-width: 500px;
-                margin: 0 20px;
+                bottom: 80px; /* Above bottom nav */
+                left: 10px;
+                right: 10px;
+                z-index: 9999;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 border: 2px solid #0d6efd;
+                background-color: white !important;
+                opacity: 1 !important;
+                padding: 15px;
+                border-radius: 12px;
                 animation: slideUp 0.3s ease-out;
             `;
 
@@ -1990,7 +2030,7 @@
                     <button class="btn btn-primary btn-sm me-2" id="install-btn">
                         <i class="fas fa-download me-1"></i>Install
                     </button>
-                    <button class="btn btn-sm btn-outline-secondary" id="dismiss-btn" title="Remind me in 7 days">
+                    <button class="btn btn-sm btn-dark" id="dismiss-btn" title="Close" style="width: 32px; height: 32px; padding: 0; line-height: 1; border-radius: 50%;">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -2172,12 +2212,15 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/static/sw.js')
+                const swPath = "{{ url_for('static', filename='sw.js') }}";
+                navigator.serviceWorker.register(swPath)
                     .then((registration) => {
-                        console.log('SW registered: ', registration);
+                        console.log('SW register success:', registration.scope);
 
                         // Request notification permission after service worker is ready
-                        requestNotificationPermission();
+                        if (typeof requestNotificationPermission === 'function') {
+                            requestNotificationPermission();
+                        }
                     })
                     .catch((registrationError) => {
                         // Handle SSL certificate errors gracefully
@@ -2186,9 +2229,11 @@
                             registrationError.message.includes('certificate')) {
                             console.warn('SW registration skipped due to SSL certificate issue (this is OK for self-signed certs):', registrationError.message);
                             // Still request notification permission even if SW fails
-                            requestNotificationPermission();
+                            if (typeof requestNotificationPermission === 'function') {
+                                requestNotificationPermission();
+                            }
                         } else {
-                            console.log('SW registration failed: ', registrationError);
+                            console.error('SW registration failed:', registrationError);
                         }
                     });
             });
@@ -2774,6 +2819,98 @@
     </script>
 
     {% block extra_js %}{% endblock %}
+
+    <!-- Mobile Bottom Navigation (Visible only on mobile) -->
+    {% if current_user.is_authenticated %}
+    <nav class="bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{{ url_for('main.dashboard') }}"
+                class="bottom-nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('practice_mode.index') }}"
+                class="bottom-nav-item {% if 'practice_mode' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-dumbbell"></i>
+                <span>Practice</span>
+            </a>
+            <a href="javascript:void(0)" onclick="toggleChatbot()" class="bottom-nav-item" id="mobileChatbotBtn">
+                <img src="{{ url_for('static', filename='galaxyAI.png') }}"
+                    style="width: 24px; height: 24px; margin-bottom: 4px;" alt="Assistant">
+                <span>Assistant</span>
+            </a>
+            <a href="{{ url_for('test_mode.self_assessment') }}"
+                class="bottom-nav-item {% if 'test_mode' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Test</span>
+            </a>
+            <a href="{{ url_for('main.tips') }}"
+                class="bottom-nav-item {% if request.endpoint == 'main.tips' %}active{% endif %}">
+                <i class="fas fa-lightbulb"></i>
+                <span>Tips</span>
+            </a>
+
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Mobile Offcanvas Navigation Menu -->
+    {% if current_user.is_authenticated %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNavMenu" aria-labelledby="mobileNavMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileNavMenuLabel">
+                <i class="fas fa-microphone-alt me-2 text-primary"></i>Menu
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="nav flex-column">
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.dashboard' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.dashboard') }}">
+                    <i class="fas fa-home me-3"></i>Dashboard
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.practice_mode' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.practice_mode') }}">
+                    <i class="fas fa-dumbbell me-3"></i>Practice Mode
+                </a>
+                <a class="nav-link py-3 border-bottom {% if 'test_mode' in request.endpoint %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('test_mode.self_assessment') }}">
+                    <i class="fas fa-clipboard-check me-3"></i>Test Mode
+                </a>
+                <a class="nav-link py-3 border-bottom {% if 'questions' in request.endpoint %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('questions.index') }}">
+                    <i class="fas fa-question-circle me-3"></i>Question Bank
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.history' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.history') }}">
+                    <i class="fas fa-history me-3"></i>History
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.tips' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.tips') }}">
+                    <i class="fas fa-lightbulb me-3"></i>Tips & Resources
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.feedback' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.feedback') }}">
+                    <i class="fas fa-comment-alt me-3"></i>Feedback
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.profile' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.profile') }}">
+                    <i class="fas fa-user me-3"></i>Profile
+                </a>
+                {% if current_user.is_admin %}
+                <a class="nav-link py-3 border-bottom text-danger" href="{{ url_for('admin.users') }}">
+                    <i class="fas fa-cog me-3"></i>Admin Panel
+                </a>
+                {% endif %}
+                <a class="nav-link py-3 text-danger" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt me-3"></i>Logout
+                </a>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+
 
     <!-- Floating Chatbot Widget (available on all pages) -->
     {% if current_user.is_authenticated %}

@@ -3,135 +3,135 @@
 
 {% block content %}
 <style>
-.admin-row {
+  .admin-row {
     background-color: #fff8e6 !important;
     border-left: 3px solid #ff9800;
-}
+  }
 
-[data-theme="dark"] .admin-row {
+  [data-theme="dark"] .admin-row {
     background-color: rgba(255, 193, 7, 0.15) !important;
     border-left: 3px solid #ffc107;
-}
+  }
 
-[data-theme="dark"] .admin-row td {
+  [data-theme="dark"] .admin-row td {
     color: var(--text-primary) !important;
-}
+  }
 
-[data-theme="dark"] .table {
+  [data-theme="dark"] .table {
     color: var(--text-primary);
-}
+  }
 
-[data-theme="dark"] .table thead th {
+  [data-theme="dark"] .table thead th {
     background: var(--bg-secondary);
     color: var(--text-primary);
     border-color: var(--border-color);
-}
+  }
 
-[data-theme="dark"] .table tbody tr {
+  [data-theme="dark"] .table tbody tr {
     border-color: var(--border-color);
-}
+  }
 
-[data-theme="dark"] .table tbody tr:hover {
+  [data-theme="dark"] .table tbody tr:hover {
     background: var(--hover-bg);
-}
+  }
 
-[data-theme="dark"] .table td,
-[data-theme="dark"] .table th {
+  [data-theme="dark"] .table td,
+  [data-theme="dark"] .table th {
     border-color: var(--border-color);
     color: var(--text-primary);
-}
+  }
 
-[data-theme="dark"] .table td a {
+  [data-theme="dark"] .table td a {
     color: var(--text-primary);
-}
+  }
 
-[data-theme="dark"] .table td a:hover {
+  [data-theme="dark"] .table td a:hover {
     color: #58a6ff;
-}
+  }
 
-/* Ensure username and name are readable in dark mode */
-[data-theme="dark"] .table td .fw-semibold {
+  /* Ensure username and name are readable in dark mode */
+  [data-theme="dark"] .table td .fw-semibold {
     color: var(--text-primary) !important;
-}
+  }
 
-[data-theme="dark"] .table td small.text-muted {
+  [data-theme="dark"] .table td small.text-muted {
     color: var(--text-secondary) !important;
-}
+  }
 
-[data-theme="dark"] .table td.text-muted {
+  [data-theme="dark"] .table td.text-muted {
     color: var(--text-secondary) !important;
-}
+  }
 
-[data-theme="dark"] .card {
+  [data-theme="dark"] .card {
     background-color: var(--bg-card);
     border-color: var(--border-color);
-}
+  }
 
-[data-theme="dark"] .card-footer {
+  [data-theme="dark"] .card-footer {
     background-color: var(--bg-card) !important;
     border-top-color: var(--border-color);
-}
+  }
 
-[data-theme="dark"] h3,
-[data-theme="dark"] h3 small.text-muted {
+  [data-theme="dark"] h3,
+  [data-theme="dark"] h3 small.text-muted {
     color: var(--text-primary) !important;
-}
+  }
 
-[data-theme="dark"] .form-control,
-[data-theme="dark"] .form-select,
-[data-theme="dark"] .input-group-text {
+  [data-theme="dark"] .form-control,
+  [data-theme="dark"] .form-select,
+  [data-theme="dark"] .input-group-text {
     background-color: var(--bg-secondary);
     border-color: var(--border-color);
     color: var(--text-primary);
-}
+  }
 
-[data-theme="dark"] .table-light {
+  [data-theme="dark"] .table-light {
     background-color: var(--bg-secondary) !important;
-}
+  }
 
-.admin-badge-large {
+  .admin-badge-large {
     font-size: 0.9rem;
     padding: 0.4em 0.8em;
     font-weight: 600;
-}
+  }
 
-.action-buttons {
+  .action-buttons {
     display: flex;
     gap: 5px;
     flex-wrap: wrap;
-}
+  }
 
-.btn-toggle-admin {
+  .btn-toggle-admin {
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     white-space: nowrap;
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     .table-responsive {
-        font-size: 0.85rem;
+      font-size: 0.85rem;
     }
-    
+
     .badge {
-        font-size: 0.65rem;
+      font-size: 0.65rem;
     }
-    
+
     .btn-toggle-admin {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.4rem;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
     }
-    
+
     /* Stack username and name on mobile if needed */
     .table th:nth-child(2),
     .table td:nth-child(2) {
-        min-width: 100px;
+      min-width: 100px;
     }
-    
+
     .table th:nth-child(3),
     .table td:nth-child(3) {
-        min-width: 100px;
+      min-width: 100px;
     }
-}
+  }
 </style>
 <div class="container-fluid py-4">
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
@@ -154,22 +154,22 @@
     <div class="col-md-3">
       <select name="lang" class="form-select">
         <option value="">All languages</option>
-        <option value="english" {{ 'selected' if lang == 'english' else '' }}>English</option>
-        <option value="korean"  {{ 'selected' if lang == 'korean'  else '' }}>Korean</option>
+        <option value="english" {{ 'selected' if lang=='english' else '' }}>English</option>
+        <option value="korean" {{ 'selected' if lang=='korean' else '' }}>Korean</option>
       </select>
     </div>
     <div class="col-md-3">
       <div class="input-group">
         <label class="input-group-text" for="sort">Sort</label>
         <select id="sort" name="sort" class="form-select">
-          <option value="created_at" {{ 'selected' if sort == 'created_at' else '' }}>Created</option>
-          <option value="username"   {{ 'selected' if sort == 'username'   else '' }}>Username</option>
-          <option value="email"      {{ 'selected' if sort == 'email'      else '' }}>Email</option>
-          <option value="responses"  {{ 'selected' if sort == 'responses'  else '' }}>Responses</option>
+          <option value="created_at" {{ 'selected' if sort=='created_at' else '' }}>Created</option>
+          <option value="username" {{ 'selected' if sort=='username' else '' }}>Username</option>
+          <option value="email" {{ 'selected' if sort=='email' else '' }}>Email</option>
+          <option value="responses" {{ 'selected' if sort=='responses' else '' }}>Responses</option>
         </select>
         <select name="order" class="form-select">
-          <option value="desc" {{ 'selected' if order == 'desc' else '' }}>Desc</option>
-          <option value="asc"  {{ 'selected' if order == 'asc'  else '' }}>Asc</option>
+          <option value="desc" {{ 'selected' if order=='desc' else '' }}>Desc</option>
+          <option value="asc" {{ 'selected' if order=='asc' else '' }}>Asc</option>
         </select>
       </div>
     </div>
@@ -200,7 +200,7 @@
           </tr>
         </thead>
         <tbody>
-        {% for u in users %}
+          {% for u in users %}
           <tr class="{{ 'admin-row' if u.is_admin else '' }}" id="user-row-{{ u.id }}">
             <td class="text-muted">{{ u.id }}</td>
             <td>
@@ -221,24 +221,25 @@
             <td><span class="badge bg-secondary">{{ u.surveys_count }}</span></td>
             <td id="role-badge-{{ u.id }}">
               {% if u.is_admin %}
-                <span class="badge bg-success admin-badge-large">
-                  <i class="fas fa-user-shield me-1"></i>Admin
-                </span>
+              <span class="badge bg-success admin-badge-large">
+                <i class="fas fa-user-shield me-1"></i>Admin
+              </span>
               {% else %}
-                <span class="badge bg-secondary">
-                  <i class="fas fa-user me-1"></i>User
-                </span>
+              <span class="badge bg-secondary">
+                <i class="fas fa-user me-1"></i>User
+              </span>
               {% endif %}
             </td>
-            <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d %H:%M:%S') if u.created_at else '-' }}</small></td>
-            <td><small class="text-muted">{{ u.last_active_date.strftime('%Y-%m-%d') if u.last_active_date else '-' }}</small></td>
+            <td><small class="text-muted">{{ u.created_at.strftime('%Y-%m-%d %H:%M:%S') if u.created_at else '-'
+                }}</small></td>
+            <td><small class="text-muted">{{ u.last_active_date.strftime('%Y-%m-%d') if u.last_active_date else '-'
+                }}</small></td>
             <td>
               {% if u.id != current_user.id %}
               <div class="action-buttons">
                 <button class="btn btn-sm btn-toggle-admin {{ 'btn-danger' if u.is_admin else 'btn-success' }}"
-                        onclick="toggleAdmin({{ u.id }}, '{{ u.username }}', {{ 'true' if u.is_admin else 'false' }})"
-                        id="btn-admin-{{ u.id }}"
-                        title="Toggle admin status">
+                  onclick="toggleAdmin({{ u.id }}, '{{ u.username }}', {{ 'true' if u.is_admin else 'false' }})"
+                  id="btn-admin-{{ u.id }}" title="Toggle admin status">
                   {% if u.is_admin %}
                   <i class="fas fa-user-minus me-1"></i>Revoke Admin
                   {% else %}
@@ -246,15 +247,12 @@
                   {% endif %}
                 </button>
                 <button class="btn btn-sm btn-warning btn-toggle-admin"
-                        onclick="resetPassword({{ u.id }}, '{{ u.username }}')"
-                        id="btn-reset-{{ u.id }}"
-                        title="Reset password">
+                  onclick="resetPassword({{ u.id }}, '{{ u.username }}')" id="btn-reset-{{ u.id }}"
+                  title="Reset password">
                   <i class="fas fa-key"></i>
                 </button>
                 <button class="btn btn-sm btn-danger btn-toggle-admin"
-                        onclick="deleteUser({{ u.id }}, '{{ u.username }}')"
-                        id="btn-delete-{{ u.id }}"
-                        title="Delete user">
+                  onclick="deleteUser({{ u.id }}, '{{ u.username }}')" id="btn-delete-{{ u.id }}" title="Delete user">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -263,9 +261,11 @@
               {% endif %}
             </td>
           </tr>
-        {% else %}
-          <tr><td colspan="12" class="text-center text-muted py-4">No users found.</td></tr>
-        {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="12" class="text-center text-muted py-4">No users found.</td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -294,5 +294,106 @@
     </div>
     {% endif %}
   </div>
-</div>
-{% endblock %}
+
+  <script>
+    // Toggle admin status for a user
+    function toggleAdmin(userId, username, currentlyAdmin) {
+      const action = currentlyAdmin ? 'revoke admin from' : 'grant admin to';
+      if (!confirm(`Are you sure you want to ${action} "${username}"?`)) {
+        return;
+      }
+
+      fetch(`/admin/users/${userId}/toggle-admin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Reload the page to reflect changes
+            window.location.reload();
+          } else {
+            alert('Error: ' + (data.error || 'Failed to toggle admin status'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+        });
+    }
+
+    // Reset password for a user
+    function resetPassword(userId, username) {
+      const newPassword = prompt(`Enter new password for "${username}":`);
+      if (!newPassword) {
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      fetch(`/admin/users/${userId}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ password: newPassword })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(`Password for "${username}" has been reset successfully.`);
+          } else {
+            alert('Error: ' + (data.error || 'Failed to reset password'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+        });
+    }
+
+    // Delete a user
+    function deleteUser(userId, username) {
+      if (!confirm(`Are you sure you want to DELETE user "${username}"? This action cannot be undone!`)) {
+        return;
+      }
+
+      // Double confirmation for safety
+      if (!confirm(`FINAL WARNING: All data for "${username}" will be permanently deleted. Continue?`)) {
+        return;
+      }
+
+      fetch(`/admin/users/${userId}/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Remove the row from the table
+            const row = document.getElementById(`user-row-${userId}`);
+            if (row) {
+              row.remove();
+            }
+            alert(`User "${username}" has been deleted.`);
+          } else {
+            alert('Error: ' + (data.error || 'Failed to delete user'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+        });
+    }
+  </script>
+  {% endblock %}

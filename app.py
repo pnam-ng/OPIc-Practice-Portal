@@ -244,6 +244,7 @@ def register_blueprints(app):
     from app.blueprints.admin import admin_bp
     from app.blueprints.comments import comments_bp
     from app.blueprints.notifications import notifications_bp
+    from app.blueprints.questions import questions_bp
     
     # Import chatbot blueprint (with error handling)
     try:
@@ -262,6 +263,7 @@ def register_blueprints(app):
     app.register_blueprint(comments_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(questions_bp, url_prefix='/questions')
 
 def create_celery(app=None):
     """Create Celery instance"""

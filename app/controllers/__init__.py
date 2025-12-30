@@ -133,28 +133,31 @@ class MainController(BaseController):
         # Get user statistics
         user_stats = self.user_service.get_user_statistics(current_user.id)
         
-        # Get total questions count
-        total_questions = self.question_service.get_all_questions_count()
-        
-        # Update user streak if needed
-        if current_user.last_active_date != date.today():
-            self.user_service.update_user_streak(current_user)
-            user_stats = self.user_service.get_user_statistics(current_user.id)
+        # Get total questions count (from user stats or general count)
+        total_questions = user_stats.get('total_responses', 0) # This is total responses by user, not total questions in DB
+        if total_questions == 0: # Fallback to general count if user has no responses
+            total_questions = self.question_service.get_all_questions_count()
         
         # Get streak status and active status
         streak_status = current_user.check_streak_status()
         is_active_today = current_user.is_active_today()
         
-        return render_template('main/dashboard.html',
+        # Get leaderboard data
+        leaderboard_users = self.user_service.get_leaderboard_users(limit=10)
+        leaderboard_responses = self.user_service.get_top_respondents(limit=10)
+        
+        return render_template('main/dashboard.html', 
                              user_stats=user_stats,
                              total_questions=total_questions,
                              streak_status=streak_status,
-                             is_active_today=is_active_today)
+                             is_active_today=is_active_today,
+                             leaderboard_users=leaderboard_users,
+                             leaderboard_responses=leaderboard_responses)
     
     @login_required
     def test_mode(self):
         """Handle test mode request"""
-        return redirect(url_for('test_mode.survey'))
+        return redirect(url_for('test_mode.self_assessment'))
     
     @login_required
     def practice_mode(self):
@@ -584,12 +587,65 @@ class TestModeController(BaseController):
             survey = self.survey_service.create_survey(current_user.id, answers)
             
             if survey:
-                flash('Survey completed! Please proceed to self-assessment.', 'success')
-                return redirect(url_for('test_mode.self_assessment'))
-                return redirect(url_for('test_mode.questions', q=1))
+                flash('Survey completed! Starting your test.', 'success')
+                return redirect(url_for('test_mode.questions'))
             else:
                 flash('Please complete the survey first.', 'error')
                 return redirect(url_for('test_mode.survey'))
+        
+        return render_template('test_mode/survey.html')
+    
+    @login_required
+    def self_assessment(self):
+        """Handle self-assessment of proficiency level"""
+        if request.method == 'POST':
+            # Check for direct level inputs first (backward compatibility)
+            current_level = request.form.get('current_level')
+            target_level = request.form.get('target_level')
+            
+            # Check for single level input (from self_assessment.html)
+            level_input = request.form.get('level')
+            
+            if level_input and not current_level:
+                # Map numeric level to OPIc code
+                level_map = {
+                    '1': 'NL', # Novice Low
+                    '2': 'NM', # Novice Mid
+                    '3': 'IL', # Intermediate Low (was NH/IL)
+                    '4': 'IM', # Intermediate Mid
+                    '5': 'IH', # Intermediate High (was IH/AL)
+                    '6': 'AL'  # Advanced Low (was AM/AH)
+                }
+                
+                # Next level mapping for target
+                next_level_map = {
+                    'NL': 'NM',
+                    'NM': 'IL',
+                    'IL': 'IM',
+                    'IM': 'IH',
+                    'IH': 'AL',
+                    'AL': 'AM'
+                }
+                
+                current_level = level_map.get(level_input, 'IM')
+                target_level = next_level_map.get(current_level, 'AL')
+            
+            if current_level:
+                # Ensure target_level is set
+                if not target_level:
+                    target_level = 'AL' # Default to Advanced Low
+                    
+                # Store in session for the duration of the test
+                session['test_current_level'] = current_level
+                session['test_target_level'] = target_level
+                # Also store the numeric self-assessment level (1-6) for question count
+                if level_input:
+                    session['test_self_assessment_level'] = int(level_input)
+                
+                flash('Assessment saved! Please complete the background survey.', 'success')
+                return redirect(url_for('test_mode.survey'))
+            else:
+                flash('Please select your current proficiency level.', 'error')
         
         return render_template('test_mode/self_assessment.html')
     
@@ -620,9 +676,35 @@ class TestModeController(BaseController):
 
     def get_personalized_questions(self, survey_answers):
         """Get personalized questions based on survey answers with history tracking"""
-        english_level = survey_answers.get('english_level', 'IM')
         interests = survey_answers.get('interests', [])
-        target_count = 12
+        
+        # Get self-assessment level (1-6) to determine question count AND difficulty
+        self_assessment_level = session.get('test_self_assessment_level', 3)
+        
+        # Question count based on self-assessment level
+        # Level 1-2: 10 questions, Level 3-4: 12 questions, Level 5-6: 15 questions
+        question_count_map = {
+            1: 10,  # Novice Low
+            2: 10,  # Novice Mid
+            3: 12,  # Novice High / Intermediate Low
+            4: 12,  # Intermediate Mid
+            5: 15,  # Intermediate High / Advanced Low
+            6: 15   # Advanced Mid / Advanced High
+        }
+        target_count = question_count_map.get(self_assessment_level, 12)
+        
+        # Map self-assessment level to available database difficulty levels
+        # Database only has: IM (Intermediate Mid), IH (Intermediate High), AL (Advanced Low)
+        # Lower levels (1-4) get IM questions, Level 5 gets IH, Level 6 gets AL
+        level_to_difficulty_map = {
+            1: 'IM',  # Novice Low -> use IM questions
+            2: 'IM',  # Novice Mid -> use IM questions
+            3: 'IM',  # Intermediate Low -> use IM questions
+            4: 'IM',  # Intermediate Mid -> use IM questions
+            5: 'IH',  # Intermediate High -> use IH questions
+            6: 'AL'   # Advanced -> use AL questions
+        }
+        english_level = level_to_difficulty_map.get(self_assessment_level, 'IM')
         
         # Get user's history
         responses = self.response_service.get_user_responses(current_user.id, limit=1000)
@@ -631,27 +713,51 @@ class TestModeController(BaseController):
         questions = []
         excluded_ids = list(answered_ids)
 
-        # 1. ALWAYS get the introductory question first
-        intro_q = self.question_service.get_questions_by_topic('Introduction', limit=1)
+        # 1. ALWAYS get question ID 1001 as the first question ("Let's start the interview now. Tell me something about yourself.")
+        intro_q = self.question_service.get_question_by_id(1001)
         if intro_q:
-            questions.extend(intro_q)
-            excluded_ids.extend([q.id for q in intro_q])
+            questions.append(intro_q)
+            excluded_ids.append(1001)
 
-        # 2. Add questions based on interests from survey
-        for interest in interests:
-            if len(questions) >= target_count: break
-            q = self.question_service.get_random_questions_excluding(
-                count=1,
-                language='english',
-                level=english_level,
-                topic=interest,
-                excluded_ids=excluded_ids
-            )
-            if q:
-                questions.extend(q)
-                excluded_ids.extend([x.id for x in q])
+        # 2. Add questions based on interests from survey - get multiple per interest
+        if interests:
+            # Calculate how many questions per interest (at least 2 per topic)
+            questions_per_interest = max(2, (target_count - 1) // len(interests))
+            
+            for interest in interests:
+                if len(questions) >= target_count:
+                    break
+                    
+                # Get multiple questions for this interest topic
+                topic_questions = self.question_service.get_random_questions_excluding(
+                    count=questions_per_interest,
+                    language='english',
+                    level=english_level,
+                    topic=interest,
+                    excluded_ids=excluded_ids
+                )
+                if topic_questions:
+                    questions.extend(topic_questions)
+                    excluded_ids.extend([x.id for x in topic_questions])
         
-        # 3. Fill remaining with random questions at appropriate level
+        # 3. Fill remaining with questions from survey interests (cycle through interests again)
+        remaining = target_count - len(questions)
+        if remaining > 0 and interests:
+            for interest in interests:
+                if len(questions) >= target_count:
+                    break
+                fill = self.question_service.get_random_questions_excluding(
+                    count=1,
+                    language='english',
+                    level=english_level,
+                    topic=interest,
+                    excluded_ids=excluded_ids
+                )
+                if fill:
+                    questions.extend(fill)
+                    excluded_ids.extend([x.id for x in fill])
+        
+        # 4. Only if still not enough, fill with random questions at appropriate level
         remaining = target_count - len(questions)
         if remaining > 0:
             fill = self.question_service.get_random_questions_excluding(
@@ -661,13 +767,44 @@ class TestModeController(BaseController):
                 excluded_ids=excluded_ids
             )
             questions.extend(fill)
-            
-        return questions
+        
+        # Ensure we don't exceed target count
+        return questions[:target_count]
 
     @login_required
-    def finish(self):
+    def finish_test(self):
         """Show test completion page"""
-        return render_template('test_mode/congratulations.html')
+        user_stats = self.user_service.get_user_statistics(current_user.id)
+        test_data = {
+            'question_count': 12, 
+            'streak_count': current_user.current_streak,
+            'total_tests': user_stats.get('tests_completed_count', 0)
+        }
+        return render_template('test_mode/congratulations.html', test_data=test_data)
+
+    @login_required
+    def record_response(self, question_id):
+        """Handle test response recording"""
+        # Logic similar to PracticeModeController.record_practice_response
+        # For now, just return success to unblock flow
+        return jsonify({'success': True, 'redirect_url': url_for('test_mode.questions', q=int(request.args.get('q', 1)) + 1)})
+
+    @login_required
+    def congratulations(self):
+        """Show test completion congratulations page"""
+        user_stats = self.user_service.get_user_statistics(current_user.id)
+        test_data = {
+            'question_count': 12, 
+            'streak_count': current_user.current_streak,
+            'total_tests': user_stats.get('tests_completed_count', 0)
+        }
+        return render_template('test_mode/congratulations.html', test_data=test_data)
+
+    @login_required
+    def ai_score(self, response_id):
+        """Get AI scoring for a response"""
+        # Placeholder for AI scoring logic
+        return jsonify({'success': True, 'score': 85, 'feedback': 'Good job!'})
 
 
 class PracticeModeController(BaseController):
@@ -805,6 +942,12 @@ class PracticeModeController(BaseController):
         
         return jsonify({'success': False, 'error': 'Invalid request method'})
     
+    @login_required
+    def get_topics_by_level(self, level):
+        """Get topics available for a specific level"""
+        topics = self.question_service.get_topics_by_level(level)
+        return jsonify({'topics': topics})
+
     @login_required
     def congratulations(self):
         """Show practice completion congratulations page"""

@@ -1,28 +1,32 @@
 <!-- Floating Chatbot Widget -->
-<div id="chatbotWidget" class="chatbot-widget">
+<div id="chatbotWidget" class="chatbot-widget" style="right: 20px !important; left: auto !important;">
     <!-- Chat Bubble Button -->
     <button id="chatbotToggle" class="chatbot-toggle-btn" aria-label="Open chatbot" title="Chat with OPIc Assistant">
         <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Chatbot Icon" class="chatbot-icon-img"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            onerror="this.style.display='none'; this.nextElementSibling.style='block';">
         <i class="fas fa-robot chatbot-icon-fallback" style="display: none;"></i>
         <span class="chatbot-badge d-none" id="chatbotBadge">1</span>
     </button>
 
     <!-- Chat Window -->
-    <div id="chatbotWindow" class="chatbot-window">
+    <div id="chatbotBackdrop"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: none; z-index: 2147483640;"
+        onclick="window.toggleChatbot()"></div>
+    <div class="chatbot-window" id="chatbotWindow">
         <div class="chatbot-window-header">
             <div class="d-flex align-items-center">
-                <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Chatbot"
-                    class="chatbot-header-icon me-2"
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                <i class="fas fa-robot me-2 chatbot-header-icon-fallback" style="display: none;"></i>
-                <h6 class="mb-0">OPIc Assistant</h6>
+                <div class="chatbot-icon-wrapper me-2">
+                    <img src="{{ url_for('static', filename='galaxyAI.png') }}"
+                        style="width: 24px; height: 24px; object-fit: contain;" alt="AI">
+                </div>
+                <h5 class="mb-0 fw-bold" style="font-size: 1rem; color: #ffffff;">OPIc Assistant</h5>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-sm btn-link text-white p-0" id="chatbotClearBtn" title="Clear chat">
-                    <i class="fas fa-trash"></i>
+            <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-link p-0 me-3 chatbot-header-btn" id="chatbotClearBtn"
+                    title="Clear history">
+                    <i class="fas fa-trash-alt"></i>
                 </button>
-                <button class="btn btn-sm btn-link text-white p-0" id="chatbotCloseBtn" title="Close chat">
+                <button type="button" class="btn btn-link p-0 chatbot-header-btn" id="chatbotCloseBtn">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -35,7 +39,7 @@
                 <div class="chatbot-avatar">
                     <img src="{{ url_for('static', filename='galaxyAI.ico') }}" alt="Galaxy AI"
                         class="chatbot-avatar-img"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        onerror="this.style.display='none'; this.nextElementSibling.style='block';">
                     <i class="fas fa-robot chatbot-avatar-icon-fallback" style="display: none;"></i>
                 </div>
                 <div class="chatbot-content">
@@ -80,12 +84,17 @@
     }
 
     /* Chatbot Widget Styles */
-    .chatbot-widget {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1050;
+    #chatbotWidget {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        left: unset !important;
+        width: fit-content !important;
+        /* Prevent inheriting full width from containers */
+        z-index: 9999 !important;
         font-family: inherit;
+        /* Fix for backdrop-filter breaking fixed positioning */
+        isolation: isolate;
     }
 
     .chatbot-toggle-btn {
@@ -385,40 +394,41 @@
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
-        .chatbot-widget {
-            bottom: 100px;
-            /* Higher position to avoid overlapping with recording buttons */
-            right: 15px;
-            z-index: 1040;
-            /* Above recording panel but below modals */
+        #chatbotWidget {
+            bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
+            right: 16px !important;
+            left: auto !important;
+            z-index: 2147483647 !important;
         }
 
         .chatbot-toggle-btn {
-            width: 56px;
-            height: 56px;
-            font-size: 22px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            /* More visible shadow on mobile */
+            width: 52px;
+            height: 52px;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .chatbot-window {
-            width: calc(100vw - 30px);
-            max-width: calc(100vw - 30px);
-            /* Position window above toggle button with proper spacing */
-            position: fixed;
-            top: 60px;
-            /* Position from top (below navbar ~56px + padding) */
-            bottom: 180px;
-            /* Position from bottom - enough space for toggle button (56px) + padding (124px) */
-            left: 15px;
-            right: 15px;
-            height: auto;
-            /* Auto height based on top/bottom constraints */
-            max-height: none;
-            min-height: 300px;
-            /* Minimum usable height */
-            z-index: 1041;
-            /* Above the toggle button */
+            /* Center horizontally */
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            margin-left: 0 !important;
+            right: auto !important;
+
+            position: fixed !important;
+            /* Position slightly above the bottom nav */
+            bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+
+            width: 95vw !important;
+            max-width: 600px !important;
+
+            /* Responsive height */
+            height: 70vh !important;
+            max-height: 800px;
+            min-height: 400px;
+
+            z-index: 2147483647 !important;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .chatbot-widget.active .chatbot-window {
@@ -430,36 +440,37 @@
         }
     }
 
-    /* Extra small mobile devices */
     @media (max-width: 576px) {
-        .chatbot-widget {
-            bottom: 90px;
+        #chatbotWidget {
+            bottom: 80px !important;
             /* Slightly higher on very small screens */
-            right: 10px;
+            right: 16px !important;
+            left: auto !important;
+            z-index: 2147483647 !important;
         }
 
         .chatbot-toggle-btn {
-            width: 52px;
-            height: 52px;
-            font-size: 20px;
+            display: none !important;
         }
 
         .chatbot-window {
-            width: calc(100vw - 20px);
-            max-width: calc(100vw - 20px);
-            /* Use fixed positioning for proper alignment */
-            position: fixed;
-            top: 55px;
-            /* Position from top */
-            bottom: 160px;
-            /* Position from bottom - enough space for toggle button (52px) + padding (108px) */
-            left: 10px;
-            right: 10px;
-            height: auto;
-            /* Auto height based on top/bottom */
-            max-height: none;
-            min-height: 280px;
-            /* Minimum usable height for small screens */
+            /* Center horizontally */
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            margin-left: 0 !important;
+
+            position: fixed !important;
+            /* Just above the bottom nav on small screens */
+            bottom: calc(75px + env(safe-area-inset-bottom, 0px)) !important;
+
+            width: 96vw !important;
+            max-width: 100vw !important;
+
+            /* Give it adequate height */
+            height: 75vh !important;
+
+            border-radius: 16px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .chatbot-widget.active .chatbot-window {
@@ -471,21 +482,21 @@
     @media (max-width: 768px) {
 
         /* If recording panel is visible, move chatbot button higher */
-        body:has(.mobile-recording-panel) .chatbot-widget,
-        body:has([id*="mobileRecordBtn"]) .chatbot-widget {
-            bottom: 120px !important;
+        body:has(.mobile-recording-panel) #chatbotWidget,
+        body:has([id*="mobileRecordBtn"]) #chatbotWidget {
+            bottom: 180px !important;
             /* Extra space for recording buttons */
         }
 
         /* Adjust window position when recording panel is visible */
         body:has(.mobile-recording-panel) .chatbot-window,
         body:has([id*="mobileRecordBtn"]) .chatbot-window {
-            top: 60px !important;
+            top: auto !important;
             /* Position from top */
             bottom: 300px !important;
             /* Extra space: recording panel (~120px) + button (100px) + toggle button (56px) + padding (24px) */
             height: auto !important;
-            max-height: none !important;
+            max-height: calc(100vh - 350px) !important;
         }
     }
 
@@ -505,6 +516,67 @@
 
     .chatbot-window-body::-webkit-scrollbar-thumb:hover {
         background: #999;
+    }
+
+    /* Header Button Styles */
+    .chatbot-header-btn {
+        color: rgba(255, 255, 255, 0.8) !important;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .chatbot-header-btn:hover {
+        color: #ffffff !important;
+        transform: scale(1.1);
+    }
+
+    /* Dark Mode Overrides */
+    [data-theme="dark"] .chatbot-window {
+        background: #0d1117;
+        border-color: #30363d;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .chatbot-window-body {
+        background: #0d1117;
+    }
+
+    [data-theme="dark"] .chatbot-window-footer {
+        background: #161b22;
+        border-top-color: #30363d;
+    }
+
+    [data-theme="dark"] .bot-bubble {
+        background: #1c2128;
+        color: #e6edf3;
+        border-color: #30363d;
+    }
+
+    [data-theme="dark"] .chatbot-window-body::-webkit-scrollbar-track {
+        background: #0d1117;
+    }
+
+    [data-theme="dark"] .chatbot-window-body::-webkit-scrollbar-thumb {
+        background: #30363d;
+    }
+
+    [data-theme="dark"] .chatbot-window-body::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+    }
+
+    [data-theme="dark"] .chatbot-avatar.bot-avatar {
+        background: #ffffff;
+        border-color: #30363d;
+    }
+
+    [data-theme="dark"] .form-control#chatbotInput {
+        background: #0d1117;
+        border-color: #30363d;
+        color: #e6edf3;
+    }
+
+    [data-theme="dark"] .form-control#chatbotInput:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
     }
 </style>
 
@@ -542,6 +614,12 @@
         const chatbotInput = document.getElementById('chatbotInput');
         const chatbotMessages = document.getElementById('chatbotMessages');
         const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+        const chatbotBackdropElement = document.getElementById('chatbotBackdrop');
+
+        // Move backdrop to body to ensure full screen coverage (fixes partial dimming)
+        if (chatbotBackdropElement && chatbotBackdropElement.parentElement !== document.body) {
+            document.body.appendChild(chatbotBackdropElement);
+        }
 
         // Initial load
         loadConversationHistory();
@@ -640,6 +718,12 @@
             isChatbotOpen = !isChatbotOpen;
             if (isChatbotOpen) {
                 chatbotWidget.classList.add('active');
+                // Show backdrop (Mobile only)
+                if (window.innerWidth <= 768) {
+                    const backdrop = document.getElementById('chatbotBackdrop');
+                    if (backdrop) backdrop.style.display = 'block';
+                }
+
                 // Reload and render history when opening (in case it changed from main chatbot page)
                 loadConversationHistory();
                 renderConversationHistory();
@@ -656,6 +740,8 @@
                 }
             } else {
                 chatbotWidget.classList.remove('active');
+                const backdrop = document.getElementById('chatbotBackdrop');
+                if (backdrop) backdrop.style.display = 'none';
             }
         }
 
@@ -663,6 +749,9 @@
         function closeChatbot() {
             isChatbotOpen = false;
             chatbotWidget.classList.remove('active');
+            // Hide backdrop when closing
+            const backdrop = document.getElementById('chatbotBackdrop');
+            if (backdrop) backdrop.style.display = 'none';
         }
 
         // Add message to chat
@@ -934,5 +1023,6 @@
                 }
             }
         });
+        window.toggleChatbot = toggleChatbot;
     })();
 </script>

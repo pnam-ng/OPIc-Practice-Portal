@@ -23,7 +23,6 @@ class User(UserMixin, db.Model):
     last_active_date = db.Column(db.Date, default=date.today)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=now_hanoi)
-    created_at = db.Column(db.DateTime, default=now_hanoi)
     updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
     
     # User Level Tracking

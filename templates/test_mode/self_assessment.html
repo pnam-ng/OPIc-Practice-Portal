@@ -4,201 +4,201 @@
 
 {% block content %}
 <style>
-/* Steps indicator - same as survey */
-.steps-indicator {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    position: relative;
-}
+    /* Steps indicator - same as survey */
+    .steps-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+    }
 
-.steps-indicator::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #e0e0e0;
-    z-index: 0;
-}
+    .steps-indicator::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 0;
+    }
 
-.step-item {
-    flex: 1;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-}
+    .step-item {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
 
-.step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    color: #666;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 10px;
-    font-weight: bold;
-    font-size: 18px;
-}
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-weight: bold;
+        font-size: 18px;
+    }
 
-.step-item.active .step-circle {
-    background: #ff6633;
-    color: white;
-}
+    .step-item.active .step-circle {
+        background: #ff6633;
+        color: white;
+    }
 
-.step-item.completed .step-circle {
-    background: #28a745;
-    color: white;
-}
+    .step-item.completed .step-circle {
+        background: #28a745;
+        color: white;
+    }
 
-.step-label {
-    font-size: 14px;
-    color: #666;
-}
+    .step-label {
+        font-size: 14px;
+        color: #666;
+    }
 
-.step-item.active .step-label {
-    color: #ff6633;
-    font-weight: 600;
-}
+    .step-item.active .step-label {
+        color: #ff6633;
+        font-weight: 600;
+    }
 
-.level-card {
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px 24px;
-    margin-bottom: 12px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    background: white;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.level-card:hover {
-    border-color: #ff6633;
-    background: #fff9f7;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.level-card.selected {
-    border-color: #ff6633;
-    background: #fff5f2;
-    border-width: 3px;
-}
-
-.level-card input[type="radio"] {
-    display: none;
-}
-
-.level-number {
-    font-size: 36px;
-    font-weight: bold;
-    color: #ff6633;
-    min-width: 60px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.level-content {
-    flex: 1;
-}
-
-.level-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #333;
-}
-
-.level-description {
-    font-size: 14px;
-    color: #666;
-    line-height: 1.5;
-}
-
-[data-theme="dark"] .card-header {
-    background: var(--bg-secondary) !important;
-    border-bottom-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] .card-body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .level-card {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-}
-
-[data-theme="dark"] .level-card:hover {
-    border-color: #ff6633;
-    background: var(--hover-bg);
-}
-
-[data-theme="dark"] .level-card.selected {
-    background: rgba(255, 102, 51, 0.1);
-}
-
-[data-theme="dark"] .level-title {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .level-description {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .steps-indicator::before {
-    background: var(--border-color);
-}
-
-[data-theme="dark"] .step-circle {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    border: 2px solid var(--border-color);
-}
-
-[data-theme="dark"] .step-item.active .step-circle {
-    background: #ff6633;
-    color: white;
-    border-color: #ff6633;
-}
-
-[data-theme="dark"] .step-item.completed .step-circle {
-    background: var(--success-color);
-    border-color: var(--success-color);
-}
-
-[data-theme="dark"] .step-label {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .step-item.active .step-label {
-    color: var(--text-primary);
-}
-
-@media (max-width: 768px) {
     .level-card {
-        padding: 16px 20px;
-        gap: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 20px;
     }
-    
+
+    .level-card:hover {
+        border-color: #ff6633;
+        background: #fff9f7;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .level-card.selected {
+        border-color: #ff6633;
+        background: #fff5f2;
+        border-width: 3px;
+    }
+
+    .level-card input[type="radio"] {
+        display: none;
+    }
+
     .level-number {
-        font-size: 28px;
-        min-width: 50px;
+        font-size: 36px;
+        font-weight: bold;
+        color: #ff6633;
+        min-width: 60px;
+        text-align: center;
+        flex-shrink: 0;
     }
-    
+
+    .level-content {
+        flex: 1;
+    }
+
     .level-title {
-        font-size: 16px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #333;
     }
-    
+
     .level-description {
-        font-size: 13px;
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
     }
-}
+
+    [data-theme="dark"] .card-header {
+        background: var(--bg-secondary) !important;
+        border-bottom-color: var(--border-color) !important;
+    }
+
+    [data-theme="dark"] .card-body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .level-card {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .level-card:hover {
+        border-color: #ff6633;
+        background: var(--hover-bg);
+    }
+
+    [data-theme="dark"] .level-card.selected {
+        background: rgba(255, 102, 51, 0.1);
+    }
+
+    [data-theme="dark"] .level-title {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .level-description {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .steps-indicator::before {
+        background: var(--border-color);
+    }
+
+    [data-theme="dark"] .step-circle {
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        border: 2px solid var(--border-color);
+    }
+
+    [data-theme="dark"] .step-item.active .step-circle {
+        background: #ff6633;
+        color: white;
+        border-color: #ff6633;
+    }
+
+    [data-theme="dark"] .step-item.completed .step-circle {
+        background: var(--success-color);
+        border-color: var(--success-color);
+    }
+
+    [data-theme="dark"] .step-label {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .step-item.active .step-label {
+        color: var(--text-primary);
+    }
+
+    @media (max-width: 768px) {
+        .level-card {
+            padding: 16px 20px;
+            gap: 16px;
+        }
+
+        .level-number {
+            font-size: 28px;
+            min-width: 50px;
+        }
+
+        .level-title {
+            font-size: 16px;
+        }
+
+        .level-description {
+            font-size: 13px;
+        }
+    }
 </style>
 
 <div class="container mt-5">
@@ -206,13 +206,13 @@
         <div class="col-lg-10">
             <!-- Step Indicator -->
             <div class="steps-indicator mb-4">
-                <div class="step-item completed">
-                    <div class="step-circle">1</div>
-                    <div class="step-label">Background Survey</div>
-                </div>
                 <div class="step-item active">
-                    <div class="step-circle">2</div>
+                    <div class="step-circle">1</div>
                     <div class="step-label">Self Assessment</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Background Survey</div>
                 </div>
                 <div class="step-item">
                     <div class="step-circle">3</div>
@@ -237,62 +237,69 @@
                                 <input type="radio" name="level" id="level1" value="1" required>
                                 <div class="level-number">1</div>
                                 <div class="level-content">
-                                    <div class="level-title">Novice Low <span class="badge bg-secondary ms-2">10 questions</span></div>
+                                    <div class="level-title">Novice Low <span class="badge bg-secondary ms-2">10
+                                            questions</span></div>
                                     <div class="level-description">
                                         I can communicate minimally with memorized words and phrases.
                                     </div>
                                 </div>
                             </label>
-                            
+
                             <label class="level-card" for="level2">
                                 <input type="radio" name="level" id="level2" value="2" required>
                                 <div class="level-number">2</div>
                                 <div class="level-content">
-                                    <div class="level-title">Novice Mid <span class="badge bg-secondary ms-2">10 questions</span></div>
+                                    <div class="level-title">Novice Mid <span class="badge bg-secondary ms-2">10
+                                            questions</span></div>
                                     <div class="level-description">
                                         I can communicate on familiar topics using simple sentences and phrases.
                                     </div>
                                 </div>
                             </label>
-                            
+
                             <label class="level-card" for="level3">
                                 <input type="radio" name="level" id="level3" value="3" required>
                                 <div class="level-number">3</div>
                                 <div class="level-content">
-                                    <div class="level-title">Novice High / Intermediate Low <span class="badge bg-info ms-2">12 questions</span></div>
+                                    <div class="level-title">Novice High / Intermediate Low <span
+                                            class="badge bg-info ms-2">12 questions</span></div>
                                     <div class="level-description">
                                         I can handle a variety of basic communicative tasks and discuss familiar topics.
                                     </div>
                                 </div>
                             </label>
-                            
+
                             <label class="level-card" for="level4">
                                 <input type="radio" name="level" id="level4" value="4" required>
                                 <div class="level-number">4</div>
                                 <div class="level-content">
-                                    <div class="level-title">Intermediate Mid <span class="badge bg-info ms-2">12 questions</span></div>
+                                    <div class="level-title">Intermediate Mid <span class="badge bg-info ms-2">12
+                                            questions</span></div>
                                     <div class="level-description">
                                         I can participate in conversations on familiar topics and provide descriptions.
                                     </div>
                                 </div>
                             </label>
-                            
+
                             <label class="level-card" for="level5">
                                 <input type="radio" name="level" id="level5" value="5" required>
                                 <div class="level-number">5</div>
                                 <div class="level-content">
-                                    <div class="level-title">Intermediate High / Advanced Low <span class="badge bg-primary ms-2">15 questions</span></div>
+                                    <div class="level-title">Intermediate High / Advanced Low <span
+                                            class="badge bg-primary ms-2">15 questions</span></div>
                                     <div class="level-description">
-                                        I can discuss a wide range of topics with good control of grammar and vocabulary.
+                                        I can discuss a wide range of topics with good control of grammar and
+                                        vocabulary.
                                     </div>
                                 </div>
                             </label>
-                            
+
                             <label class="level-card" for="level6">
                                 <input type="radio" name="level" id="level6" value="6" required>
                                 <div class="level-number">6</div>
                                 <div class="level-content">
-                                    <div class="level-title">Advanced Mid / Advanced High <span class="badge bg-primary ms-2">15 questions</span></div>
+                                    <div class="level-title">Advanced Mid / Advanced High <span
+                                            class="badge bg-primary ms-2">15 questions</span></div>
                                     <div class="level-description">
                                         I can communicate fluently and accurately on most topics with ease.
                                     </div>
@@ -316,31 +323,31 @@
 </div>
 
 <script>
-const levelCards = document.querySelectorAll('.level-card');
-const continueBtn = document.getElementById('continueBtn');
-const radioInputs = document.querySelectorAll('input[name="level"]');
+    const levelCards = document.querySelectorAll('.level-card');
+    const continueBtn = document.getElementById('continueBtn');
+    const radioInputs = document.querySelectorAll('input[name="level"]');
 
-// Handle level card selection
-levelCards.forEach(card => {
-    card.addEventListener('click', function(e) {
-        // Remove selected class from all cards
-        levelCards.forEach(c => c.classList.remove('selected'));
-        
-        // Add selected class to clicked card
-        this.classList.add('selected');
-        
-        // Enable continue button
-        continueBtn.disabled = false;
-    });
-});
+    // Handle level card selection
+    levelCards.forEach(card => {
+        card.addEventListener('click', function (e) {
+            // Remove selected class from all cards
+            levelCards.forEach(c => c.classList.remove('selected'));
 
-// Also handle radio button change directly
-radioInputs.forEach(radio => {
-    radio.addEventListener('change', function() {
-        levelCards.forEach(c => c.classList.remove('selected'));
-        this.closest('.level-card').classList.add('selected');
-        continueBtn.disabled = false;
+            // Add selected class to clicked card
+            this.classList.add('selected');
+
+            // Enable continue button
+            continueBtn.disabled = false;
+        });
     });
-});
+
+    // Also handle radio button change directly
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', function () {
+            levelCards.forEach(c => c.classList.remove('selected'));
+            this.closest('.level-card').classList.add('selected');
+            continueBtn.disabled = false;
+        });
+    });
 </script>
 {% endblock %}
