@@ -613,15 +613,49 @@
             opacity: 0.8;
         }
 
-        /* Notifications Dropdown Styles */
+        /* Notifications Dropdown Styles - Modern Glassmorphism Design */
         .notifications-dropdown {
-            width: 500px;
-            max-height: 700px;
-            overflow-y: auto;
-            right: auto !important;
+            width: 420px;
+            max-height: 600px;
+            overflow: hidden;
+            right: 0 !important;
             left: auto !important;
-            transform: translateX(-420px) !important;
-            margin-right: 0;
+            transform: translateX(0) !important;
+            margin-top: 0.5rem !important;
+            border: none !important;
+            border-radius: 16px !important;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.2),
+                0 10px 25px -10px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+            animation: notifSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            padding: 0 !important;
+        }
+
+        @keyframes notifSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Gradient accent bar at top */
+        .notifications-dropdown::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+            z-index: 10;
         }
 
         /* Mobile Notifications Panel */
@@ -640,10 +674,11 @@
                 margin: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
-                background: var(--dropdown-bg);
+                background: var(--bg-primary) !important;
                 z-index: 1050 !important;
                 overflow-y: auto;
                 overflow-x: hidden;
+                animation: none;
             }
 
             #mobileNotificationsDropdown+.notifications-dropdown.show {
@@ -653,65 +688,66 @@
             #mobileNotificationsDropdown+.notifications-dropdown .border-bottom:first-child {
                 position: sticky;
                 top: 0;
-                background: var(--dropdown-bg);
+                background: var(--bg-primary);
                 z-index: 10;
-                border-bottom: 2px solid var(--border-color) !important;
+                border-bottom: 1px solid var(--border-color) !important;
             }
         }
 
-        /* On larger screens, make it even wider */
+        /* On larger screens */
         @media (min-width: 1200px) {
             .notifications-dropdown {
-                width: 600px;
-                transform: translateX(-520px) !important;
+                width: 480px;
             }
         }
 
-        @media (min-width: 1400px) {
-            .notifications-dropdown {
-                width: 700px;
-                transform: translateX(-620px) !important;
-            }
-        }
-
-        /* Notification filter buttons */
+        /* Modern pill-style filter tabs */
         .notifications-dropdown .btn-group {
-            border-radius: 0.25rem;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #f1f5f9;
+            padding: 3px;
+            gap: 2px;
         }
 
         .notifications-dropdown .btn-group .btn {
-            font-size: 0.8rem;
-            padding: 0.375rem 0.875rem;
-            border-color: var(--border-color);
-            background-color: white;
-            color: #495057;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.4rem 0.9rem;
+            border: none !important;
+            background-color: transparent;
+            color: #64748b;
+            border-radius: 16px !important;
+            transition: all 0.2s ease;
         }
 
         .notifications-dropdown .btn-group .btn:hover:not(.active) {
-            background-color: #f8f9fa;
-            color: #212529;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #334155;
         }
 
         .notifications-dropdown .btn-group .btn.active {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+        }
+
+        [data-theme="dark"] .notifications-dropdown .btn-group {
+            background: rgba(51, 65, 85, 0.5);
         }
 
         [data-theme="dark"] .notifications-dropdown .btn-group .btn {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
-
-        [data-theme="dark"] .notifications-dropdown .btn-group .btn.active {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-            color: white !important;
+            color: #94a3b8;
         }
 
         [data-theme="dark"] .notifications-dropdown .btn-group .btn:hover:not(.active) {
-            background-color: var(--dropdown-hover);
+            background-color: rgba(71, 85, 105, 0.5);
+            color: #f1f5f9;
+        }
+
+        [data-theme="dark"] .notifications-dropdown .btn-group .btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white !important;
         }
 
         /* Close button for mobile notifications */
@@ -745,35 +781,56 @@
         }
 
         .notification-item {
-            padding: 0.875rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            margin: 0.25rem 0.5rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
             display: flex;
-            gap: 0.75rem;
+            gap: 0.875rem;
             align-items: start;
             position: relative;
+            border: 1px solid transparent;
+            background: transparent;
         }
 
         .notification-item:hover {
-            background-color: var(--dropdown-hover);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-color: rgba(59, 130, 246, 0.1);
+            transform: translateX(2px);
         }
 
         .notification-item.unread {
-            background-color: rgba(13, 110, 253, 0.05);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .notification-item.unread:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.08) 100%);
+        }
+
+        [data-theme="dark"] .notification-item:hover {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border-color: rgba(59, 130, 246, 0.2);
         }
 
         [data-theme="dark"] .notification-item.unread {
-            background-color: rgba(88, 166, 255, 0.1);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border-color: rgba(59, 130, 246, 0.25);
         }
 
         .notification-avatar {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
-            border: 2px solid var(--border-color);
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .notification-avatar {
+            border-color: #334155;
         }
 
         .notification-content {
@@ -781,7 +838,7 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.3rem;
         }
 
         .notification-header {
@@ -794,12 +851,16 @@
         .notification-name {
             font-size: 0.9rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #1e293b;
+        }
+
+        [data-theme="dark"] .notification-name {
+            color: #f1f5f9;
         }
 
         .notification-username {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #64748b;
         }
 
         .notification-action {
@@ -807,21 +868,34 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.85rem;
-            color: var(--text-secondary);
+            color: #475569;
+        }
+
+        [data-theme="dark"] .notification-action {
+            color: #94a3b8;
         }
 
         .notification-action i {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
         }
 
         .notification-preview {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #64748b;
             font-style: italic;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
+            padding: 0.35rem 0.5rem;
+            background: rgba(100, 116, 139, 0.08);
+            border-radius: 6px;
+            margin-top: 0.25rem;
+        }
+
+        [data-theme="dark"] .notification-preview {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
         }
 
         .notification-footer {
@@ -829,51 +903,70 @@
             align-items: center;
             gap: 0.4rem;
             font-size: 0.75rem;
-            color: var(--text-muted);
+            color: #94a3b8;
+            margin-top: 0.25rem;
         }
 
         .notification-time {
-            color: var(--text-muted);
+            color: #94a3b8;
         }
 
         .notification-separator {
-            color: var(--text-muted);
+            color: #cbd5e1;
         }
 
         .notification-topic {
-            color: var(--text-muted);
+            color: #64748b;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-weight: 500;
         }
 
         .notification-badge {
-            width: 8px;
-            height: 8px;
-            background-color: #0d6efd;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             border-radius: 50%;
             flex-shrink: 0;
             position: absolute;
             top: 1rem;
             right: 1rem;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1);
+            }
         }
 
         [data-theme="dark"] .notification-badge {
-            background-color: #58a6ff;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
         }
 
         /* Dark mode for notifications dropdown */
         [data-theme="dark"] .notifications-dropdown {
-            background-color: var(--bg-primary);
-            border-color: var(--border-color);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%) !important;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5),
+                0 10px 25px -10px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(59, 130, 246, 0.2) !important;
         }
 
         [data-theme="dark"] .notifications-dropdown .border-bottom {
-            border-color: var(--border-color) !important;
+            border-color: rgba(51, 65, 85, 0.5) !important;
         }
 
         [data-theme="dark"] .notifications-dropdown h6 {
-            color: var(--text-primary);
+            color: #f1f5f9;
         }
 
         [data-theme="dark"] .notification-item {
@@ -909,19 +1002,68 @@
         }
 
         [data-theme="dark"] #loadMoreBtn {
-            color: #58a6ff !important;
+            color: #60a5fa !important;
         }
 
         [data-theme="dark"] #loadMoreBtn:hover {
-            color: #79bbff !important;
+            color: #93c5fd !important;
         }
 
         [data-theme="dark"] .notifications-dropdown .text-center.text-muted {
-            color: var(--text-muted) !important;
+            color: #94a3b8 !important;
         }
 
         [data-theme="dark"] .notifications-dropdown .text-center.text-muted i {
             opacity: 0.5;
+        }
+
+        /* Notifications list scrollable container */
+        #notificationsList,
+        #mobileNotificationsList {
+            max-height: 450px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0.5rem 0;
+        }
+
+        /* Custom scrollbar for notifications */
+        #notificationsList::-webkit-scrollbar,
+        #mobileNotificationsList::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #notificationsList::-webkit-scrollbar-track,
+        #mobileNotificationsList::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #notificationsList::-webkit-scrollbar-thumb,
+        #mobileNotificationsList::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+
+        #notificationsList::-webkit-scrollbar-thumb:hover,
+        #mobileNotificationsList::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+
+        /* Mark all read button styling */
+        #markAllReadBtn {
+            color: #3b82f6 !important;
+            font-weight: 500;
+        }
+
+        #markAllReadBtn:hover {
+            color: #2563eb !important;
+        }
+
+        [data-theme="dark"] #markAllReadBtn {
+            color: #60a5fa !important;
+        }
+
+        [data-theme="dark"] #markAllReadBtn:hover {
+            color: #93c5fd !important;
         }
 
         /* User Dropdown Styles - Enhanced */
@@ -1535,20 +1677,20 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end notifications-dropdown"
                         aria-labelledby="mobileNotificationsDropdown">
-                        <!-- Same content as desktop notifications -->
+                        <!-- Mobile Notifications Header -->
                         <li class="px-3 py-2 border-bottom">
                             <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0 fw-bold">Notifications</h6>
                                 <div class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-link btn-sm text-decoration-none p-0 d-lg-none"
-                                        id="closeMobileNotifications">
+                                    <button class="btn btn-link btn-sm text-decoration-none p-0"
+                                        id="mobileMarkAllReadBtn" style="display: none;">
+                                        <small>Mark all read</small>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-circle d-lg-none"
+                                        id="closeMobileNotifications" style="width: 28px; height: 28px; padding: 0;">
                                         <i class="fas fa-times"></i>
                                     </button>
-                                    <h6 class="mb-0">Notifications</h6>
                                 </div>
-                                <button class="btn btn-link btn-sm text-decoration-none p-0" id="mobileMarkAllReadBtn"
-                                    style="display: none;">
-                                    <small>Mark all read</small>
-                                </button>
                             </div>
                             <div class="d-flex justify-content-between align-items-center flex-wrap">
                                 <div class="btn-group btn-group-sm" role="group">
@@ -1998,52 +2140,166 @@
                 }
             }
 
-            // Create install banner
+            // Create install banner with modern premium design
             const installBanner = document.createElement('div');
             installBanner.id = 'pwa-install-banner';
-            installBanner.className = 'alert alert-info position-fixed shadow-lg pwa-banner-solid';
+
+            // Detect dark mode
+            const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+
             installBanner.style.cssText = `
-                bottom: 80px; /* Above bottom nav */
-                left: 10px;
-                right: 10px;
+                position: fixed;
+                bottom: 90px;
+                left: 50%;
+                transform: translateX(-50%);
                 z-index: 9999;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                border: 2px solid #0d6efd;
-                background-color: white !important;
-                opacity: 1 !important;
-                padding: 15px;
-                border-radius: 12px;
-                animation: slideUp 0.3s ease-out;
+                width: calc(100% - 32px);
+                max-width: 420px;
+                padding: 0;
+                border-radius: 20px;
+                overflow: hidden;
+                animation: pwaSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                box-shadow: 0 20px 60px -15px rgba(37, 99, 235, 0.4), 0 10px 30px -10px rgba(0, 0, 0, 0.2);
             `;
 
             installBanner.innerHTML = `
-                <div class="d-flex align-items-center flex-grow-1">
-                    <i class="fas fa-microphone-alt text-primary me-3" style="font-size: 2rem;"></i>
-                    <div>
-                        <strong>Install OPIc Practice Portal</strong>
-                        <p class="mb-0 small">Get quick access from your home screen</p>
+                <div style="
+                    background: ${isDarkMode
+                    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                    : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'};
+                    border: 1px solid ${isDarkMode ? 'rgba(59, 130, 246, 0.3)' : 'rgba(37, 99, 235, 0.15)'};
+                    border-radius: 20px;
+                    overflow: hidden;
+                ">
+                    <!-- Gradient accent bar -->
+                    <div style="
+                        height: 4px;
+                        background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+                    "></div>
+                    
+                    <div style="padding: 20px;">
+                        <!-- Header with icon and close button -->
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="
+                                    width: 52px;
+                                    height: 52px;
+                                    border-radius: 14px;
+                                    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.5);
+                                ">
+                                    <i class="fas fa-microphone-alt" style="font-size: 1.4rem; color: white;"></i>
+                                </div>
+                                <div>
+                                    <h6 style="
+                                        margin: 0 0 4px 0;
+                                        font-weight: 700;
+                                        font-size: 1rem;
+                                        color: ${isDarkMode ? '#f8fafc' : '#0f172a'};
+                                    ">Install OPIc Practice Portal</h6>
+                                    <p style="
+                                        margin: 0;
+                                        font-size: 0.85rem;
+                                        color: ${isDarkMode ? '#94a3b8' : '#64748b'};
+                                    ">Get quick access from your home screen</p>
+                                </div>
+                            </div>
+                            <button id="dismiss-btn" style="
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                border: none;
+                                background: ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
+                                color: ${isDarkMode ? '#94a3b8' : '#64748b'};
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.2s ease;
+                                flex-shrink: 0;
+                            ">
+                                <i class="fas fa-times" style="font-size: 0.85rem;"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Install button -->
+                <button id="install-btn" style="
+                            width: 100%;
+                            padding: 14px 24px;
+                            border: none;
+                            border-radius: 12px;
+                            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+                            color: white;
+                            font-weight: 600;
+                            font-size: 0.95rem;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            transition: all 0.2s ease;
+                            box-shadow: 0 4px 15px -5px rgba(37, 99, 235, 0.5);
+                        ">
+                            <i class="fas fa-download"></i>
+                            <span>Install</span>
+                        </button>
                     </div>
                 </div>
-                <div class="ms-3">
-                    <button class="btn btn-primary btn-sm me-2" id="install-btn">
-                        <i class="fas fa-download me-1"></i>Install
-                    </button>
-                    <button class="btn btn-sm btn-dark" id="dismiss-btn" title="Close" style="width: 32px; height: 32px; padding: 0; line-height: 1; border-radius: 50%;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
+                `;
+
+            // Add animation keyframes if not already added
+            if (!document.getElementById('pwa-banner-styles')) {
+                const style = document.createElement('style');
+                style.id = 'pwa-banner-styles';
+                style.textContent = `
+                    @keyframes pwaSlideUp {
+                        from {
+                            opacity: 0;
+                            transform: translateX(-50%) translateY(30px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateX(-50%) translateY(0);
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
 
             document.body.appendChild(installBanner);
 
             // Add click handlers
-            document.getElementById('install-btn').addEventListener('click', installApp);
-            document.getElementById('dismiss-btn').addEventListener('click', () => {
+            const installBtn = document.getElementById('install-btn');
+            const dismissBtn = document.getElementById('dismiss-btn');
+
+            installBtn.addEventListener('click', installApp);
+            dismissBtn.addEventListener('click', () => {
                 installBanner.remove();
                 // Store timestamp instead of just 'true' - will show again after 7 days
                 localStorage.setItem('pwa-install-dismissed-time', Date.now().toString());
+            });
+
+            // Add hover effects
+            const dismissBg = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            const dismissBgHover = isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+
+            dismissBtn.addEventListener('mouseenter', function () {
+                this.style.background = dismissBgHover;
+            });
+            dismissBtn.addEventListener('mouseleave', function () {
+                this.style.background = dismissBg;
+            });
+
+            installBtn.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 20px -5px rgba(37, 99, 235, 0.6)';
+            });
+            installBtn.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 15px -5px rgba(37, 99, 235, 0.5)';
             });
         }
 
@@ -2162,6 +2418,7 @@
             const modal = document.createElement('div');
             modal.className = 'modal fade';
             modal.id = 'iosInstallModal';
+            modal.setAttribute('tabindex', '-1');
             modal.innerHTML = `
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -2176,8 +2433,8 @@
                             <ol class="install-steps">
                                 <li class="mb-2">
                                     <i class="fas fa-arrow-up text-primary me-2"></i>
-                                    Tap the <strong>Share</strong> button 
-                                    <i class="fas fa-share" style="font-size: 0.9rem;"></i> 
+                                    Tap the <strong>Share</strong> button
+                                    <i class="fas fa-share" style="font-size: 0.9rem;"></i>
                                     in Safari's toolbar
                                 </li>
                                 <li class="mb-2">
@@ -2584,7 +2841,6 @@
                         actionIcon = '<i class="fas fa-bell"></i>';
                 }
 
-                // Preview of comment if available
                 const commentPreview = notif.comment_preview ?
                     `<div class="notification-preview">"${escapeHtml(notif.comment_preview)}"</div>` : '';
 

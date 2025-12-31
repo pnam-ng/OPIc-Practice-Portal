@@ -55,10 +55,11 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary px-4">
+                            <button type="submit" class="btn btn-primary px-4 order-md-2">
                                 <i class="fas fa-paper-plane me-2"></i>Submit Feedback
                             </button>
+                            <a href="{{ url_for('main.index') }}"
+                                class="btn btn-outline-secondary order-md-1">Cancel</a>
                         </div>
                     </form>
                 </div>
