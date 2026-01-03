@@ -102,12 +102,21 @@ class Question(db.Model):
     audio_url = db.Column(db.String(200))
     sample_answer_text = db.Column(db.Text, nullable=True)  # Sample answer transcription
     sample_answer_audio_url = db.Column(db.String(200), nullable=True)  # Sample answer audio path
+    
+    # Question Variation Fields
+    parent_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=True)  # Original question if this is a variation
+    variation_type = db.Column(db.String(20), nullable=True)  # 'rephrase', 'followup', 'perspective', 'timeshift'
+    is_generated = db.Column(db.Boolean, default=False)  # True if AI-generated
+    generation_source = db.Column(db.String(50), nullable=True)  # 'gemini', 'manual', 'template'
+    keywords = db.Column(db.JSON, nullable=True)  # Keywords for this question
+    
     created_at = db.Column(db.DateTime, default=now_hanoi)
     updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
     
     # Relationships
     responses = db.relationship('Response', backref='question', lazy='dynamic')
     comments = db.relationship('Comment', backref='question', lazy='dynamic', cascade='all, delete-orphan')
+    variations = db.relationship('Question', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
     
     def __repr__(self):
         text_preview = self.text[:50] if self.text else 'No text'
@@ -125,6 +134,11 @@ class Question(db.Model):
             'audio_url': self.audio_url,
             'sample_answer_text': self.sample_answer_text,
             'sample_answer_audio_url': self.sample_answer_audio_url,
+            'parent_id': self.parent_id,
+            'variation_type': self.variation_type,
+            'is_generated': self.is_generated,
+            'generation_source': self.generation_source,
+            'keywords': self.keywords,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
@@ -310,4 +324,73 @@ class Tip(db.Model):
             'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class QuestionSession(db.Model):
+    """Track which questions have been shown to users for intelligent rotation"""
+    __tablename__ = 'question_sessions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
+    topic = db.Column(db.String(100), nullable=False)  # Denormalized for faster queries
+    difficulty_level = db.Column(db.String(10), nullable=False)  # Denormalized for faster queries
+    round_number = db.Column(db.Integer, default=1)  # Track which round user is in
+    shown_at = db.Column(db.DateTime, default=now_hanoi)
+    was_answered = db.Column(db.Boolean, default=False)
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('question_sessions', lazy='dynamic'))
+    question = db.relationship('Question', backref=db.backref('sessions', lazy='dynamic'))
+    
+    # Unique constraint to prevent duplicate entries in same round
+    __table_args__ = (
+        db.Index('idx_user_topic_level_round', 'user_id', 'topic', 'difficulty_level', 'round_number'),
+    )
+    
+    def __repr__(self):
+        return f'<QuestionSession {self.id}: User {self.user_id} Q{self.question_id} Round {self.round_number}>'
+    
+    @staticmethod
+    def get_current_round(user_id, topic, difficulty_level):
+        """Get the current round number for a user's topic/level"""
+        latest = QuestionSession.query.filter_by(
+            user_id=user_id,
+            topic=topic,
+            difficulty_level=difficulty_level
+        ).order_by(QuestionSession.round_number.desc()).first()
+        return latest.round_number if latest else 1
+    
+    @staticmethod
+    def get_seen_question_ids(user_id, topic, difficulty_level, round_number):
+        """Get IDs of questions already seen in current round"""
+        seen = QuestionSession.query.filter_by(
+            user_id=user_id,
+            topic=topic,
+            difficulty_level=difficulty_level,
+            round_number=round_number
+        ).with_entities(QuestionSession.question_id).all()
+        return [s.question_id for s in seen]
+    
+    @staticmethod
+    def get_progress(user_id, topic, difficulty_level):
+        """Get user's progress for a topic/level (seen/total)"""
+        from app.models import Question
+        current_round = QuestionSession.get_current_round(user_id, topic, difficulty_level)
+        seen_count = QuestionSession.query.filter_by(
+            user_id=user_id,
+            topic=topic,
+            difficulty_level=difficulty_level,
+            round_number=current_round
+        ).count()
+        total_count = Question.query.filter_by(
+            topic=topic,
+            difficulty_level=difficulty_level
+        ).count()
+        return {
+            'seen': seen_count,
+            'total': total_count,
+            'round': current_round,
+            'progress_percent': (seen_count / total_count * 100) if total_count > 0 else 0
         }

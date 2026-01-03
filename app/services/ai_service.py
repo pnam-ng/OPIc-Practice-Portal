@@ -13,69 +13,79 @@ import time
 
 
 class AIService:
-    """Service for AI-powered response scoring"""
+    """Service for AI-powered response scoring with multi-provider fallback"""
     
     def __init__(self):
-        # Using Google AI Studio (Gemini) - COMPLETELY FREE, no credit card required!
-        # Get API key: https://aistudio.google.com/app/apikey
-        # Free tier: 60 requests/minute, generous limits
-        # Model: gemini-2.5-flash (free, fast, good for instruction following)
+        # Primary: Google AI Studio (Gemini) - FREE
+        # Fallback: Groq API - FREE (14.4K req/day)
         self.api_provider = "google"
         
         # Model configuration with fallback support
-        # Based on available models and rate limits:
-        # - gemini-2.5-flash: RPD 250 (currently exceeded)
-        # - gemini-2.5-flash-lite: RPD 1000 (best fallback)
-        # - gemini-2.0-flash: RPD 200
-        # - gemini-2.0-flash-lite: RPD 200
-        # - gemini-2.5-pro: RPD 50
-        self.default_model = "gemini-2.5-flash"
+        # Fallback order: gemini-3-flash → gemini-2.5-flash → gemini-2.5-flash-lite → groq
+        self.default_model = "gemini-3-flash"
         self.fallback_models = [
-            "gemini-2.5-flash-lite",  # First fallback (RPD: 1000 - highest limit)
-            "gemini-2.0-flash",       # Second fallback (RPD: 200)
-            "gemini-2.0-flash-lite",   # Third fallback (RPD: 200)
-            "gemini-2.5-pro",          # Fourth fallback (RPD: 50)
+            # Google Gemini fallbacks
+            ("google", "gemini-2.5-flash"),
+            ("google", "gemini-2.5-flash-lite"),
+            # Groq fallbacks (14.4K RPD)
+            ("groq", "llama-3.3-70b-versatile"),
+            ("groq", "llama-3.1-8b-instant"),
         ]
         self.model = self.default_model
         self.current_model_index = 0  # 0 = default, 1+ = fallback index
-        self.last_model_check = 0  # Timestamp of last model availability check
-        self.model_check_interval = 3600  # Check default model availability every hour
+        self.last_model_check = 0
+        self.model_check_interval = 3600
         
         self._update_api_url()
         
+        # Google API token
         self.api_token = os.getenv("GOOGLE_AI_API_KEY") or os.getenv("GEMINI_API_KEY")
+        
+        # Groq API token
+        self.groq_api_token = os.getenv("GROQ_API_KEY")
         
         if not self.api_token:
             try:
                 from flask import has_app_context
                 if has_app_context():
                     self.api_token = current_app.config.get("GOOGLE_AI_API_KEY") or current_app.config.get("GEMINI_API_KEY")
+                    self.groq_api_token = self.groq_api_token or current_app.config.get("GROQ_API_KEY")
             except:
                 pass
         
         self.max_retries = 3
-        self.timeout = 90  # 90 seconds timeout (increased for API calls)
-        self._rater_guidelines = None  # Cache for PDF content (loaded once)
-        self._rater_summary = None  # Cache for PDF summary (concise version)
-        self._system_prompt_base = None  # Cached system prompt with PDF summary
-        self._pdf_loaded = False  # Flag to track if PDF has been loaded
+        self.timeout = 90
+        self._rater_guidelines = None
+        self._rater_summary = None
+        self._system_prompt_base = None
+        self._pdf_loaded = False
     
     def _update_api_url(self):
-        """Update API URL based on current model"""
-        self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        """Update API URL based on current model and provider"""
+        if self.api_provider == "groq":
+            self.api_url = "https://api.groq.com/openai/v1/chat/completions"
+        else:
+            self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
     
     def _switch_to_fallback_model(self):
-        """Switch to next fallback model if available"""
+        """Switch to next fallback model if available (supports multi-provider)"""
         if self.current_model_index < len(self.fallback_models):
+            fallback = self.fallback_models[self.current_model_index]
             self.current_model_index += 1
-            self.model = self.fallback_models[self.current_model_index - 1]
+            
+            # Handle (provider, model) tuple format
+            if isinstance(fallback, tuple):
+                self.api_provider, self.model = fallback
+            else:
+                self.model = fallback
+            
             self._update_api_url()
             try:
                 from flask import has_app_context
                 if has_app_context():
-                    current_app.logger.warning(f"[AI Service] Switched to fallback model: {self.model}")
+                    current_app.logger.warning(f"[AI Service] Switched to {self.api_provider}:{self.model}")
             except:
-                pass
+                print(f"[AI Service] Switched to {self.api_provider}:{self.model}")
             return True
         return False
     
@@ -613,7 +623,109 @@ Respond in JSON format (personalized feedback in Vietnamese): {{"score": number,
     
     def _call_google_api(self, prompt: str) -> Optional[str]:
         """
-        Call Google AI Studio (Gemini) API - COMPLETELY FREE!
+        Call AI API based on current provider (Google Gemini or Groq)
+        """
+        # Route to appropriate provider
+        if self.api_provider == "groq":
+            return self._call_groq_api(prompt)
+        
+        return self._call_gemini_api(prompt)
+    
+    def _call_groq_api(self, prompt: str) -> Optional[str]:
+        """
+        Call Groq API (OpenAI-compatible format)
+        Free tier: 14,400 requests/day
+        """
+        if not self.groq_api_token:
+            self.groq_api_token = os.getenv("GROQ_API_KEY")
+            if not self.groq_api_token:
+                try:
+                    from flask import has_app_context
+                    if has_app_context():
+                        self.groq_api_token = current_app.config.get("GROQ_API_KEY")
+                except:
+                    pass
+        
+        if not self.groq_api_token:
+            try:
+                from flask import has_app_context
+                if has_app_context():
+                    current_app.logger.error("GROQ_API_KEY not set. Get free key at https://console.groq.com")
+            except:
+                print("GROQ_API_KEY not set. Get free key at https://console.groq.com")
+            return None
+        
+        headers = {
+            "Authorization": f"Bearer {self.groq_api_token}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.7,
+            "max_tokens": 4096,
+        }
+        
+        for attempt in range(self.max_retries):
+            try:
+                response = requests.post(
+                    self.api_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=self.timeout
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    if content:
+                        try:
+                            from flask import has_app_context
+                            if has_app_context():
+                                current_app.logger.info(f"[Groq] Success with {self.model}")
+                        except:
+                            print(f"[Groq] Success with {self.model}")
+                        return content
+                    return None
+                    
+                elif response.status_code == 429:
+                    # Rate limit - switch to next fallback
+                    try:
+                        current_app.logger.warning(f"[Groq] Rate limited on {self.model}")
+                    except:
+                        print(f"[Groq] Rate limited on {self.model}")
+                    if self._switch_to_fallback_model():
+                        continue
+                    return None
+                    
+                else:
+                    try:
+                        current_app.logger.error(f"[Groq] Error {response.status_code}: {response.text[:200]}")
+                    except:
+                        print(f"[Groq] Error {response.status_code}: {response.text[:200]}")
+                    if attempt < self.max_retries - 1:
+                        time.sleep(2 ** attempt)
+                        continue
+                    return None
+                    
+            except Exception as e:
+                try:
+                    current_app.logger.error(f"[Groq] Exception: {e}")
+                except:
+                    print(f"[Groq] Exception: {e}")
+                if attempt < self.max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                return None
+        
+        return None
+    
+    def _call_gemini_api(self, prompt: str) -> Optional[str]:
+        """
+        Call Google AI Studio (Gemini) API
         """
         # Refresh API token from config if not set
         if not self.api_token:
@@ -754,38 +866,34 @@ Respond in JSON format (personalized feedback in Vietnamese): {{"score": number,
                     return content
                     
                 elif response.status_code == 429:
-                    # Rate limit - try fallback model if available
-                    if self.current_model_index == 0:  # Currently using default model
-                        if self._switch_to_fallback_model():
-                            # Retry with fallback model
-                            api_url = f"{self.api_url}?key={self.api_token}"
-                            current_app.logger.warning(f"Rate limited on {self.default_model}, switching to {self.model}")
-                            continue
-                    
-                    # If already on fallback or no fallback available, wait and retry
-                    current_app.logger.warning(f"Rate limit exceeded on {self.model}. Waiting before retry...")
-                    if attempt < self.max_retries - 1:
-                        time.sleep(5)
+                    # Rate limit - try switching to next fallback model
+                    current_app.logger.warning(f"Rate limited on {self.model}. Trying next fallback...")
+                    if self._switch_to_fallback_model():
+                        # Retry with new fallback model
+                        api_url = f"{self.api_url}?key={self.api_token}"
+                        current_app.logger.warning(f"Switched to {self.model}")
                         continue
-                    return None
+                    else:
+                        # No more fallback models, wait and return None
+                        current_app.logger.error(f"All fallback models exceeded rate limit. No more options.")
+                        if attempt < self.max_retries - 1:
+                            time.sleep(5)
+                            continue
+                        return None
                 elif response.status_code == 403:
                     error_info = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
                     error_msg = error_info.get('error', {}).get('message', 'API key invalid or quota exceeded')
                     
                     # Check if it's quota exceeded (not just invalid key)
                     if 'quota' in error_msg.lower() or 'exceeded' in error_msg.lower() or 'RPD' in error_msg:
-                        # Quota exceeded - try fallback model
-                        if self.current_model_index == 0:  # Currently using default model
-                            if self._switch_to_fallback_model():
-                                # Retry with fallback model
-                                api_url = f"{self.api_url}?key={self.api_token}"
-                                current_app.logger.warning(f"Quota exceeded on {self.default_model}, switching to {self.model}")
-                                continue
+                        # Quota exceeded - try switching to next fallback model
+                        current_app.logger.warning(f"Quota exceeded on {self.model}. Trying next fallback...")
+                        if self._switch_to_fallback_model():
+                            api_url = f"{self.api_url}?key={self.api_token}"
+                            current_app.logger.warning(f"Switched to {self.model}")
+                            continue
                         else:
-                            current_app.logger.error(f"Quota exceeded on fallback model {self.model}: {error_msg}")
-                            if attempt < self.max_retries - 1:
-                                time.sleep(2 ** attempt)
-                                continue
+                            current_app.logger.error(f"All fallback models exceeded quota. Using template fallback.")
                             return None
                     else:
                         # Other 403 error (invalid key, etc.)
@@ -793,6 +901,16 @@ Respond in JSON format (personalized feedback in Vietnamese): {{"score": number,
                         if attempt < self.max_retries - 1:
                             time.sleep(2 ** attempt)
                             continue
+                        return None
+                elif response.status_code == 404:
+                    # Model not found - switch to next fallback
+                    current_app.logger.warning(f"Model {self.model} not found (404). Trying next fallback...")
+                    if self._switch_to_fallback_model():
+                        api_url = f"{self.api_url}?key={self.api_token}"
+                        current_app.logger.warning(f"Switched to {self.model}")
+                        continue
+                    else:
+                        current_app.logger.error(f"All models unavailable. Using template fallback.")
                         return None
                 else:
                     current_app.logger.error(f"Google AI API error: {response.status_code} - {response.text[:200]}")
