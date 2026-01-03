@@ -1646,29 +1646,27 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary" {% if current_user.is_authenticated
         %}data-user-logged-in="true" {% endif %}>
-        <div class="container-fluid px-3 px-md-4">
+        <div class="container-fluid px-2 px-md-4">
             <a class="navbar-brand"
                 href="{% if current_user.is_authenticated %}{{ url_for('main.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}">
-                <i class="fas fa-microphone-alt me-2"></i>OPIc Practice Portal
+                <i class="fas fa-microphone-alt me-1"></i><span class="d-none d-sm-inline">OPIc Practice
+                    Portal</span><span class="d-sm-none">OPP</span>
             </a>
 
             <!-- Bootstrap Navbar Toggler -->
             <!-- Mobile Nav Buttons Group (Aligned with brand on small screens) -->
-            <div class="d-flex align-items-center ms-2 ms-lg-auto">
-                <!-- PWA Install Button (mobile only) -->
-                <button class="btn btn-sm btn-light me-2 d-none" id="pwaInstallBtn" aria-label="Install app"
+            <div class="d-flex align-items-center ms-auto gap-1">
+                <button class="btn btn-sm btn-light d-none" id="pwaInstallBtn" aria-label="Install app"
                     title="Install app">
                     <i class="fas fa-download"></i>
                 </button>
 
-                <!-- Dark Mode Toggle (visible on all screens) -->
-                <button class="theme-toggle me-2" id="themeToggle" aria-label="Toggle dark mode">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
 
-                <!-- Notifications Icon (visible on mobile outside hamburger menu) -->
                 {% if current_user.is_authenticated %}
-                <div class="d-lg-none dropdown me-2">
+                <div class="d-lg-none dropdown">
                     <a class="nav-link-mobile position-relative" href="#" id="mobileNotificationsDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-bell"></i>
@@ -1726,10 +1724,10 @@
                 </div>
                 {% endif %}
 
-                <!-- Mobile Hamburger Menu Button (after notifications) -->
                 {% if current_user.is_authenticated %}
-                <button class="btn btn-sm btn-light d-lg-none" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#mobileNavMenu" aria-controls="mobileNavMenu" aria-label="Open menu">
+                <button class="btn btn-sm btn-light d-lg-none" id="mobileMenuToggler" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileNavMenu" aria-controls="mobileNavMenu"
+                    aria-label="Open menu">
                     <i class="fas fa-bars"></i>
                 </button>
                 {% endif %}
