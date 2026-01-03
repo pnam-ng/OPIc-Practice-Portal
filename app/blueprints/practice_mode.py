@@ -48,3 +48,8 @@ def congratulations():
 @login_required
 def ai_score(response_id):
     return practice_mode_controller.ai_score(response_id)
+
+@practice_mode_bp.route('/progress')
+@login_required
+def get_practice_progress():
+    return practice_mode_controller.get_practice_progress()

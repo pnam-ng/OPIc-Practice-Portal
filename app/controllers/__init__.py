@@ -813,6 +813,15 @@ class PracticeModeController(BaseController):
     def __init__(self):
         super().__init__()
         # Services are initialized in BaseController
+        self._question_generator = None
+    
+    @property
+    def question_generator(self):
+        """Lazy load question generator service"""
+        if self._question_generator is None:
+            from app.services.question_generator import QuestionGeneratorService
+            self._question_generator = QuestionGeneratorService()
+        return self._question_generator
     
     @login_required
     def index(self):
@@ -825,7 +834,7 @@ class PracticeModeController(BaseController):
     
     @login_required
     def start_practice(self):
-        """Start a practice session"""
+        """Start a practice session using intelligent question rotation"""
         if request.method == 'POST':
             topic = request.form.get('topic')
             level = request.form.get('level')
@@ -835,31 +844,36 @@ class PracticeModeController(BaseController):
                 flash('Please select a difficulty level.', 'error')
                 return redirect(url_for('practice_mode.index'))
             
-            # Get user history to avoid repetition
-            responses = self.response_service.get_user_responses(current_user.id, limit=None)
-            excluded_ids = [r.question_id for r in responses]
-
-            questions = []
-            if topic == 'random':
-                questions = self.question_service.get_random_questions_excluding(
-                    count=1, 
-                    language=language, 
-                    level=level,
-                    excluded_ids=excluded_ids
-                )
+            if topic == 'random' or not topic:
+                # Get random question from any topic at this level
+                from app.models import Question
+                question = Question.query.filter_by(
+                    difficulty_level=level
+                ).order_by(db.func.random()).first()
+                
+                if question:
+                    session['allowed_practice_question'] = question.id
+                    session['practice_topic'] = question.topic
+                    session['practice_level'] = level
+                    return redirect(url_for('practice_mode.question', question_id=question.id))
             else:
-                questions = self.question_service.get_random_questions_excluding(
-                    count=1, 
-                    language=language, 
-                    level=level,
+                # Use intelligent rotation for specific topic
+                question, is_new_round = self.question_generator.get_next_question(
+                    user_id=current_user.id,
                     topic=topic,
-                    excluded_ids=excluded_ids
+                    level=level
                 )
-            
-            if questions:
-                # Store allowed question in session for security
-                session['allowed_practice_question'] = questions[0].id
-                return redirect(url_for('practice_mode.question', question_id=questions[0].id))
+                
+                if question:
+                    # Store allowed question in session for security
+                    session['allowed_practice_question'] = question.id
+                    session['practice_topic'] = topic
+                    session['practice_level'] = level
+                    
+                    if is_new_round:
+                        flash('🎉 You completed all questions in this topic! Starting a new round.', 'info')
+                    
+                    return redirect(url_for('practice_mode.question', question_id=question.id))
             
             flash('No questions found for your selection.', 'error')
             return redirect(url_for('practice_mode.index'))
@@ -944,9 +958,27 @@ class PracticeModeController(BaseController):
     
     @login_required
     def get_topics_by_level(self, level):
-        """Get topics available for a specific level"""
+        """Get topics available for a specific level with progress info"""
         topics = self.question_service.get_topics_by_level(level)
-        return jsonify({'topics': topics})
+        
+        # Add progress info for each topic
+        topics_with_progress = []
+        for topic in topics:
+            progress = self.question_generator.get_user_progress(
+                current_user.id, topic, level
+            )
+            topics_with_progress.append({
+                'name': topic,
+                'progress': progress
+            })
+        
+        return jsonify({'topics': topics_with_progress})
+    
+    @login_required
+    def get_practice_progress(self):
+        """Get user's overall practice progress"""
+        progress = self.question_generator.get_user_progress(current_user.id)
+        return jsonify({'success': True, 'progress': progress})
 
     @login_required
     def congratulations(self):
