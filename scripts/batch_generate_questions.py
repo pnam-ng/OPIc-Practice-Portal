@@ -14,6 +14,20 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
+# Load environment variables from env file
+try:
+    from dotenv import load_dotenv
+    env_files = ['config.env', '.env', 'env']
+    for env_file in env_files:
+        env_path = os.path.join(project_root, env_file)
+        if os.path.exists(env_path):
+            load_dotenv(env_path)
+            print(f"[OK] Loaded environment from: {env_file}")
+            break
+except ImportError:
+    print("[WARN] python-dotenv not installed, using system environment")
+
+
 
 def generate_for_all_topics(questions_per_topic=3, include_variations=True, export_json=True):
     """Generate questions for all topics across all levels"""
