@@ -666,3 +666,133 @@ def delete_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# --- TTS Audio Management ---
+
+@admin_bp.route("/tts/scan", methods=["GET"])
+@login_required
+@admin_required
+def scan_missing_audio():
+    """Scan for questions/sample answers that have text but no audio"""
+    from app.services.tts_service import TTSService
+    
+    include_sample_answers = request.args.get('include_sample_answers', 'true').lower() == 'true'
+    
+    tts = TTSService()
+    result = tts.scan_missing_audio(include_sample_answer=include_sample_answers)
+    
+    return jsonify({
+        'success': True,
+        'questions_missing': len(result['questions']),
+        'sample_answers_missing': len(result['sample_answers']),
+        'total_missing': result['total_missing'],
+        'questions': result['questions'][:50],  # Limit to 50 for performance
+        'sample_answers': result['sample_answers'][:50]
+    })
+
+
+@admin_bp.route("/tts/generate", methods=["POST"])
+@login_required
+@admin_required
+def generate_batch_audio():
+    """Generate TTS audio for questions/sample answers missing audio"""
+    from app.services.tts_service import TTSService
+    
+    data = request.get_json() or {}
+    
+    voice_key = data.get('voice', 'ava')
+    generate_questions = data.get('generate_questions', True)
+    generate_sample_answers = data.get('generate_sample_answers', True)
+    limit = data.get('limit')
+    topic = data.get('topic')
+    
+    tts = TTSService()
+    
+    if topic:
+        # Generate for specific topic
+        result = tts.generate_missing_audio_for_topic(
+            topic=topic,
+            voice_key=voice_key,
+            generate_questions=generate_questions,
+            generate_sample_answers=generate_sample_answers
+        )
+    else:
+        # Generate for all
+        result = tts.generate_missing_audio(
+            voice_key=voice_key,
+            generate_questions=generate_questions,
+            generate_sample_answers=generate_sample_answers,
+            limit=limit
+        )
+    
+    return jsonify({
+        'success': True,
+        'success_count': result['success_count'],
+        'failed_count': result['failed_count'],
+        'skipped_count': result['skipped_count'],
+        'details': result['details'][:100]  # Limit details for response size
+    })
+
+
+@admin_bp.route("/tts/generate-single/<int:question_id>", methods=["POST"])
+@login_required
+@admin_required
+def generate_single_audio(question_id):
+    """Generate TTS audio for a single question"""
+    from app.services.tts_service import TTSService
+    
+    question = Question.query.get(question_id)
+    if not question:
+        return jsonify({'success': False, 'error': 'Question not found'}), 404
+    
+    data = request.get_json() or {}
+    voice_key = data.get('voice', 'ava')
+    audio_type = data.get('type', 'question')  # 'question' or 'sample_answer'
+    
+    tts = TTSService()
+    
+    # Determine which text to use
+    if audio_type == 'sample_answer':
+        text = question.sample_answer_text
+        if not text:
+            return jsonify({'success': False, 'error': 'Question has no sample answer text'}), 400
+    else:
+        text = question.text
+        if not text:
+            return jsonify({'success': False, 'error': 'Question has no text content'}), 400
+    
+    # Generate audio
+    upload_dir = tts._get_upload_base_dir()
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    timestamp = int(time.time() * 1000)
+    if audio_type == 'sample_answer':
+        filename = f"sa_{question_id}_{timestamp}.mp3"
+    else:
+        filename = f"q_{question_id}_{timestamp}.mp3"
+    
+    output_path = os.path.join(upload_dir, filename)
+    audio_url = f"/uploads/questions/{filename}"
+    
+    try:
+        success = tts.generate_audio_standalone(text, output_path, voice_key)
+        
+        if success:
+            if audio_type == 'sample_answer':
+                question.sample_answer_audio_url = audio_url
+            else:
+                question.audio_url = audio_url
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Audio generated successfully',
+                'audio_url': audio_url
+            })
+        else:
+            return jsonify({'success': False, 'error': 'TTS generation failed'}), 500
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
