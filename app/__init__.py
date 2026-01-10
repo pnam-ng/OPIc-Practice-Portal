@@ -117,7 +117,63 @@ def create_app():
     # Register the filter with Flask (recommended method)
     app.add_template_filter(unescape_html_filter, 'unescape_html')
     
+    # Start background TTS generation for missing audio on startup
+    _start_background_tts_generator(app)
+    
     return app
+
+
+def _start_background_tts_generator(app):
+    """
+    Start a background thread to generate missing TTS audio.
+    This runs after app startup with a delay to not block the server.
+    """
+    import threading
+    import time
+    
+    def run_tts_generation(app):
+        # Wait a bit after startup to let the server initialize fully
+        time.sleep(10)  # 10 second delay
+        
+        with app.app_context():
+            try:
+                from app.services.tts_service import TTSService
+                
+                tts = TTSService()
+                missing = tts.scan_missing_audio(include_sample_answer=True)
+                
+                total_missing = missing['total_missing']
+                if total_missing == 0:
+                    print("[TTS] ✓ All questions have audio files")
+                    return
+                
+                print(f"[TTS] Found {total_missing} items missing audio. Starting background generation...")
+                print(f"[TTS]   - Questions: {len(missing['questions'])}")
+                print(f"[TTS]   - Sample answers: {len(missing['sample_answers'])}")
+                
+                # Generate missing audio (runs in current thread which is already background)
+                result = tts.generate_missing_audio(
+                    voice_key='ava',
+                    generate_questions=True,
+                    generate_sample_answers=True,
+                    limit=None  # Process all
+                )
+                
+                print(f"[TTS] ✓ Generation complete!")
+                print(f"[TTS]   - Success: {result['success_count']}")
+                print(f"[TTS]   - Failed: {result['failed_count']}")
+                print(f"[TTS]   - Skipped: {result['skipped_count']}")
+                
+            except Exception as e:
+                print(f"[TTS] ✗ Background TTS generation error: {e}")
+                import traceback
+                traceback.print_exc()
+    
+    # Start background thread (daemon=True so it doesn't block shutdown)
+    thread = threading.Thread(target=run_tts_generation, args=(app,), daemon=True)
+    thread.start()
+    print("[TTS] Background audio generation thread started (will run in 10 seconds)")
+
 
 def create_celery(app=None):
     celery = Celery(

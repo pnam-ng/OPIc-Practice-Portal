@@ -472,7 +472,8 @@ Generate a NEW, UNIQUE question for the OPIc test.
     def save_generated_question(self, topic: str, level: str, text: str, 
                                 sample_answer: str = None, keywords: List[str] = None,
                                 parent_id: int = None, variation_type: str = None,
-                                generation_source: str = 'gemini') -> Optional[Question]:
+                                generation_source: str = 'gemini',
+                                auto_generate_audio: bool = True) -> Optional[Question]:
         """
         Save a generated question to the database
         
@@ -485,6 +486,7 @@ Generate a NEW, UNIQUE question for the OPIc test.
             parent_id: Optional parent question ID (for variations)
             variation_type: Type of variation if applicable
             generation_source: Source of generation ('gemini', 'template', 'manual')
+            auto_generate_audio: Whether to auto-generate TTS audio (default: True)
             
         Returns:
             The created Question object or None
@@ -507,6 +509,11 @@ Generate a NEW, UNIQUE question for the OPIc test.
             db.session.commit()
             
             current_app.logger.info(f"Saved generated question: {text[:50]}...")
+            
+            # Auto-generate TTS audio for question and sample answer
+            if auto_generate_audio:
+                self._generate_audio_for_question(question)
+            
             return question
             
         except Exception as e:
@@ -514,6 +521,72 @@ Generate a NEW, UNIQUE question for the OPIc test.
             db.session.rollback()
             return None
 
+    def _generate_audio_for_question(self, question: Question):
+        """
+        Generate TTS audio for a question in a background thread.
+        This is called automatically after saving a generated question.
+        """
+        import threading
+        
+        def generate_in_background(question_id, text, sample_answer_text):
+            try:
+                from app.services.tts_service import TTSService
+                import os
+                import time
+                
+                tts = TTSService()
+                upload_dir = tts._get_upload_base_dir()
+                os.makedirs(upload_dir, exist_ok=True)
+                
+                # Generate question audio
+                if text and len(text.strip()) >= 5:
+                    timestamp = int(time.time() * 1000)
+                    filename = f"q_{question_id}_{timestamp}.mp3"
+                    output_path = os.path.join(upload_dir, filename)
+                    audio_url = f"/uploads/questions/{filename}"
+                    
+                    if tts.generate_audio_standalone(text, output_path, voice_key='ava'):
+                        # Update database using a new app context
+                        from app import create_app, db
+                        app = create_app()
+                        with app.app_context():
+                            from app.models import Question
+                            q = Question.query.get(question_id)
+                            if q:
+                                q.audio_url = audio_url
+                                db.session.commit()
+                                print(f"✓ Auto-generated question audio for #{question_id}")
+                
+                # Generate sample answer audio
+                if sample_answer_text and len(sample_answer_text.strip()) >= 5:
+                    timestamp = int(time.time() * 1000)
+                    filename = f"sa_{question_id}_{timestamp}.mp3"
+                    output_path = os.path.join(upload_dir, filename)
+                    audio_url = f"/uploads/questions/{filename}"
+                    
+                    if tts.generate_audio_standalone(sample_answer_text, output_path, voice_key='ava'):
+                        from app import create_app, db
+                        app = create_app()
+                        with app.app_context():
+                            from app.models import Question
+                            q = Question.query.get(question_id)
+                            if q:
+                                q.sample_answer_audio_url = audio_url
+                                db.session.commit()
+                                print(f"✓ Auto-generated sample answer audio for #{question_id}")
+                                
+            except Exception as e:
+                print(f"✗ Error auto-generating audio for question #{question_id}: {e}")
+        
+        # Run in background thread to not block the main request
+        thread = threading.Thread(
+            target=generate_in_background,
+            args=(question.id, question.text, question.sample_answer_text),
+            daemon=True
+        )
+        thread.start()
+
 
 # Global instance
 question_generator = QuestionGeneratorService()
+
