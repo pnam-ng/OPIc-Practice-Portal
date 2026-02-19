@@ -113,10 +113,13 @@ Respond with ONLY the new question text, nothing else."""
     
     def _generate_with_ai(self, topic: str, level: str, question_type: str,
                           existing_questions: List[str] = None) -> Optional[Dict]:
-        """Generate question using AI (Gemini API)"""
+        """Generate question using AI (Gemini API) with level-appropriate complexity"""
         try:
             existing_list = existing_questions or []
             existing_str = '\n'.join([f"- {q}" for q in existing_list[:10]])  # Limit to 10
+            
+            # Level-specific complexity guidelines
+            level_guidelines = self._get_level_guidelines(level)
             
             prompt = f"""You are an OPIc (Oral Proficiency Interview - Computer) test question creator.
 
@@ -127,20 +130,27 @@ Generate a NEW, UNIQUE question for the OPIc test.
 - Level: {level} (IM=Intermediate-Mid, IH=Intermediate-High, AL=Advanced-Low)
 - Question Type: {question_type}
 
+**IMPORTANT - Level-Specific Complexity Guidelines for {level}:**
+{level_guidelines}
+
 **Existing questions to AVOID duplicating:**
 {existing_str if existing_str else "(No existing questions)"}
 
 **Requirements:**
-1. The question must be appropriate for level {level}
+1. The question MUST match the complexity level of {level} as described above
 2. It must be related to the topic "{topic}"
-3. It should encourage a 1-2 minute spoken response
+3. For {question_type} type: {"general description/introduction" if question_type == 'general' else "personal experience/story" if question_type == 'experience' else "compare two things" if question_type == 'comparison' else "role-play scenario" if question_type == 'roleplay' else "opinion/viewpoint"}
 4. It must be DIFFERENT from the existing questions listed above
-5. For {question_type} type: {"general description/introduction" if question_type == 'general' else "personal experience/story" if question_type == 'experience' else "compare two things" if question_type == 'comparison' else "role-play scenario" if question_type == 'roleplay' else "opinion/viewpoint"}
+
+**Sample Answer Requirements:**
+- The sample answer must also match the {level} level complexity
+- Use vocabulary and sentence structures appropriate for {level}
+{self._get_sample_answer_guidelines(level)}
 
 **Respond in JSON format:**
 {{
     "question_text": "The full question text",
-    "sample_answer": "A model 1-2 minute response to this question",
+    "sample_answer": "A model response matching {level} level",
     "keywords": ["keyword1", "keyword2", "keyword3"]
 }}"""
 
@@ -173,10 +183,73 @@ Generate a NEW, UNIQUE question for the OPIc test.
             except:
                 print(f"AI generation failed, will use template: {e}")
             return None
+
+    def _get_level_guidelines(self, level: str) -> str:
+        """Get complexity guidelines for each level"""
+        guidelines = {
+            'IM': """
+**Intermediate-Mid (IM) - SIMPLEST Level:**
+- Use SIMPLE, direct questions that are easy to understand
+- Ask about familiar, everyday topics (daily routines, personal preferences)
+- Question structure: Simple sentences, one idea at a time
+- Expected response: Short descriptions, basic vocabulary
+- Avoid: Complex scenarios, hypothetical situations, abstract concepts
+- Focus on: "What", "Where", "When" questions
+- Example complexity: "Tell me about your favorite restaurant."
+- Response time: 30-60 seconds""",
+
+            'IH': """
+**Intermediate-High (IH) - MODERATE Level:**
+- Use moderately complex questions with some detail
+- Include personal experiences and comparisons
+- Question structure: Compound sentences, connected ideas
+- Expected response: Descriptions with reasons, some elaboration
+- Can include: Simple comparisons, past experiences, preferences with explanations
+- Focus on: "How", "Why", and "Describe" questions
+- Example complexity: "Describe a memorable experience at a restaurant and explain why it was special."
+- Response time: 60-90 seconds""",
+
+            'AL': """
+**Advanced-Low (AL) - MOST COMPLEX Level:**
+- Use sophisticated, multi-layered questions
+- Include hypothetical scenarios, abstract concepts, and analytical elements
+- Question structure: Complex sentences with multiple parts
+- Expected response: Detailed analysis, opinions with supporting arguments
+- Must include: Hypothetical situations ("If you were...", "Imagine that..."), comparisons across time or cultures, problem-solving scenarios
+- Focus on: Analysis, evaluation, and synthesis questions
+- Add challenges: Ask about changes over time, cultural differences, or solutions to problems
+- Example complexity: "If you were to open a restaurant, what concept would you choose and how would you make it different from existing restaurants in your area? Consider current trends and customer preferences."
+- Response time: 90-120 seconds"""
+        }
+        return guidelines.get(level.upper(), guidelines['IH'])
+
+    def _get_sample_answer_guidelines(self, level: str) -> str:
+        """Get sample answer requirements for each level"""
+        guidelines = {
+            'IM': """- Use simple vocabulary and short sentences
+- Include 3-5 sentences as the response
+- Use present tense primarily
+- Basic connectors only (and, but, so, because)
+- Straightforward, personal statements""",
+
+            'IH': """- Use varied vocabulary with some descriptive words
+- Include 5-8 sentences with details and reasons
+- Mix of present, past, and future tenses
+- Use connectors (however, therefore, for example, in addition)
+- Include personal opinions with simple explanations""",
+
+            'AL': """- Use sophisticated vocabulary and complex sentence structures
+- Include 8-12 sentences with analysis and multiple perspectives
+- All tenses including conditionals and hypotheticals
+- Advanced connectors (nevertheless, consequently, on the other hand, taking into account)
+- Include hypothetical reasoning, comparisons, and well-supported arguments
+- Demonstrate critical thinking and nuanced opinions"""
+        }
+        return guidelines.get(level.upper(), guidelines['IH'])
     
     def _generate_from_template(self, topic: str, level: str, question_type: str,
                                 existing_questions: List[str] = None) -> Optional[Dict]:
-        """Generate question from templates (fallback when AI is unavailable)"""
+        """Generate question from templates (fallback when AI is unavailable) with level-appropriate complexity"""
         existing_list = existing_questions or []
         
         # Clean topic name first (remove numbering like "01. " and lowercase)
@@ -185,59 +258,8 @@ Generate a NEW, UNIQUE question for the OPIc test.
             clean_topic = topic.split('. ', 1)[1]
         clean_topic = clean_topic.lower()
         
-        # Extended templates for variety (using clean topic)
-        templates = {
-            'general': [
-                f"Tell me about {clean_topic} in your area. What is it like?",
-                f"Can you describe {clean_topic} in detail? What are the main characteristics?",
-                f"I'd like to know about {clean_topic}. What can you tell me?",
-                f"What is {clean_topic} like in your country? Please describe it.",
-                f"Describe your experience with {clean_topic}. What do you know about it?",
-                f"Let's talk about {clean_topic}. What comes to mind when you think about it?",
-                f"Tell me everything you know about {clean_topic}.",
-                f"Can you give me an overview of {clean_topic}?"
-            ],
-            'experience': [
-                f"Tell me about a memorable experience you had with {clean_topic}.",
-                f"Describe a specific time when {clean_topic} was important to you.",
-                f"What was your best experience related to {clean_topic}? Why was it special?",
-                f"Share a story about {clean_topic} that you remember well.",
-                f"When was the last time you dealt with {clean_topic}? What happened?",
-                f"Tell me about a time when {clean_topic} surprised you.",
-                f"Describe an unforgettable moment involving {clean_topic}.",
-                f"What interesting experience have you had with {clean_topic}?"
-            ],
-            'comparison': [
-                f"Compare {clean_topic} now and 10 years ago. What has changed?",
-                f"What are the differences between {clean_topic} in your country and abroad?",
-                f"Compare two different aspects of {clean_topic}. Which do you prefer?",
-                f"How has {clean_topic} changed since you were young?",
-                f"Compare the advantages and disadvantages of {clean_topic}.",
-                f"How does {clean_topic} differ between different age groups?",
-                f"Compare traditional and modern approaches to {clean_topic}.",
-                f"What's the difference between {clean_topic} in urban and rural areas?"
-            ],
-            'roleplay': [
-                f"Imagine you're explaining {clean_topic} to a foreigner. What would you say?",
-                f"You're helping a friend who knows nothing about {clean_topic}. Describe it to them.",
-                f"Pretend you're a tour guide talking about {clean_topic}. What do you say?",
-                f"You're writing a blog post about {clean_topic}. What would you include?",
-                f"Imagine someone asks you about {clean_topic}. How would you explain it?",
-                f"You're making a recommendation about {clean_topic}. What advice would you give?",
-                f"Pretend you're being interviewed about {clean_topic}. What's your response?",
-                f"A new colleague asks about {clean_topic}. How do you explain it?"
-            ],
-            'opinion': [
-                f"What do you think about {clean_topic}? Do you like it or not? Why?",
-                f"In your opinion, is {clean_topic} important? Explain your reasons.",
-                f"What are your thoughts on {clean_topic}? Share your perspective.",
-                f"Do you think {clean_topic} is beneficial or harmful? Why?",
-                f"How do you feel about {clean_topic}? Has your opinion changed over time?",
-                f"What's your personal view on {clean_topic}?",
-                f"If you had to rate {clean_topic}, what would you say and why?",
-                f"Do you agree that {clean_topic} is important in modern life? Why or why not?"
-            ]
-        }
+        # Level-specific templates
+        templates = self._get_level_templates(clean_topic, level.upper())
         
         # Get templates for the requested type
         available_templates = templates.get(question_type, templates['general'])
@@ -261,11 +283,162 @@ Generate a NEW, UNIQUE question for the OPIc test.
         # Pick a random template
         question_text = random.choice(unused_templates)
         
+        # Generate level-appropriate sample answer prompt
+        sample_answer = self._get_level_sample_answer(clean_topic, level.upper())
+        
         return {
             'text': question_text,
-            'sample_answer': f"Sample answer for {clean_topic} question.",
+            'sample_answer': sample_answer,
             'keywords': [clean_topic, question_type, level.lower()]
         }
+
+    def _get_level_templates(self, topic: str, level: str) -> Dict[str, List[str]]:
+        """Get level-appropriate question templates"""
+        
+        if level == 'IM':
+            # IM - Simple, direct questions
+            return {
+                'general': [
+                    f"Tell me about {topic}.",
+                    f"What is {topic} like?",
+                    f"Do you like {topic}? Why?",
+                    f"What do you know about {topic}?",
+                    f"Describe {topic} for me.",
+                    f"Where can you find {topic}?",
+                    f"When do you usually think about {topic}?",
+                    f"Is {topic} popular in your country?"
+                ],
+                'experience': [
+                    f"Tell me about a time with {topic}.",
+                    f"What is your experience with {topic}?",
+                    f"Do you have a story about {topic}?",
+                    f"When did you last experience {topic}?",
+                    f"What happened with {topic} recently?",
+                    f"Share one memory about {topic}."
+                ],
+                'comparison': [
+                    f"Do you prefer {topic} now or before?",
+                    f"Is {topic} different now?",
+                    f"Has {topic} changed?",
+                    f"What is better about {topic} now?"
+                ],
+                'roleplay': [
+                    f"Tell a friend about {topic}.",
+                    f"Explain {topic} to someone new.",
+                    f"Describe {topic} to a visitor.",
+                    f"What would you say about {topic}?"
+                ],
+                'opinion': [
+                    f"Do you like {topic}? Why?",
+                    f"Is {topic} important to you?",
+                    f"What do you think about {topic}?",
+                    f"Is {topic} good or bad?"
+                ]
+            }
+        
+        elif level == 'AL':
+            # AL - Complex, hypothetical, analytical questions
+            return {
+                'general': [
+                    f"If you were to explain {topic} to someone from a completely different culture, what aspects would you emphasize and why?",
+                    f"Analyze how {topic} has evolved over the past decade and predict how it might change in the future.",
+                    f"Consider the various perspectives people might have about {topic}. What are the main viewpoints and what influences them?",
+                    f"Discuss the cultural significance of {topic} in your society and compare it with what you know about other cultures.",
+                    f"If you were writing a comprehensive guide about {topic}, what would be the key points you would include and why?"
+                ],
+                'experience': [
+                    f"Describe a challenging situation involving {topic} and explain how you overcame the difficulties. What did you learn?",
+                    f"Think of a time when your understanding of {topic} completely changed. What caused this shift in perspective?",
+                    f"If you could go back and change how you approached {topic} in a past experience, what would you do differently and why?",
+                    f"Analyze a memorable experience with {topic} from multiple angles - what would others involved have thought?",
+                    f"Describe a situation where {topic} created an unexpected outcome. How did it affect your future decisions?"
+                ],
+                'comparison': [
+                    f"Compare and contrast how different generations view {topic}. What causes these differences and what might bridge the gap?",
+                    f"If you were to analyze {topic} from both Eastern and Western perspectives, what key differences would emerge?",
+                    f"How might {topic} look different in 20 years? Consider technological, social, and cultural factors in your analysis.",
+                    f"Compare the advantages and disadvantages of traditional versus modern approaches to {topic}. Which is more sustainable?",
+                    f"Analyze how urbanization has affected {topic} compared to rural areas. What are the implications for the future?"
+                ],
+                'roleplay': [
+                    f"Imagine you are a consultant hired to improve {topic} in your city. Present your analysis and recommendations.",
+                    f"You're being interviewed as an expert on {topic} for a documentary. Provide insights that would educate an international audience.",
+                    f"Suppose you're writing a policy proposal about {topic}. What problems would you address and what solutions would you propose?",
+                    f"If you were teaching a university course about {topic}, what would be your main lecture points for advanced students?",
+                    f"You're advising a foreign investor interested in {topic} in your country. What comprehensive overview would you provide?"
+                ],
+                'opinion': [
+                    f"Some argue that {topic} is becoming too commercialized. Do you agree? Support your position with specific examples.",
+                    f"What role should the government play in regulating {topic}? Discuss the balance between freedom and oversight.",
+                    f"How do you think technology will fundamentally change {topic} in the coming decades? Is this change positive or concerning?",
+                    f"If you could redesign how society approaches {topic}, what changes would you implement and what challenges might arise?",
+                    f"Critically evaluate the current state of {topic} in your country. What are its strengths, weaknesses, and potential improvements?"
+                ]
+            }
+        
+        else:
+            # IH - Moderate complexity (default)
+            return {
+                'general': [
+                    f"Tell me about {topic} in your area. What is it like and why?",
+                    f"Can you describe {topic} in detail? What are the main characteristics?",
+                    f"I'd like to know about {topic}. What can you tell me about your experience?",
+                    f"What is {topic} like in your country? Please describe it with examples.",
+                    f"Describe your experience with {topic}. What do you know about it and why?",
+                    f"Let's talk about {topic}. What comes to mind and why is it significant?",
+                    f"Tell me everything you know about {topic} and explain why it matters.",
+                    f"Can you give me an overview of {topic} with some personal insights?"
+                ],
+                'experience': [
+                    f"Tell me about a memorable experience you had with {topic}. Why was it special?",
+                    f"Describe a specific time when {topic} was important to you. What happened?",
+                    f"What was your best experience related to {topic}? Why was it memorable?",
+                    f"Share a story about {topic} that you remember well. What made it stand out?",
+                    f"When was the last time you dealt with {topic}? What happened and how did you feel?",
+                    f"Tell me about a time when {topic} surprised you. What did you learn?",
+                    f"Describe an unforgettable moment involving {topic}. Why do you still remember it?",
+                    f"What interesting experience have you had with {topic}? How did it affect you?"
+                ],
+                'comparison': [
+                    f"Compare {topic} now and 10 years ago. What has changed and why?",
+                    f"What are the differences between {topic} in your country and other places you know?",
+                    f"Compare two different aspects of {topic}. Which do you prefer and why?",
+                    f"How has {topic} changed since you were young? What caused these changes?",
+                    f"Compare the advantages and disadvantages of {topic}. What's your conclusion?",
+                    f"How does {topic} differ between different age groups? Why do these differences exist?",
+                    f"Compare traditional and modern approaches to {topic}. Which is better?",
+                    f"What's the difference between {topic} in urban and rural areas? Why?"
+                ],
+                'roleplay': [
+                    f"Imagine you're explaining {topic} to a foreigner. What would you include and emphasize?",
+                    f"You're helping a friend who knows nothing about {topic}. Describe it thoroughly.",
+                    f"Pretend you're a tour guide talking about {topic}. What interesting facts would you share?",
+                    f"You're writing a blog post about {topic}. What would you include to engage readers?",
+                    f"Imagine someone asks you about {topic}. How would you explain it comprehensively?",
+                    f"You're making a recommendation about {topic}. What advice would you give and why?",
+                    f"Pretend you're being interviewed about {topic}. What's your thoughtful response?",
+                    f"A new colleague asks about {topic}. How do you explain it to help them understand?"
+                ],
+                'opinion': [
+                    f"What do you think about {topic}? Do you like it or not? Explain your reasons.",
+                    f"In your opinion, is {topic} important? Explain your reasons with examples.",
+                    f"What are your thoughts on {topic}? Share your perspective and reasoning.",
+                    f"Do you think {topic} is beneficial or harmful? Why do you think so?",
+                    f"How do you feel about {topic}? Has your opinion changed over time?",
+                    f"What's your personal view on {topic}? What shaped this opinion?",
+                    f"If you had to rate {topic}, what would you say and why?",
+                    f"Do you agree that {topic} is important in modern life? Why or why not?"
+                ]
+            }
+
+    def _get_level_sample_answer(self, topic: str, level: str) -> str:
+        """Generate a placeholder sample answer appropriate for the level"""
+        if level == 'IM':
+            return f"I like {topic}. It is nice. I think {topic} is good because it is fun. In my country, {topic} is popular. Many people enjoy it."
+        elif level == 'AL':
+            return f"When considering {topic}, there are multiple perspectives to analyze. From a cultural standpoint, {topic} has evolved significantly over the years, reflecting broader societal changes. If we examine this from both traditional and modern viewpoints, we can see interesting contrasts. Furthermore, the implications of {topic} extend beyond the immediate context, affecting various aspects of daily life. Hypothetically speaking, if current trends continue, we might expect to see even more changes in how society perceives and interacts with {topic}."
+        else:  # IH
+            return f"I would like to tell you about {topic}. In my experience, {topic} is quite interesting because it has several aspects worth mentioning. For example, I remember a time when {topic} was particularly important to me. Additionally, I think {topic} has changed over the years, becoming more significant in modern life. Overall, I believe {topic} is an important part of our daily lives."
 
     
     def generate_variation(self, question: Question, variation_type: str) -> Optional[str]:
@@ -354,9 +527,13 @@ Generate a NEW, UNIQUE question for the OPIc test.
             seen_ids = QuestionSession.get_seen_question_ids(user_id, topic, level, current_round)
             
             # Get all questions for this topic/level
-            all_questions = Question.query.filter_by(
-                topic=topic,
-                difficulty_level=level
+            # Match both exact topic and number-prefixed variants (e.g., "32. Role Play")
+            all_questions = Question.query.filter(
+                db.or_(
+                    Question.topic == topic,
+                    Question.topic.like(f'%. {topic}')
+                ),
+                Question.difficulty_level == level
             ).all()
             
             if not all_questions:
@@ -396,9 +573,12 @@ Generate a NEW, UNIQUE question for the OPIc test.
             current_app.logger.error(f"Error getting next question: {e}")
             db.session.rollback()
             # Fallback to random question
-            question = Question.query.filter_by(
-                topic=topic,
-                difficulty_level=level
+            question = Question.query.filter(
+                db.or_(
+                    Question.topic == topic,
+                    Question.topic.like(f'%. {topic}')
+                ),
+                Question.difficulty_level == level
             ).order_by(db.func.random()).first()
             return question, False
     

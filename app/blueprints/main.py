@@ -191,3 +191,9 @@ def history():
 def update_levels():
     return main_controller.update_levels()
 
+@main_bp.route('/vocabulary')
+@login_required
+def vocabulary():
+    """Vocabulary library page"""
+    from flask import render_template
+    return render_template('vocabulary/index.html')

@@ -4,294 +4,294 @@
 
 {% block content %}
 <style>
-.practice-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
+    .practice-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
 
-.practice-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 40px;
-    border-radius: 15px;
-    color: white;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.practice-hero h1 {
-    margin: 0 0 10px 0;
-    font-size: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.practice-hero h1 i {
-    flex-shrink: 0;
-}
-
-.practice-hero p {
-    margin: 0;
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.stat-card {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    padding: 12px 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.stat-card i {
-    font-size: 1.5rem;
-    opacity: 0.7;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #667eea;
-    margin: 0;
-    line-height: 1;
-}
-
-[data-theme="dark"] .stat-value {
-    color: #79c0ff;
-}
-
-.stat-label {
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    margin: 0;
-    line-height: 1.2;
-}
-
-.start-practice-card {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-    border: 1px solid var(--border-color);
-}
-
-.start-practice-card h3 {
-    color: var(--text-primary);
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-control:disabled {
-    background: #f8f9fa;
-    cursor: not-allowed;
-}
-
-[data-theme="dark"] .form-control:disabled {
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
-    border-color: var(--border-color);
-    opacity: 0.7;
-}
-
-.btn-start {
-    width: 100%;
-    padding: 15px;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-start:hover {
-    background: #5568d3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.feature-box {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    text-align: center;
-    transition: all 0.2s;
-    border: 1px solid var(--border-color);
-}
-
-.feature-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-
-.feature-icon {
-    font-size: 1.8rem;
-    color: #667eea;
-    margin-bottom: 8px;
-}
-
-.feature-box h4 {
-    color: var(--text-primary);
-    margin: 0 0 5px 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.feature-box p {
-    color: var(--text-secondary);
-    margin: 0;
-    font-size: 0.75rem;
-    line-height: 1.3;
-}
-
-.tips-section {
-    background: var(--bg-secondary);
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-}
-
-.tips-section h4 {
-    color: var(--text-primary);
-    margin-bottom: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.tips-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
-.tip-item {
-    text-align: center;
-    background: var(--bg-card);
-    color: var(--text-primary);
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-}
-
-.tip-item i {
-    font-size: 1.2rem;
-    color: #28a745;
-    margin-bottom: 5px;
-}
-
-[data-theme="dark"] .tip-item i {
-    color: var(--success-color);
-}
-
-.tip-item h5 {
-    color: var(--text-primary);
-    margin: 0 0 3px 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.tip-item p {
-    color: var(--text-secondary);
-    margin: 0;
-    font-size: 0.7rem;
-    line-height: 1.3;
-}
-
-@media (max-width: 768px) {
     .practice-hero {
-        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
     }
-    
+
     .practice-hero h1 {
-        font-size: 1.5rem;
-        gap: 8px;
+        margin: 0 0 10px 0;
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
-    
+
     .practice-hero h1 i {
-        font-size: 1.3rem;
+        flex-shrink: 0;
     }
-    
+
     .practice-hero p {
-        font-size: 0.95rem;
+        margin: 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
     }
-    
+
     .stats-row {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    
+
+    .stat-card {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 12px 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .stat-card i {
+        font-size: 1.5rem;
+        opacity: 0.7;
+    }
+
     .stat-value {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #667eea;
+        margin: 0;
+        line-height: 1;
     }
-    
+
+    [data-theme="dark"] .stat-value {
+        color: #79c0ff;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        margin: 0;
+        line-height: 1.2;
+    }
+
     .start-practice-card {
-        padding: 20px;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
     }
-    
+
+    .start-practice-card h3 {
+        color: var(--text-primary);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control:disabled {
+        background: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    [data-theme="dark"] .form-control:disabled {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border-color: var(--border-color);
+        opacity: 0.7;
+    }
+
+    .btn-start {
+        width: 100%;
+        padding: 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-start:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
     .features-grid {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
     }
-    
+
+    .feature-box {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: all 0.2s;
+        border: 1px solid var(--border-color);
+    }
+
+    .feature-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .feature-icon {
+        font-size: 1.8rem;
+        color: #667eea;
+        margin-bottom: 8px;
+    }
+
+    .feature-box h4 {
+        color: var(--text-primary);
+        margin: 0 0 5px 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .feature-box p {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .tips-section {
+        background: var(--bg-secondary);
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .tips-section h4 {
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
     .tips-grid {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
     }
-}
+
+    .tip-item {
+        text-align: center;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+    }
+
+    .tip-item i {
+        font-size: 1.2rem;
+        color: #28a745;
+        margin-bottom: 5px;
+    }
+
+    [data-theme="dark"] .tip-item i {
+        color: var(--success-color);
+    }
+
+    .tip-item h5 {
+        color: var(--text-primary);
+        margin: 0 0 3px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .tip-item p {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+
+    @media (max-width: 768px) {
+        .practice-hero {
+            padding: 20px;
+        }
+
+        .practice-hero h1 {
+            font-size: 1.5rem;
+            gap: 8px;
+        }
+
+        .practice-hero h1 i {
+            font-size: 1.3rem;
+        }
+
+        .practice-hero p {
+            font-size: 0.95rem;
+        }
+
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+        }
+
+        .start-practice-card {
+            padding: 20px;
+        }
+
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tips-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 </style>
 
 <div class="practice-container">
@@ -334,7 +334,7 @@
                     <option value="AL">AL - Advanced-Low</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="topic">
                     <i class="fas fa-tag"></i> Choose Topic
@@ -343,7 +343,7 @@
                     <option value="">Select a level first...</option>
                 </select>
             </div>
-            
+
             <button type="submit" class="btn-start">
                 <i class="fas fa-play-circle"></i>
                 <span>Start Practice</span>
@@ -360,7 +360,7 @@
             <h4>Listen & Speak</h4>
             <p>Practice with real OPIc-style audio questions</p>
         </div>
-        
+
         <div class="feature-box">
             <div class="feature-icon">
                 <i class="fas fa-clock"></i>
@@ -368,7 +368,7 @@
             <h4>No Time Pressure</h4>
             <p>Take your time to think and respond</p>
         </div>
-        
+
         <div class="feature-box">
             <div class="feature-icon">
                 <i class="fas fa-redo"></i>
@@ -376,7 +376,7 @@
             <h4>Unlimited Attempts</h4>
             <p>Practice as many times as you want</p>
         </div>
-        
+
         <div class="feature-box">
             <div class="feature-icon">
                 <i class="fas fa-download"></i>
@@ -415,45 +415,46 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const levelSelect = document.getElementById('level');
-    const topicSelect = document.getElementById('topic');
-    
-    levelSelect.addEventListener('change', async function() {
-        const level = this.value;
-        
-        if (!level) {
+    document.addEventListener('DOMContentLoaded', function () {
+        const levelSelect = document.getElementById('level');
+        const topicSelect = document.getElementById('topic');
+
+        levelSelect.addEventListener('change', async function () {
+            const level = this.value;
+
+            if (!level) {
+                topicSelect.disabled = true;
+                topicSelect.innerHTML = '<option value="">Select a level first...</option>';
+                return;
+            }
+
             topicSelect.disabled = true;
-            topicSelect.innerHTML = '<option value="">Select a level first...</option>';
-            return;
-        }
-        
-        topicSelect.disabled = true;
-        topicSelect.innerHTML = '<option value="">Loading topics...</option>';
-        
-        try {
-            const response = await fetch(`/practice/topics/${level}`);
-            const data = await response.json();
-            
+            topicSelect.innerHTML = '<option value="">Loading topics...</option>';
+
+            try {
+                const response = await fetch(`/practice/topics/${level}`);
+                const data = await response.json();
+
                 topicSelect.innerHTML = '<option value="">Choose a topic...</option>';
-            topicSelect.innerHTML += '<option value="random">🎲 Random Question</option>';
-                
+                topicSelect.innerHTML += '<option value="random">🎲 Random Question</option>';
+
                 if (data.topics && data.topics.length > 0) {
-                    data.topics.forEach(topic => {
+                    data.topics.forEach((topic, index) => {
                         const option = document.createElement('option');
-                        option.value = topic;
-                        option.textContent = topic;
+                        const name = typeof topic === 'string' ? topic : topic.name;
+                        option.value = name;
+                        option.textContent = `${index + 1}. ${name}`;
                         topicSelect.appendChild(option);
                     });
                     topicSelect.disabled = false;
                 } else {
-                topicSelect.innerHTML = '<option value="">No topics available</option>';
+                    topicSelect.innerHTML = '<option value="">No topics available</option>';
                 }
-        } catch (error) {
+            } catch (error) {
                 console.error('Error loading topics:', error);
                 topicSelect.innerHTML = '<option value="">Error loading topics</option>';
-        }
+            }
+        });
     });
-});
 </script>
 {% endblock %}

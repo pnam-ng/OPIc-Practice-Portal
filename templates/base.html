@@ -1780,6 +1780,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.vocabulary') }}">
+                            <i class="fas fa-book me-1"></i>Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.history') }}">
                             <i class="fas fa-history me-1"></i>History
                         </a>
@@ -3098,10 +3103,10 @@
                 <i class="fas fa-clipboard-check"></i>
                 <span>Test</span>
             </a>
-            <a href="{{ url_for('main.tips') }}"
-                class="bottom-nav-item {% if request.endpoint == 'main.tips' %}active{% endif %}">
-                <i class="fas fa-lightbulb"></i>
-                <span>Tips</span>
+            <a href="{{ url_for('main.vocabulary') }}"
+                class="bottom-nav-item {% if request.endpoint == 'main.vocabulary' %}active{% endif %}">
+                <i class="fas fa-book"></i>
+                <span>Library</span>
             </a>
 
         </div>
@@ -3138,6 +3143,10 @@
                 <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.history' %}active text-primary fw-bold{% endif %}"
                     href="{{ url_for('main.history') }}">
                     <i class="fas fa-history me-3"></i>History
+                </a>
+                <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.vocabulary' %}active text-primary fw-bold{% endif %}"
+                    href="{{ url_for('main.vocabulary') }}">
+                    <i class="fas fa-book me-3"></i>Vocabulary Library
                 </a>
                 <a class="nav-link py-3 border-bottom {% if request.endpoint == 'main.tips' %}active text-primary fw-bold{% endif %}"
                     href="{{ url_for('main.tips') }}">

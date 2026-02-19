@@ -38,6 +38,31 @@ When new questions are generated, TTS audio is **automatically created** for:
 | `save_generated_question(...)` | Save question to DB and auto-generate TTS audio |
 | `get_next_question(user_id, topic, level)` | Get next question using intelligent rotation |
 
+### Level-Specific Complexity
+
+Questions are generated with complexity appropriate to each level:
+
+| Level | Name | Complexity | Question Style | Response Time |
+|-------|------|------------|----------------|---------------|
+| **IM** | Intermediate-Mid | Simple | Direct, basic questions. "What", "Where", "When" | 30-60 seconds |
+| **IH** | Intermediate-High | Moderate | Compound questions with reasons. "How", "Why", "Describe" | 60-90 seconds |
+| **AL** | Advanced-Low | Complex | Hypothetical scenarios, analysis, multi-part questions | 90-120 seconds |
+
+#### IM (Simplest) Examples:
+- "Tell me about restaurants."
+- "Do you like restaurants? Why?"
+- "What is restaurants like in your country?"
+
+#### IH (Moderate) Examples:
+- "Tell me about a memorable experience at a restaurant. Why was it special?"
+- "Compare restaurants now and 10 years ago. What has changed and why?"
+- "What are your thoughts on restaurants? Share your perspective and reasoning."
+
+#### AL (Most Complex) Examples:
+- "If you were to open a restaurant, what concept would you choose and how would you make it different from existing restaurants? Consider current trends and customer preferences."
+- "Compare and contrast how different generations view restaurants. What causes these differences and what might bridge the gap?"
+- "Critically evaluate the current state of restaurants in your country. What are their strengths, weaknesses, and potential improvements?"
+
 ### Question Types
 - `general` - Describe or explain the topic
 - `experience` - Personal experience/story questions
