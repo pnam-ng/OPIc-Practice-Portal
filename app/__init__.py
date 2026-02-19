@@ -82,6 +82,8 @@ def create_app():
     from app.blueprints.comments import comments_bp
     from app.blueprints.notifications import notifications_bp
     
+    print("[DEBUG] About to register chatbot and vocabulary blueprints...", flush=True)
+    
     # Import chatbot blueprint (with error handling)
     try:
         from app.blueprints.chatbot import chatbot_bp
@@ -99,6 +101,18 @@ def create_app():
     app.register_blueprint(comments_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    
+    # Import vocabulary blueprint
+    print("[DEBUG] Attempting to load vocabulary blueprint...", flush=True)
+    try:
+        from app.blueprints.vocabulary import vocabulary_bp
+        print("[DEBUG] Vocabulary blueprint imported, registering...", flush=True)
+        app.register_blueprint(vocabulary_bp, url_prefix='/api/vocabulary')
+        print("[OK] Vocabulary blueprint registered successfully", flush=True)
+    except Exception as e:
+        import traceback
+        print(f"[WARN] Failed to register vocabulary blueprint: {e}", flush=True)
+        traceback.print_exc()
     
     # User loader for Flask-Login
     from app.models import User
@@ -119,6 +133,19 @@ def create_app():
     
     # Start background TTS generation for missing audio on startup
     _start_background_tts_generator(app)
+    
+    # Test route to verify routing works
+    @app.route('/api/test')
+    def api_test():
+        from flask import jsonify
+        return jsonify({'status': 'ok', 'message': 'API routing works!'})
+    
+    # Print all registered routes for debugging
+    print("\n[DEBUG] Registered routes containing 'vocab':", flush=True)
+    for rule in app.url_map.iter_rules():
+        if 'vocab' in rule.rule.lower():
+            print(f"  {rule.methods} {rule.rule} -> {rule.endpoint}", flush=True)
+    print("", flush=True)
     
     return app
 

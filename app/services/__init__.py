@@ -261,8 +261,15 @@ class QuestionService(BaseService):
                 .filter(Question.difficulty_level == level)\
                 .distinct()\
                 .all()
-            # Return list of strings (first element of tuple)
-            return [t[0] for t in topics if t[0]]
+            # Strip number prefixes and deduplicate
+            processed = set()
+            for t in topics:
+                if t[0]:
+                    topic = t[0]
+                    if '. ' in topic:
+                        topic = topic.split('. ', 1)[1]
+                    processed.add(topic)
+            return sorted(list(processed))
         except Exception as e:
             current_app.logger.error(f"Error fetching topics: {e}")
             return []
@@ -278,7 +285,12 @@ class QuestionService(BaseService):
         if level:
             base_query = base_query.filter_by(difficulty_level=level)
         if topic:
-            base_query = base_query.filter_by(topic=topic)
+            base_query = base_query.filter(
+                db.or_(
+                    Question.topic == topic,
+                    Question.topic.like(f'%. {topic}')
+                )
+            )
             
         # If no excluded IDs, just return random
         if not excluded_ids:

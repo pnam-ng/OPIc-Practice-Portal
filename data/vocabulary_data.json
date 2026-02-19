@@ -1,0 +1,5334 @@
+{
+  "version": "2.0",
+  "description": "OPIc vocabulary data. Edit this file to update vocabulary content.",
+  "topics": {
+    "Housing": {
+      "words": [
+        {
+          "word": "apartment",
+          "definition": "a set of rooms forming one residence",
+          "meaning_vi": "căn hộ",
+          "meaning_ko": "아파트",
+          "pos": "noun",
+          "example": "I live in a two-bedroom apartment downtown."
+        },
+        {
+          "word": "neighborhood",
+          "definition": "a district or community within a city",
+          "meaning_vi": "khu phố, vùng lân cận",
+          "meaning_ko": "동네, 이웃",
+          "pos": "noun",
+          "example": "My neighborhood is very quiet and safe."
+        },
+        {
+          "word": "spacious",
+          "definition": "having plenty of room",
+          "meaning_vi": "rộng rãi",
+          "meaning_ko": "넓은, 널찍한",
+          "pos": "adjective",
+          "example": "The living room is really spacious."
+        },
+        {
+          "word": "cozy",
+          "definition": "giving a feeling of comfort and warmth",
+          "meaning_vi": "ấm cúng",
+          "meaning_ko": "아늑한",
+          "pos": "adjective",
+          "example": "My bedroom is small but cozy."
+        },
+        {
+          "word": "convenient",
+          "definition": "fitting in well with one's needs",
+          "meaning_vi": "thuận tiện",
+          "meaning_ko": "편리한",
+          "pos": "adjective",
+          "example": "The location is very convenient for commuting."
+        },
+        {
+          "word": "renovate",
+          "definition": "to restore or improve a building",
+          "meaning_vi": "sửa chữa, cải tạo",
+          "meaning_ko": "리모델링하다",
+          "pos": "verb",
+          "example": "We plan to renovate the kitchen next year."
+        },
+        {
+          "word": "landlord",
+          "definition": "a person who rents out property",
+          "meaning_vi": "chủ nhà (cho thuê)",
+          "meaning_ko": "집주인",
+          "pos": "noun",
+          "example": "My landlord is very understanding."
+        },
+        {
+          "word": "tenant",
+          "definition": "a person who rents and occupies property",
+          "meaning_vi": "người thuê nhà",
+          "meaning_ko": "세입자",
+          "pos": "noun",
+          "example": "The tenant signed a one-year contract."
+        },
+        {
+          "word": "lease",
+          "definition": "a contract for renting property",
+          "meaning_vi": "hợp đồng thuê nhà",
+          "meaning_ko": "임대 계약",
+          "pos": "noun",
+          "example": "I signed a one-year lease."
+        },
+        {
+          "word": "utilities",
+          "definition": "basic services like electricity and water",
+          "meaning_vi": "tiện ích (điện, nước, gas)",
+          "meaning_ko": "공과금",
+          "pos": "noun",
+          "example": "Utilities are included in the rent."
+        },
+        {
+          "word": "commute",
+          "definition": "to travel regularly between home and work",
+          "meaning_vi": "đi lại hàng ngày",
+          "meaning_ko": "통근하다",
+          "pos": "verb",
+          "example": "I commute by subway every day."
+        },
+        {
+          "word": "suburb",
+          "definition": "a residential area outside a city center",
+          "meaning_vi": "vùng ngoại ô",
+          "meaning_ko": "교외",
+          "pos": "noun",
+          "example": "I grew up in the suburbs."
+        },
+        {
+          "word": "downtown",
+          "definition": "the central business area of a city",
+          "meaning_vi": "trung tâm thành phố",
+          "meaning_ko": "도심, 시내",
+          "pos": "noun",
+          "example": "I work downtown."
+        },
+        {
+          "word": "balcony",
+          "definition": "a platform extending from a building wall",
+          "meaning_vi": "ban công",
+          "meaning_ko": "발코니",
+          "pos": "noun",
+          "example": "I grow flowers on my balcony."
+        },
+        {
+          "word": "mortgage",
+          "definition": "a loan used to buy property",
+          "meaning_vi": "thế chấp, vay mua nhà",
+          "meaning_ko": "주택담보대출",
+          "pos": "noun",
+          "example": "They are paying off their mortgage."
+        },
+        {
+          "word": "relocate",
+          "definition": "to move to a new place",
+          "meaning_vi": "chuyển chỗ ở",
+          "meaning_ko": "이사하다",
+          "pos": "verb",
+          "example": "I relocated to Seoul for my job."
+        },
+        {
+          "word": "furnish",
+          "definition": "to provide a room with furniture",
+          "meaning_vi": "trang bị nội thất",
+          "meaning_ko": "가구를 배치하다",
+          "pos": "verb",
+          "example": "The apartment came fully furnished."
+        },
+        {
+          "word": "household",
+          "definition": "a house and its occupants as a unit",
+          "meaning_vi": "hộ gia đình",
+          "meaning_ko": "가정, 세대",
+          "pos": "noun",
+          "example": "There are four people in our household."
+        },
+        {
+          "word": "residential",
+          "definition": "designed for people to live in",
+          "meaning_vi": "khu dân cư",
+          "meaning_ko": "주거의",
+          "pos": "adjective",
+          "example": "This is a quiet residential area."
+        },
+        {
+          "word": "maintenance",
+          "definition": "keeping something in good condition",
+          "meaning_vi": "bảo trì, bảo dưỡng",
+          "meaning_ko": "유지보수",
+          "pos": "noun",
+          "example": "The building handles all maintenance."
+        },
+        {
+          "word": "rooftop",
+          "definition": "the outer surface of a building's roof",
+          "meaning_vi": "sân thượng",
+          "meaning_ko": "옥상",
+          "pos": "noun",
+          "example": "We have a rooftop garden."
+        },
+        {
+          "word": "settle in",
+          "definition": "to become comfortable in a new home",
+          "meaning_vi": "ổn định cuộc sống",
+          "meaning_ko": "정착하다",
+          "pos": "phrasal verb",
+          "example": "It took a month to settle in."
+        },
+        {
+          "word": "roommate",
+          "definition": "a person sharing a room or apartment",
+          "meaning_vi": "bạn cùng phòng",
+          "meaning_ko": "룸메이트",
+          "pos": "noun",
+          "example": "My roommate is very tidy."
+        },
+        {
+          "word": "affordable",
+          "definition": "not too expensive; reasonably priced",
+          "meaning_vi": "giá phải chăng",
+          "meaning_ko": "적당한 가격의",
+          "pos": "adjective",
+          "example": "Affordable housing is hard to find."
+        },
+        {
+          "word": "decorate",
+          "definition": "to make something look more attractive",
+          "meaning_vi": "trang trí",
+          "meaning_ko": "꾸미다, 장식하다",
+          "pos": "verb",
+          "example": "I decorated my room with posters."
+        },
+        {
+          "word": "noisy",
+          "definition": "making or full of loud sounds",
+          "meaning_vi": "ồn ào",
+          "meaning_ko": "시끄러운",
+          "pos": "adjective",
+          "example": "The street is a bit noisy at night."
+        },
+        {
+          "word": "amenities",
+          "definition": "useful features of a building or area",
+          "meaning_vi": "tiện nghi",
+          "meaning_ko": "편의시설",
+          "pos": "noun",
+          "example": "The building has great amenities."
+        },
+        {
+          "word": "move in",
+          "definition": "to begin living in a new home",
+          "meaning_vi": "dọn vào nhà mới",
+          "meaning_ko": "이사 들어가다",
+          "pos": "phrasal verb",
+          "example": "We moved in last weekend."
+        }
+      ]
+    },
+    "Furniture": {
+      "words": [
+        {
+          "word": "sofa",
+          "definition": "a long upholstered seat for several people",
+          "meaning_vi": "ghế sofa",
+          "meaning_ko": "소파",
+          "pos": "noun",
+          "example": "We bought a new leather sofa."
+        },
+        {
+          "word": "cabinet",
+          "definition": "a cupboard with shelves or drawers",
+          "meaning_vi": "tủ",
+          "meaning_ko": "캐비닛, 수납장",
+          "pos": "noun",
+          "example": "The dishes are in the kitchen cabinet."
+        },
+        {
+          "word": "wardrobe",
+          "definition": "a large cabinet for storing clothes",
+          "meaning_vi": "tủ quần áo",
+          "meaning_ko": "옷장",
+          "pos": "noun",
+          "example": "My wardrobe is full of clothes."
+        },
+        {
+          "word": "bookshelf",
+          "definition": "a shelf or piece of furniture for books",
+          "meaning_vi": "kệ sách",
+          "meaning_ko": "책장",
+          "pos": "noun",
+          "example": "I have a bookshelf in my room."
+        },
+        {
+          "word": "comfortable",
+          "definition": "providing physical ease and relaxation",
+          "meaning_vi": "thoải mái",
+          "meaning_ko": "편안한",
+          "pos": "adjective",
+          "example": "This chair is very comfortable."
+        },
+        {
+          "word": "durable",
+          "definition": "able to withstand wear and pressure",
+          "meaning_vi": "bền",
+          "meaning_ko": "내구성 있는",
+          "pos": "adjective",
+          "example": "This furniture is very durable."
+        },
+        {
+          "word": "assemble",
+          "definition": "to fit together the parts of something",
+          "meaning_vi": "lắp ráp",
+          "meaning_ko": "조립하다",
+          "pos": "verb",
+          "example": "I assembled the desk myself."
+        },
+        {
+          "word": "rearrange",
+          "definition": "to change the position or order of things",
+          "meaning_vi": "sắp xếp lại",
+          "meaning_ko": "재배치하다",
+          "pos": "verb",
+          "example": "I like to rearrange furniture sometimes."
+        },
+        {
+          "word": "minimalist",
+          "definition": "using simple and sparse design",
+          "meaning_vi": "tối giản",
+          "meaning_ko": "미니멀리스트",
+          "pos": "adjective",
+          "example": "I prefer minimalist furniture."
+        },
+        {
+          "word": "vintage",
+          "definition": "from an earlier time, classic",
+          "meaning_vi": "cổ điển",
+          "meaning_ko": "빈티지",
+          "pos": "adjective",
+          "example": "She collects vintage furniture."
+        },
+        {
+          "word": "mattress",
+          "definition": "a fabric case filled with soft material for sleeping",
+          "meaning_vi": "nệm",
+          "meaning_ko": "매트리스",
+          "pos": "noun",
+          "example": "I need a new mattress for better sleep."
+        },
+        {
+          "word": "cushion",
+          "definition": "a soft pillow for sitting or leaning on",
+          "meaning_vi": "đệm, gối tựa",
+          "meaning_ko": "쿠션",
+          "pos": "noun",
+          "example": "The cushions on the sofa are very soft."
+        },
+        {
+          "word": "drawer",
+          "definition": "a box-shaped container that slides in and out",
+          "meaning_vi": "ngăn kéo",
+          "meaning_ko": "서랍",
+          "pos": "noun",
+          "example": "I keep my documents in the drawer."
+        },
+        {
+          "word": "curtain",
+          "definition": "a piece of cloth hung to cover a window",
+          "meaning_vi": "rèm cửa",
+          "meaning_ko": "커튼",
+          "pos": "noun",
+          "example": "I bought new curtains for the living room."
+        },
+        {
+          "word": "rug",
+          "definition": "a floor covering smaller than a carpet",
+          "meaning_vi": "thảm",
+          "meaning_ko": "러그, 깔개",
+          "pos": "noun",
+          "example": "We placed a rug under the dining table."
+        },
+        {
+          "word": "stool",
+          "definition": "a seat without a back or arms",
+          "meaning_vi": "ghế đẩu",
+          "meaning_ko": "스툴, 의자",
+          "pos": "noun",
+          "example": "I sit on a stool at the kitchen counter."
+        },
+        {
+          "word": "nightstand",
+          "definition": "a small table beside a bed",
+          "meaning_vi": "tủ đầu giường",
+          "meaning_ko": "협탁",
+          "pos": "noun",
+          "example": "I keep my phone on the nightstand."
+        },
+        {
+          "word": "desk",
+          "definition": "a table for working or studying",
+          "meaning_vi": "bàn làm việc",
+          "meaning_ko": "책상",
+          "pos": "noun",
+          "example": "I spend hours at my desk every day."
+        },
+        {
+          "word": "dining table",
+          "definition": "a table used for eating meals",
+          "meaning_vi": "bàn ăn",
+          "meaning_ko": "식탁",
+          "pos": "noun",
+          "example": "We eat dinner at the dining table."
+        },
+        {
+          "word": "recline",
+          "definition": "to lean back in a relaxed position",
+          "meaning_vi": "ngả lưng",
+          "meaning_ko": "기대다",
+          "pos": "verb",
+          "example": "I like to recline on the sofa after work."
+        },
+        {
+          "word": "spacious",
+          "definition": "having ample room",
+          "meaning_vi": "rộng rãi",
+          "meaning_ko": "넓은",
+          "pos": "adjective",
+          "example": "We need spacious shelves for all our books."
+        },
+        {
+          "word": "sturdy",
+          "definition": "strong and well-made",
+          "meaning_vi": "chắc chắn",
+          "meaning_ko": "튼튼한",
+          "pos": "adjective",
+          "example": "This table is very sturdy."
+        },
+        {
+          "word": "interior",
+          "definition": "the inside part of a building or room",
+          "meaning_vi": "nội thất",
+          "meaning_ko": "인테리어",
+          "pos": "noun",
+          "example": "I love modern interior design."
+        },
+        {
+          "word": "declutter",
+          "definition": "to remove unnecessary items",
+          "meaning_vi": "dọn dẹp",
+          "meaning_ko": "정리하다",
+          "pos": "verb",
+          "example": "I need to declutter my room."
+        },
+        {
+          "word": "upholstery",
+          "definition": "soft covering on furniture",
+          "meaning_vi": "vải bọc",
+          "meaning_ko": "천 (가구 덮개)",
+          "pos": "noun",
+          "example": "The upholstery on the chair is worn out."
+        }
+      ]
+    },
+    "Food": {
+      "words": [
+        {
+          "word": "delicious",
+          "definition": "highly pleasant to the taste",
+          "meaning_vi": "ngon",
+          "meaning_ko": "맛있는",
+          "pos": "adjective",
+          "example": "This soup is absolutely delicious."
+        },
+        {
+          "word": "cuisine",
+          "definition": "a style or method of cooking",
+          "meaning_vi": "ẩm thực",
+          "meaning_ko": "요리, 음식",
+          "pos": "noun",
+          "example": "I love Korean cuisine."
+        },
+        {
+          "word": "ingredient",
+          "definition": "a component part of a recipe",
+          "meaning_vi": "nguyên liệu",
+          "meaning_ko": "재료, 식재료",
+          "pos": "noun",
+          "example": "Fresh ingredients make a big difference."
+        },
+        {
+          "word": "recipe",
+          "definition": "instructions for preparing food",
+          "meaning_vi": "công thức nấu ăn",
+          "meaning_ko": "레시피, 조리법",
+          "pos": "noun",
+          "example": "I found a great recipe online."
+        },
+        {
+          "word": "nutritious",
+          "definition": "providing essential nourishment",
+          "meaning_vi": "bổ dưỡng",
+          "meaning_ko": "영양가 있는",
+          "pos": "adjective",
+          "example": "Vegetables are very nutritious."
+        },
+        {
+          "word": "homemade",
+          "definition": "made at home, not bought",
+          "meaning_vi": "tự làm tại nhà",
+          "meaning_ko": "집에서 만든",
+          "pos": "adjective",
+          "example": "I prefer homemade food."
+        },
+        {
+          "word": "appetite",
+          "definition": "a natural desire for food",
+          "meaning_vi": "sự ngon miệng",
+          "meaning_ko": "식욕",
+          "pos": "noun",
+          "example": "I have a big appetite after exercising."
+        },
+        {
+          "word": "portion",
+          "definition": "an amount of food for one person",
+          "meaning_vi": "phần ăn",
+          "meaning_ko": "1인분",
+          "pos": "noun",
+          "example": "The portions here are huge."
+        },
+        {
+          "word": "leftovers",
+          "definition": "food remaining after a meal",
+          "meaning_vi": "đồ ăn thừa",
+          "meaning_ko": "남은 음식",
+          "pos": "noun",
+          "example": "I ate leftovers for lunch."
+        },
+        {
+          "word": "seasoning",
+          "definition": "salt, herbs, or spices added to food",
+          "meaning_vi": "gia vị",
+          "meaning_ko": "양념",
+          "pos": "noun",
+          "example": "The seasoning is perfect."
+        },
+        {
+          "word": "organic",
+          "definition": "produced without chemical fertilizers",
+          "meaning_vi": "hữu cơ",
+          "meaning_ko": "유기농의",
+          "pos": "adjective",
+          "example": "I try to buy organic vegetables."
+        },
+        {
+          "word": "crave",
+          "definition": "to feel a powerful desire for something",
+          "meaning_vi": "thèm",
+          "meaning_ko": "갈망하다",
+          "pos": "verb",
+          "example": "I crave chocolate when stressed."
+        },
+        {
+          "word": "bland",
+          "definition": "lacking strong flavor",
+          "meaning_vi": "nhạt nhẽo",
+          "meaning_ko": "싱거운, 밋밋한",
+          "pos": "adjective",
+          "example": "The food was a bit bland."
+        },
+        {
+          "word": "savory",
+          "definition": "having a salty or spicy flavor",
+          "meaning_vi": "mặn, đậm đà",
+          "meaning_ko": "짭짤한, 고소한",
+          "pos": "adjective",
+          "example": "I prefer savory snacks over sweet ones."
+        },
+        {
+          "word": "staple",
+          "definition": "a main or important food item",
+          "meaning_vi": "thực phẩm thiết yếu",
+          "meaning_ko": "주식, 필수 식품",
+          "pos": "noun",
+          "example": "Rice is a staple in many Asian countries."
+        },
+        {
+          "word": "balanced diet",
+          "definition": "eating the right amount of nutrients",
+          "meaning_vi": "chế độ ăn cân bằng",
+          "meaning_ko": "균형 잡힌 식단",
+          "pos": "noun",
+          "example": "A balanced diet is important for health."
+        },
+        {
+          "word": "picky eater",
+          "definition": "someone who is fussy about food",
+          "meaning_vi": "người kén ăn",
+          "meaning_ko": "편식하는 사람",
+          "pos": "noun",
+          "example": "My brother is a picky eater."
+        },
+        {
+          "word": "stir-fry",
+          "definition": "to cook quickly over high heat while stirring",
+          "meaning_vi": "xào",
+          "meaning_ko": "볶다",
+          "pos": "verb",
+          "example": "I stir-fry vegetables for dinner."
+        },
+        {
+          "word": "marinate",
+          "definition": "to soak food in a seasoned liquid",
+          "meaning_vi": "ướp",
+          "meaning_ko": "재우다, 양념하다",
+          "pos": "verb",
+          "example": "I marinate the chicken overnight."
+        },
+        {
+          "word": "aroma",
+          "definition": "a pleasant and distinctive smell",
+          "meaning_vi": "hương thơm",
+          "meaning_ko": "향기",
+          "pos": "noun",
+          "example": "The aroma of fresh bread fills the kitchen."
+        },
+        {
+          "word": "garnish",
+          "definition": "to decorate food for serving",
+          "meaning_vi": "trang trí món ăn",
+          "meaning_ko": "고명을 얹다",
+          "pos": "verb",
+          "example": "The chef garnished the dish with herbs."
+        },
+        {
+          "word": "indulge",
+          "definition": "to allow oneself to enjoy something",
+          "meaning_vi": "chiều theo sở thích ăn uống",
+          "meaning_ko": "마음껏 먹다",
+          "pos": "verb",
+          "example": "I indulge in desserts on weekends."
+        },
+        {
+          "word": "sour",
+          "definition": "having a sharp acidic taste",
+          "meaning_vi": "chua",
+          "meaning_ko": "신, 시큼한",
+          "pos": "adjective",
+          "example": "This sauce is a little sour."
+        },
+        {
+          "word": "spicy",
+          "definition": "flavored with strong spices",
+          "meaning_vi": "cay",
+          "meaning_ko": "매운",
+          "pos": "adjective",
+          "example": "Korean food can be very spicy."
+        },
+        {
+          "word": "wholesome",
+          "definition": "good for health and well-being",
+          "meaning_vi": "lành mạnh",
+          "meaning_ko": "건강에 좋은",
+          "pos": "adjective",
+          "example": "My mom cooks wholesome meals."
+        }
+      ]
+    },
+    "Restaurants": {
+      "words": [
+        {
+          "word": "reservation",
+          "definition": "an arrangement to book a table",
+          "meaning_vi": "đặt bàn",
+          "meaning_ko": "예약",
+          "pos": "noun",
+          "example": "I made a reservation for 7 PM."
+        },
+        {
+          "word": "appetizer",
+          "definition": "a small dish before the main course",
+          "meaning_vi": "món khai vị",
+          "meaning_ko": "전채 요리, 에피타이저",
+          "pos": "noun",
+          "example": "We ordered some appetizers to share."
+        },
+        {
+          "word": "entree",
+          "definition": "the main course of a meal",
+          "meaning_vi": "món chính",
+          "meaning_ko": "메인 요리, 앙트레",
+          "pos": "noun",
+          "example": "The steak is the most popular entree."
+        },
+        {
+          "word": "dessert",
+          "definition": "a sweet course at the end of a meal",
+          "meaning_vi": "món tráng miệng",
+          "meaning_ko": "디저트",
+          "pos": "noun",
+          "example": "Would you like some dessert?"
+        },
+        {
+          "word": "recommend",
+          "definition": "to suggest as good or suitable",
+          "meaning_vi": "gợi ý, giới thiệu",
+          "meaning_ko": "추천하다",
+          "pos": "verb",
+          "example": "What do you recommend?"
+        },
+        {
+          "word": "specialty",
+          "definition": "a dish the restaurant is known for",
+          "meaning_vi": "món đặc biệt",
+          "meaning_ko": "특선 요리",
+          "pos": "noun",
+          "example": "Their specialty is seafood pasta."
+        },
+        {
+          "word": "atmosphere",
+          "definition": "the mood or feeling of a place",
+          "meaning_vi": "bầu không khí",
+          "meaning_ko": "분위기",
+          "pos": "noun",
+          "example": "This restaurant has a nice atmosphere."
+        },
+        {
+          "word": "service",
+          "definition": "the action of serving customers",
+          "meaning_vi": "dịch vụ phục vụ",
+          "meaning_ko": "서비스",
+          "pos": "noun",
+          "example": "The service here is excellent."
+        },
+        {
+          "word": "tip",
+          "definition": "extra money given to a server",
+          "meaning_vi": "tiền boa",
+          "meaning_ko": "팁",
+          "pos": "noun",
+          "example": "I left a generous tip."
+        },
+        {
+          "word": "takeout",
+          "definition": "food to be eaten elsewhere",
+          "meaning_vi": "đồ ăn mang đi",
+          "meaning_ko": "포장 음식",
+          "pos": "noun",
+          "example": "Let's get takeout tonight."
+        },
+        {
+          "word": "waiter",
+          "definition": "a person who serves food at a restaurant",
+          "meaning_vi": "người phục vụ (nam)",
+          "meaning_ko": "웨이터",
+          "pos": "noun",
+          "example": "The waiter was very friendly."
+        },
+        {
+          "word": "bill",
+          "definition": "a statement of charges for a meal",
+          "meaning_vi": "hóa đơn",
+          "meaning_ko": "계산서",
+          "pos": "noun",
+          "example": "Can I have the bill, please?"
+        },
+        {
+          "word": "dine in",
+          "definition": "to eat a meal at a restaurant",
+          "meaning_vi": "ăn tại chỗ",
+          "meaning_ko": "매장에서 먹다",
+          "pos": "phrasal verb",
+          "example": "Would you like to dine in or take out?"
+        },
+        {
+          "word": "portion",
+          "definition": "a serving of food",
+          "meaning_vi": "phần ăn",
+          "meaning_ko": "양, 1인분",
+          "pos": "noun",
+          "example": "The portions are generous here."
+        },
+        {
+          "word": "cuisine",
+          "definition": "a style of cooking",
+          "meaning_vi": "ẩm thực",
+          "meaning_ko": "요리",
+          "pos": "noun",
+          "example": "This restaurant serves Italian cuisine."
+        },
+        {
+          "word": "menu",
+          "definition": "a list of dishes available",
+          "meaning_vi": "thực đơn",
+          "meaning_ko": "메뉴",
+          "pos": "noun",
+          "example": "Let me look at the menu first."
+        },
+        {
+          "word": "order",
+          "definition": "to request food or drinks",
+          "meaning_vi": "gọi món",
+          "meaning_ko": "주문하다",
+          "pos": "verb",
+          "example": "Are you ready to order?"
+        },
+        {
+          "word": "food court",
+          "definition": "an area with several fast food outlets",
+          "meaning_vi": "khu ẩm thực",
+          "meaning_ko": "푸드코트",
+          "pos": "noun",
+          "example": "Let's eat at the food court in the mall."
+        },
+        {
+          "word": "outdoor seating",
+          "definition": "tables and chairs outside a restaurant",
+          "meaning_vi": "chỗ ngồi ngoài trời",
+          "meaning_ko": "야외 좌석",
+          "pos": "noun",
+          "example": "I prefer outdoor seating when the weather is nice."
+        },
+        {
+          "word": "signature dish",
+          "definition": "a recipe unique to a restaurant",
+          "meaning_vi": "món ăn đặc trưng",
+          "meaning_ko": "시그니처 메뉴",
+          "pos": "noun",
+          "example": "You should try their signature dish."
+        },
+        {
+          "word": "waiting list",
+          "definition": "a list of people waiting for a table",
+          "meaning_vi": "danh sách chờ",
+          "meaning_ko": "대기 명단",
+          "pos": "noun",
+          "example": "There's a long waiting list tonight."
+        },
+        {
+          "word": "complimentary",
+          "definition": "given for free",
+          "meaning_vi": "miễn phí",
+          "meaning_ko": "무료의",
+          "pos": "adjective",
+          "example": "They gave us complimentary bread."
+        },
+        {
+          "word": "dine out",
+          "definition": "to eat a meal at a restaurant",
+          "meaning_vi": "ăn ngoài",
+          "meaning_ko": "외식하다",
+          "pos": "phrasal verb",
+          "example": "We dine out every Friday."
+        },
+        {
+          "word": "split the bill",
+          "definition": "to divide the cost between people",
+          "meaning_vi": "chia hóa đơn",
+          "meaning_ko": "더치페이하다",
+          "pos": "phrasal verb",
+          "example": "Let's split the bill equally."
+        },
+        {
+          "word": "crowded",
+          "definition": "having many people",
+          "meaning_vi": "đông đúc",
+          "meaning_ko": "붐비는",
+          "pos": "adjective",
+          "example": "The restaurant is always crowded on weekends."
+        }
+      ]
+    },
+    "Bars": {
+      "words": [
+        {
+          "word": "beverage",
+          "definition": "a drink other than water",
+          "meaning_vi": "đồ uống",
+          "meaning_ko": "음료",
+          "pos": "noun",
+          "example": "What beverage would you like?"
+        },
+        {
+          "word": "cocktail",
+          "definition": "an alcoholic mixed drink",
+          "meaning_vi": "cocktail",
+          "meaning_ko": "칵테일",
+          "pos": "noun",
+          "example": "I ordered a cocktail."
+        },
+        {
+          "word": "socialize",
+          "definition": "to mix socially with others",
+          "meaning_vi": "giao lưu",
+          "meaning_ko": "사교하다",
+          "pos": "verb",
+          "example": "Bars are good places to socialize."
+        },
+        {
+          "word": "atmosphere",
+          "definition": "the mood of a place",
+          "meaning_vi": "bầu không khí",
+          "meaning_ko": "분위기",
+          "pos": "noun",
+          "example": "This bar has a great atmosphere."
+        },
+        {
+          "word": "crowded",
+          "definition": "having many people",
+          "meaning_vi": "đông đúc",
+          "meaning_ko": "붐비는",
+          "pos": "adjective",
+          "example": "The bar was really crowded."
+        },
+        {
+          "word": "lively",
+          "definition": "full of life and energy",
+          "meaning_vi": "sôi động",
+          "meaning_ko": "활기찬",
+          "pos": "adjective",
+          "example": "The atmosphere is lively on weekends."
+        },
+        {
+          "word": "unwind",
+          "definition": "to relax after tension or work",
+          "meaning_vi": "thư giãn",
+          "meaning_ko": "긴장을 풀다",
+          "pos": "verb",
+          "example": "I like to unwind at a bar after work."
+        },
+        {
+          "word": "draft beer",
+          "definition": "beer served from a keg",
+          "meaning_vi": "bia tươi",
+          "meaning_ko": "생맥주",
+          "pos": "noun",
+          "example": "I'll have a draft beer, please."
+        },
+        {
+          "word": "hangout",
+          "definition": "a place where one spends time",
+          "meaning_vi": "nơi thường lui tới",
+          "meaning_ko": "단골집, 아지트",
+          "pos": "noun",
+          "example": "This bar is our favorite hangout."
+        },
+        {
+          "word": "bartender",
+          "definition": "a person who serves drinks at a bar",
+          "meaning_vi": "người pha chế",
+          "meaning_ko": "바텐더",
+          "pos": "noun",
+          "example": "The bartender makes great cocktails."
+        },
+        {
+          "word": "toast",
+          "definition": "to raise a glass and drink to someone",
+          "meaning_vi": "nâng ly chúc mừng",
+          "meaning_ko": "건배하다",
+          "pos": "verb",
+          "example": "Let's toast to our success!"
+        },
+        {
+          "word": "treat",
+          "definition": "to pay for someone else's drink or food",
+          "meaning_vi": "đãi, mời",
+          "meaning_ko": "한턱내다",
+          "pos": "verb",
+          "example": "It's my treat tonight."
+        },
+        {
+          "word": "tipsy",
+          "definition": "slightly drunk",
+          "meaning_vi": "hơi say",
+          "meaning_ko": "약간 취한",
+          "pos": "adjective",
+          "example": "I was a bit tipsy after two drinks."
+        },
+        {
+          "word": "nightlife",
+          "definition": "entertainment available at night",
+          "meaning_vi": "cuộc sống về đêm",
+          "meaning_ko": "밤문화",
+          "pos": "noun",
+          "example": "The nightlife here is exciting."
+        },
+        {
+          "word": "on tap",
+          "definition": "available from a keg, not bottled",
+          "meaning_vi": "bia hơi",
+          "meaning_ko": "생맥주로 나오는",
+          "pos": "adjective",
+          "example": "What beers do you have on tap?"
+        },
+        {
+          "word": "pub",
+          "definition": "a casual bar or tavern",
+          "meaning_vi": "quán rượu",
+          "meaning_ko": "펍, 술집",
+          "pos": "noun",
+          "example": "We went to a local pub."
+        },
+        {
+          "word": "round",
+          "definition": "a set of drinks for everyone",
+          "meaning_vi": "lượt (mời rượu)",
+          "meaning_ko": "한 순서 (술)",
+          "pos": "noun",
+          "example": "I'll buy the next round."
+        },
+        {
+          "word": "snack",
+          "definition": "a light meal or food",
+          "meaning_vi": "đồ ăn nhẹ",
+          "meaning_ko": "간식, 안주",
+          "pos": "noun",
+          "example": "They serve bar snacks too."
+        },
+        {
+          "word": "cozy",
+          "definition": "warm and comfortable",
+          "meaning_vi": "ấm cúng",
+          "meaning_ko": "아늑한",
+          "pos": "adjective",
+          "example": "This bar has a cozy vibe."
+        },
+        {
+          "word": "loud",
+          "definition": "producing much noise",
+          "meaning_vi": "ồn ào",
+          "meaning_ko": "시끄러운",
+          "pos": "adjective",
+          "example": "The music was too loud."
+        },
+        {
+          "word": "chill out",
+          "definition": "to relax completely",
+          "meaning_vi": "thư giãn",
+          "meaning_ko": "편하게 쉬다",
+          "pos": "phrasal verb",
+          "example": "Let's chill out at the bar tonight."
+        },
+        {
+          "word": "happy hour",
+          "definition": "a time when drinks are cheaper",
+          "meaning_vi": "giờ giảm giá đồ uống",
+          "meaning_ko": "해피아워",
+          "pos": "noun",
+          "example": "Happy hour starts at 5 PM."
+        },
+        {
+          "word": "designated driver",
+          "definition": "a person who stays sober to drive others",
+          "meaning_vi": "người lái xe thay",
+          "meaning_ko": "대리운전자",
+          "pos": "noun",
+          "example": "I'm the designated driver tonight."
+        },
+        {
+          "word": "cheers",
+          "definition": "an exclamation before drinking",
+          "meaning_vi": "chúc mừng",
+          "meaning_ko": "건배",
+          "pos": "interjection",
+          "example": "Cheers! Let's have a great time."
+        },
+        {
+          "word": "craft beer",
+          "definition": "beer made by a small, independent brewery",
+          "meaning_vi": "bia thủ công",
+          "meaning_ko": "수제 맥주",
+          "pos": "noun",
+          "example": "I prefer craft beer over regular brands."
+        }
+      ]
+    },
+    "Coffee shop": {
+      "words": [
+        {
+          "word": "espresso",
+          "definition": "strong concentrated black coffee",
+          "meaning_vi": "cà phê espresso",
+          "meaning_ko": "에스프레소",
+          "pos": "noun",
+          "example": "I'll have a double espresso."
+        },
+        {
+          "word": "latte",
+          "definition": "espresso with steamed milk",
+          "meaning_vi": "cà phê latte",
+          "meaning_ko": "라떼",
+          "pos": "noun",
+          "example": "A vanilla latte, please."
+        },
+        {
+          "word": "barista",
+          "definition": "a person who makes coffee drinks",
+          "meaning_vi": "người pha chế cà phê",
+          "meaning_ko": "바리스타",
+          "pos": "noun",
+          "example": "The barista makes great coffee."
+        },
+        {
+          "word": "caffeine",
+          "definition": "a stimulant found in coffee and tea",
+          "meaning_vi": "caffeine",
+          "meaning_ko": "카페인",
+          "pos": "noun",
+          "example": "I need caffeine in the morning."
+        },
+        {
+          "word": "brew",
+          "definition": "to make coffee or tea by infusing",
+          "meaning_vi": "pha (cà phê)",
+          "meaning_ko": "내리다, 추출하다",
+          "pos": "verb",
+          "example": "They brew fresh coffee every hour."
+        },
+        {
+          "word": "pastry",
+          "definition": "sweet baked goods",
+          "meaning_vi": "bánh ngọt",
+          "meaning_ko": "페이스트리",
+          "pos": "noun",
+          "example": "I'll have a pastry with my coffee."
+        },
+        {
+          "word": "WiFi",
+          "definition": "wireless internet connection",
+          "meaning_vi": "WiFi, mạng không dây",
+          "meaning_ko": "와이파이",
+          "pos": "noun",
+          "example": "Do they have free WiFi?"
+        },
+        {
+          "word": "iced coffee",
+          "definition": "coffee served cold with ice",
+          "meaning_vi": "cà phê đá",
+          "meaning_ko": "아이스 커피",
+          "pos": "noun",
+          "example": "I prefer iced coffee in summer."
+        },
+        {
+          "word": "cozy",
+          "definition": "comfortable and warm",
+          "meaning_vi": "ấm cúng",
+          "meaning_ko": "아늑한",
+          "pos": "adjective",
+          "example": "This cafe is so cozy."
+        },
+        {
+          "word": "decaf",
+          "definition": "coffee with most caffeine removed",
+          "meaning_vi": "cà phê không caffeine",
+          "meaning_ko": "디카페인",
+          "pos": "noun",
+          "example": "I'll have a decaf, please."
+        },
+        {
+          "word": "takeaway",
+          "definition": "food or drink to be consumed elsewhere",
+          "meaning_vi": "mang đi",
+          "meaning_ko": "테이크아웃",
+          "pos": "noun",
+          "example": "One latte takeaway, please."
+        },
+        {
+          "word": "refill",
+          "definition": "to fill a cup again",
+          "meaning_vi": "rót thêm",
+          "meaning_ko": "리필",
+          "pos": "noun",
+          "example": "Can I get a refill?"
+        },
+        {
+          "word": "regular",
+          "definition": "a frequent customer or standard size",
+          "meaning_vi": "khách quen / cỡ thường",
+          "meaning_ko": "단골 / 레귤러",
+          "pos": "noun",
+          "example": "I'm a regular at this cafe."
+        },
+        {
+          "word": "drip coffee",
+          "definition": "coffee made by dripping hot water through grounds",
+          "meaning_vi": "cà phê phin",
+          "meaning_ko": "드립 커피",
+          "pos": "noun",
+          "example": "I prefer drip coffee to instant."
+        },
+        {
+          "word": "study spot",
+          "definition": "a good place for studying",
+          "meaning_vi": "chỗ ngồi học bài",
+          "meaning_ko": "공부하기 좋은 곳",
+          "pos": "noun",
+          "example": "This cafe is a great study spot."
+        },
+        {
+          "word": "ambiance",
+          "definition": "the atmosphere of a place",
+          "meaning_vi": "bầu không khí",
+          "meaning_ko": "분위기",
+          "pos": "noun",
+          "example": "The ambiance here is perfect for reading."
+        },
+        {
+          "word": "grab a coffee",
+          "definition": "to quickly get a coffee",
+          "meaning_vi": "đi uống cà phê",
+          "meaning_ko": "커피 한 잔 하다",
+          "pos": "phrasal verb",
+          "example": "Let's grab a coffee before class."
+        },
+        {
+          "word": "blend",
+          "definition": "a mixture of different types of coffee",
+          "meaning_vi": "hỗn hợp, trộn",
+          "meaning_ko": "블렌드",
+          "pos": "noun",
+          "example": "This is a special house blend."
+        },
+        {
+          "word": "creamer",
+          "definition": "a substance added to coffee instead of milk",
+          "meaning_vi": "kem pha cà phê",
+          "meaning_ko": "크리머, 프림",
+          "pos": "noun",
+          "example": "Do you want creamer with that?"
+        },
+        {
+          "word": "sip",
+          "definition": "to drink something slowly",
+          "meaning_vi": "nhấp, uống từng ngụm",
+          "meaning_ko": "홀짝이다",
+          "pos": "verb",
+          "example": "I sipped my coffee while reading."
+        },
+        {
+          "word": "whipped cream",
+          "definition": "cream that has been beaten until light",
+          "meaning_vi": "kem tươi đánh bông",
+          "meaning_ko": "휘핑크림",
+          "pos": "noun",
+          "example": "Can I have whipped cream on top?"
+        },
+        {
+          "word": "sugar-free",
+          "definition": "containing no sugar",
+          "meaning_vi": "không đường",
+          "meaning_ko": "무설탕",
+          "pos": "adjective",
+          "example": "Do you have sugar-free syrup?"
+        },
+        {
+          "word": "aromatic",
+          "definition": "having a pleasant and distinctive smell",
+          "meaning_vi": "thơm",
+          "meaning_ko": "향기로운",
+          "pos": "adjective",
+          "example": "The coffee is very aromatic."
+        },
+        {
+          "word": "grind",
+          "definition": "to crush coffee beans into powder",
+          "meaning_vi": "xay (cà phê)",
+          "meaning_ko": "갈다 (커피를)",
+          "pos": "verb",
+          "example": "They grind the beans fresh for every cup."
+        },
+        {
+          "word": "chain",
+          "definition": "a group of stores under the same brand",
+          "meaning_vi": "chuỗi cửa hàng",
+          "meaning_ko": "체인점, 프랜차이즈",
+          "pos": "noun",
+          "example": "I prefer local cafes over chains."
+        }
+      ]
+    },
+    "Music": {
+      "words": [
+        {
+          "word": "melody",
+          "definition": "a sequence of musical notes forming a tune",
+          "meaning_vi": "giai điệu",
+          "meaning_ko": "멜로디",
+          "pos": "noun",
+          "example": "The melody is beautiful."
+        },
+        {
+          "word": "rhythm",
+          "definition": "a strong regular repeated pattern of sound",
+          "meaning_vi": "nhịp điệu",
+          "meaning_ko": "리듬",
+          "pos": "noun",
+          "example": "I love the rhythm of this song."
+        },
+        {
+          "word": "lyrics",
+          "definition": "the words of a song",
+          "meaning_vi": "lời bài hát",
+          "meaning_ko": "가사",
+          "pos": "noun",
+          "example": "The lyrics are meaningful."
+        },
+        {
+          "word": "genre",
+          "definition": "a category of music or art",
+          "meaning_vi": "thể loại",
+          "meaning_ko": "장르",
+          "pos": "noun",
+          "example": "What genre do you like?"
+        },
+        {
+          "word": "concert",
+          "definition": "a musical performance for an audience",
+          "meaning_vi": "buổi hòa nhạc",
+          "meaning_ko": "콘서트",
+          "pos": "noun",
+          "example": "I went to a concert last weekend."
+        },
+        {
+          "word": "album",
+          "definition": "a collection of songs released together",
+          "meaning_vi": "album nhạc",
+          "meaning_ko": "앨범",
+          "pos": "noun",
+          "example": "Their new album is great."
+        },
+        {
+          "word": "catchy",
+          "definition": "instantly appealing and easy to remember",
+          "meaning_vi": "bắt tai",
+          "meaning_ko": "중독성 있는",
+          "pos": "adjective",
+          "example": "That song is so catchy."
+        },
+        {
+          "word": "soothing",
+          "definition": "having a gently calming effect",
+          "meaning_vi": "êm dịu, dịu dàng",
+          "meaning_ko": "차분한, 편안한",
+          "pos": "adjective",
+          "example": "I listen to soothing music to relax."
+        },
+        {
+          "word": "playlist",
+          "definition": "a list of songs to be played in sequence",
+          "meaning_vi": "danh sách phát",
+          "meaning_ko": "플레이리스트",
+          "pos": "noun",
+          "example": "I made a workout playlist."
+        },
+        {
+          "word": "streaming",
+          "definition": "playing music online in real-time",
+          "meaning_vi": "phát trực tuyến",
+          "meaning_ko": "스트리밍",
+          "pos": "noun",
+          "example": "I use a streaming service for music."
+        },
+        {
+          "word": "instrument",
+          "definition": "a device for making music",
+          "meaning_vi": "nhạc cụ",
+          "meaning_ko": "악기",
+          "pos": "noun",
+          "example": "I play a musical instrument."
+        },
+        {
+          "word": "perform",
+          "definition": "to present entertainment to an audience",
+          "meaning_vi": "biểu diễn",
+          "meaning_ko": "공연하다",
+          "pos": "verb",
+          "example": "The band performed live."
+        },
+        {
+          "word": "tune",
+          "definition": "a melody or musical piece",
+          "meaning_vi": "bài hát, giai điệu",
+          "meaning_ko": "곡, 음악",
+          "pos": "noun",
+          "example": "I can't get that tune out of my head."
+        },
+        {
+          "word": "vibe",
+          "definition": "the feeling or atmosphere of music",
+          "meaning_vi": "cảm giác, phong cách",
+          "meaning_ko": "분위기, 바이브",
+          "pos": "noun",
+          "example": "This song has a nice vibe."
+        },
+        {
+          "word": "earbud",
+          "definition": "a small earphone inserted in the ear",
+          "meaning_vi": "tai nghe nhét tai",
+          "meaning_ko": "이어버드",
+          "pos": "noun",
+          "example": "I listen to music with my earbuds."
+        },
+        {
+          "word": "chorus",
+          "definition": "the repeated part of a song",
+          "meaning_vi": "điệp khúc",
+          "meaning_ko": "후렴구, 코러스",
+          "pos": "noun",
+          "example": "The chorus is really catchy."
+        },
+        {
+          "word": "compose",
+          "definition": "to write or create music",
+          "meaning_vi": "sáng tác",
+          "meaning_ko": "작곡하다",
+          "pos": "verb",
+          "example": "She composed the song herself."
+        },
+        {
+          "word": "vocalist",
+          "definition": "a singer",
+          "meaning_vi": "ca sĩ",
+          "meaning_ko": "보컬리스트",
+          "pos": "noun",
+          "example": "The vocalist has an amazing voice."
+        },
+        {
+          "word": "upbeat",
+          "definition": "having a fast tempo; cheerful",
+          "meaning_vi": "vui vẻ, sôi nổi",
+          "meaning_ko": "경쾌한, 신나는",
+          "pos": "adjective",
+          "example": "I like upbeat music when exercising."
+        },
+        {
+          "word": "acoustic",
+          "definition": "music without electronic amplification",
+          "meaning_vi": "mộc, không điện tử",
+          "meaning_ko": "어쿠스틱",
+          "pos": "adjective",
+          "example": "I prefer the acoustic version."
+        },
+        {
+          "word": "fan",
+          "definition": "an enthusiastic admirer",
+          "meaning_vi": "người hâm mộ",
+          "meaning_ko": "팬",
+          "pos": "noun",
+          "example": "I'm a big fan of this band."
+        },
+        {
+          "word": "K-pop",
+          "definition": "Korean popular music",
+          "meaning_vi": "nhạc Hàn Quốc",
+          "meaning_ko": "케이팝",
+          "pos": "noun",
+          "example": "K-pop is popular worldwide."
+        },
+        {
+          "word": "classic",
+          "definition": "a timeless and well-known work",
+          "meaning_vi": "kinh điển",
+          "meaning_ko": "클래식, 명곡",
+          "pos": "adjective",
+          "example": "That's a classic song from the 90s."
+        },
+        {
+          "word": "DJ",
+          "definition": "a person who plays recorded music",
+          "meaning_vi": "DJ",
+          "meaning_ko": "디제이",
+          "pos": "noun",
+          "example": "The DJ played great songs."
+        },
+        {
+          "word": "remix",
+          "definition": "a new version of a recorded song",
+          "meaning_vi": "bản phối lại",
+          "meaning_ko": "리믹스",
+          "pos": "noun",
+          "example": "I prefer the remix of that song."
+        }
+      ]
+    },
+    "Movies": {
+      "words": [
+        {
+          "word": "plot",
+          "definition": "the main events of a story",
+          "meaning_vi": "cốt truyện",
+          "meaning_ko": "줄거리",
+          "pos": "noun",
+          "example": "The plot was very interesting."
+        },
+        {
+          "word": "character",
+          "definition": "a person in a story or movie",
+          "meaning_vi": "nhân vật",
+          "meaning_ko": "등장인물",
+          "pos": "noun",
+          "example": "The main character was relatable."
+        },
+        {
+          "word": "scene",
+          "definition": "a part of a movie or play",
+          "meaning_vi": "cảnh phim",
+          "meaning_ko": "장면",
+          "pos": "noun",
+          "example": "That action scene was amazing."
+        },
+        {
+          "word": "director",
+          "definition": "a person who directs a movie",
+          "meaning_vi": "đạo diễn",
+          "meaning_ko": "감독",
+          "pos": "noun",
+          "example": "He is my favorite director."
+        },
+        {
+          "word": "recommend",
+          "definition": "to suggest as worthwhile",
+          "meaning_vi": "đề xuất, gợi ý",
+          "meaning_ko": "추천하다",
+          "pos": "verb",
+          "example": "I recommend this movie."
+        },
+        {
+          "word": "spoiler",
+          "definition": "information that reveals a plot",
+          "meaning_vi": "tiết lộ nội dung",
+          "meaning_ko": "스포일러",
+          "pos": "noun",
+          "example": "Don't give me any spoilers!"
+        },
+        {
+          "word": "sequel",
+          "definition": "a movie that continues a previous story",
+          "meaning_vi": "phần tiếp theo",
+          "meaning_ko": "속편",
+          "pos": "noun",
+          "example": "The sequel was disappointing."
+        },
+        {
+          "word": "entertaining",
+          "definition": "providing enjoyment",
+          "meaning_vi": "giải trí, thú vị",
+          "meaning_ko": "재미있는",
+          "pos": "adjective",
+          "example": "It was very entertaining."
+        },
+        {
+          "word": "touching",
+          "definition": "arousing feelings of sympathy",
+          "meaning_vi": "cảm động",
+          "meaning_ko": "감동적인",
+          "pos": "adjective",
+          "example": "It was a touching story."
+        },
+        {
+          "word": "suspenseful",
+          "definition": "causing excitement and uncertainty",
+          "meaning_vi": "hồi hộp",
+          "meaning_ko": "긴장감 넘치는",
+          "pos": "adjective",
+          "example": "The movie was suspenseful."
+        },
+        {
+          "word": "blockbuster",
+          "definition": "a very successful movie",
+          "meaning_vi": "phim bom tấn",
+          "meaning_ko": "블록버스터",
+          "pos": "noun",
+          "example": "It became a blockbuster."
+        },
+        {
+          "word": "binge-watch",
+          "definition": "to watch many episodes at once",
+          "meaning_vi": "xem liên tục",
+          "meaning_ko": "몰아보다",
+          "pos": "verb",
+          "example": "I binge-watched the entire series."
+        },
+        {
+          "word": "subtitle",
+          "definition": "text at the bottom of the screen",
+          "meaning_vi": "phụ đề",
+          "meaning_ko": "자막",
+          "pos": "noun",
+          "example": "I always watch with subtitles."
+        },
+        {
+          "word": "genre",
+          "definition": "a category of movie",
+          "meaning_vi": "thể loại",
+          "meaning_ko": "장르",
+          "pos": "noun",
+          "example": "My favorite genre is comedy."
+        },
+        {
+          "word": "premiere",
+          "definition": "the first showing of a movie",
+          "meaning_vi": "buổi công chiếu đầu tiên",
+          "meaning_ko": "시사회, 개봉",
+          "pos": "noun",
+          "example": "The premiere is next week."
+        },
+        {
+          "word": "trailer",
+          "definition": "a preview of a movie",
+          "meaning_vi": "đoạn giới thiệu phim",
+          "meaning_ko": "예고편",
+          "pos": "noun",
+          "example": "The trailer looks exciting."
+        },
+        {
+          "word": "cast",
+          "definition": "the actors in a movie",
+          "meaning_vi": "dàn diễn viên",
+          "meaning_ko": "출연진, 캐스트",
+          "pos": "noun",
+          "example": "The cast is amazing."
+        },
+        {
+          "word": "soundtrack",
+          "definition": "the music in a movie",
+          "meaning_vi": "nhạc phim",
+          "meaning_ko": "사운드트랙, OST",
+          "pos": "noun",
+          "example": "The soundtrack is beautiful."
+        },
+        {
+          "word": "cinema",
+          "definition": "a place where movies are shown",
+          "meaning_vi": "rạp chiếu phim",
+          "meaning_ko": "영화관",
+          "pos": "noun",
+          "example": "Let's go to the cinema tonight."
+        },
+        {
+          "word": "review",
+          "definition": "a written opinion about a movie",
+          "meaning_vi": "bài đánh giá",
+          "meaning_ko": "리뷰, 평가",
+          "pos": "noun",
+          "example": "The reviews are mostly positive."
+        },
+        {
+          "word": "animation",
+          "definition": "a movie made with drawings or CGI",
+          "meaning_vi": "phim hoạt hình",
+          "meaning_ko": "애니메이션",
+          "pos": "noun",
+          "example": "I love watching animation movies."
+        },
+        {
+          "word": "twist",
+          "definition": "an unexpected change in a story",
+          "meaning_vi": "tình tiết bất ngờ",
+          "meaning_ko": "반전",
+          "pos": "noun",
+          "example": "The ending had a great twist."
+        },
+        {
+          "word": "acting",
+          "definition": "the art of performing in movies",
+          "meaning_vi": "diễn xuất",
+          "meaning_ko": "연기",
+          "pos": "noun",
+          "example": "The acting was outstanding."
+        },
+        {
+          "word": "box office",
+          "definition": "where tickets are sold; also revenue",
+          "meaning_vi": "phòng vé / doanh thu",
+          "meaning_ko": "박스오피스, 흥행",
+          "pos": "noun",
+          "example": "It broke box office records."
+        },
+        {
+          "word": "streaming platform",
+          "definition": "an online service for watching content",
+          "meaning_vi": "nền tảng xem phim trực tuyến",
+          "meaning_ko": "스트리밍 플랫폼",
+          "pos": "noun",
+          "example": "I watch movies on a streaming platform."
+        }
+      ]
+    },
+    "Television": {
+      "words": [
+        {
+          "word": "episode",
+          "definition": "one part of a TV series",
+          "meaning_vi": "tập phim",
+          "meaning_ko": "에피소드, 회",
+          "pos": "noun",
+          "example": "I watched three episodes last night."
+        },
+        {
+          "word": "series",
+          "definition": "a set of related TV programs",
+          "meaning_vi": "phim bộ",
+          "meaning_ko": "시리즈, 드라마",
+          "pos": "noun",
+          "example": "This series has ten seasons."
+        },
+        {
+          "word": "channel",
+          "definition": "a TV broadcasting frequency",
+          "meaning_vi": "kênh truyền hình",
+          "meaning_ko": "채널",
+          "pos": "noun",
+          "example": "What channel is it on?"
+        },
+        {
+          "word": "stream",
+          "definition": "to watch content online",
+          "meaning_vi": "xem trực tuyến",
+          "meaning_ko": "스트리밍하다",
+          "pos": "verb",
+          "example": "I stream shows on Netflix."
+        },
+        {
+          "word": "commercial",
+          "definition": "an advertisement on TV",
+          "meaning_vi": "quảng cáo",
+          "meaning_ko": "광고",
+          "pos": "noun",
+          "example": "I hate watching commercials."
+        },
+        {
+          "word": "addictive",
+          "definition": "causing a strong desire to continue",
+          "meaning_vi": "gây nghiện",
+          "meaning_ko": "중독성 있는",
+          "pos": "adjective",
+          "example": "This show is so addictive."
+        },
+        {
+          "word": "cliffhanger",
+          "definition": "an ending that creates suspense",
+          "meaning_vi": "kết thúc hồi hộp",
+          "meaning_ko": "클리프행어",
+          "pos": "noun",
+          "example": "The episode ended on a cliffhanger."
+        },
+        {
+          "word": "premiere",
+          "definition": "the first broadcast of a show",
+          "meaning_vi": "buổi công chiếu đầu tiên",
+          "meaning_ko": "첫 방송",
+          "pos": "noun",
+          "example": "The premiere is next week."
+        },
+        {
+          "word": "binge-watch",
+          "definition": "to watch many episodes consecutively",
+          "meaning_vi": "xem liên tục",
+          "meaning_ko": "몰아보다",
+          "pos": "verb",
+          "example": "I binge-watched the entire season."
+        },
+        {
+          "word": "reality show",
+          "definition": "a TV program about real people",
+          "meaning_vi": "chương trình thực tế",
+          "meaning_ko": "리얼리티 쇼",
+          "pos": "noun",
+          "example": "I enjoy watching reality shows."
+        },
+        {
+          "word": "sitcom",
+          "definition": "a comedy series with recurring characters",
+          "meaning_vi": "phim hài tình huống",
+          "meaning_ko": "시트콤",
+          "pos": "noun",
+          "example": "Friends is a classic sitcom."
+        },
+        {
+          "word": "documentary",
+          "definition": "a factual film or TV program",
+          "meaning_vi": "phim tài liệu",
+          "meaning_ko": "다큐멘터리",
+          "pos": "noun",
+          "example": "I watched an interesting documentary."
+        },
+        {
+          "word": "broadcast",
+          "definition": "to transmit a program on TV or radio",
+          "meaning_vi": "phát sóng",
+          "meaning_ko": "방송하다",
+          "pos": "verb",
+          "example": "The game will be broadcast live."
+        },
+        {
+          "word": "season",
+          "definition": "a set of episodes of a TV show",
+          "meaning_vi": "mùa phim",
+          "meaning_ko": "시즌",
+          "pos": "noun",
+          "example": "Season 2 was better than Season 1."
+        },
+        {
+          "word": "plot twist",
+          "definition": "an unexpected change in the story",
+          "meaning_vi": "tình tiết bất ngờ",
+          "meaning_ko": "반전",
+          "pos": "noun",
+          "example": "I didn't see that plot twist coming."
+        },
+        {
+          "word": "host",
+          "definition": "a person who presents a TV show",
+          "meaning_vi": "người dẫn chương trình",
+          "meaning_ko": "진행자, MC",
+          "pos": "noun",
+          "example": "The host is very funny."
+        },
+        {
+          "word": "remote control",
+          "definition": "a device for controlling a TV",
+          "meaning_vi": "điều khiển từ xa",
+          "meaning_ko": "리모컨",
+          "pos": "noun",
+          "example": "Hand me the remote control."
+        },
+        {
+          "word": "cable TV",
+          "definition": "television delivered via cable",
+          "meaning_vi": "truyền hình cáp",
+          "meaning_ko": "케이블 TV",
+          "pos": "noun",
+          "example": "We cancelled our cable TV subscription."
+        },
+        {
+          "word": "talk show",
+          "definition": "a TV show with interviews and discussions",
+          "meaning_vi": "chương trình trò chuyện",
+          "meaning_ko": "토크쇼",
+          "pos": "noun",
+          "example": "I watch talk shows in the evening."
+        },
+        {
+          "word": "news anchor",
+          "definition": "a person who presents news on TV",
+          "meaning_vi": "người dẫn tin tức",
+          "meaning_ko": "뉴스 앵커",
+          "pos": "noun",
+          "example": "She is a famous news anchor."
+        },
+        {
+          "word": "subscribe",
+          "definition": "to sign up for a service",
+          "meaning_vi": "đăng ký",
+          "meaning_ko": "구독하다",
+          "pos": "verb",
+          "example": "I subscribed to a streaming service."
+        },
+        {
+          "word": "rerun",
+          "definition": "a repeat showing of a TV program",
+          "meaning_vi": "chiếu lại",
+          "meaning_ko": "재방송",
+          "pos": "noun",
+          "example": "They're showing reruns of that old show."
+        },
+        {
+          "word": "on-demand",
+          "definition": "available whenever the viewer wants",
+          "meaning_vi": "theo yêu cầu",
+          "meaning_ko": "온디맨드, 주문형",
+          "pos": "adjective",
+          "example": "I watch everything on-demand now."
+        },
+        {
+          "word": "binge-worthy",
+          "definition": "so good that you want to watch many episodes",
+          "meaning_vi": "đáng xem liên tục",
+          "meaning_ko": "몰아보기 좋은",
+          "pos": "adjective",
+          "example": "This drama is totally binge-worthy."
+        },
+        {
+          "word": "tune in",
+          "definition": "to watch or listen to a broadcast",
+          "meaning_vi": "theo dõi chương trình",
+          "meaning_ko": "채널을 맞추다",
+          "pos": "phrasal verb",
+          "example": "Tune in next week for the finale."
+        }
+      ]
+    },
+    "Internet": {
+      "words": [
+        {
+          "word": "browse",
+          "definition": "to look through information online",
+          "meaning_vi": "duyệt web",
+          "meaning_ko": "검색하다",
+          "pos": "verb",
+          "example": "I browse the internet every day."
+        },
+        {
+          "word": "search",
+          "definition": "to look for information",
+          "meaning_vi": "tìm kiếm",
+          "meaning_ko": "검색하다",
+          "pos": "verb",
+          "example": "I searched for reviews online."
+        },
+        {
+          "word": "download",
+          "definition": "to copy data to your device",
+          "meaning_vi": "tải xuống",
+          "meaning_ko": "다운로드하다",
+          "pos": "verb",
+          "example": "I downloaded the app."
+        },
+        {
+          "word": "upload",
+          "definition": "to transfer data to the internet",
+          "meaning_vi": "tải lên",
+          "meaning_ko": "업로드하다",
+          "pos": "verb",
+          "example": "I uploaded photos to the cloud."
+        },
+        {
+          "word": "streaming",
+          "definition": "transmitting data continuously online",
+          "meaning_vi": "phát trực tuyến",
+          "meaning_ko": "스트리밍",
+          "pos": "noun",
+          "example": "Streaming uses a lot of data."
+        },
+        {
+          "word": "viral",
+          "definition": "spreading rapidly on the internet",
+          "meaning_vi": "lan truyền",
+          "meaning_ko": "바이럴, 입소문",
+          "pos": "adjective",
+          "example": "The video went viral."
+        },
+        {
+          "word": "subscribe",
+          "definition": "to sign up for online content",
+          "meaning_vi": "đăng ký theo dõi",
+          "meaning_ko": "구독하다",
+          "pos": "verb",
+          "example": "I subscribed to the channel."
+        },
+        {
+          "word": "notification",
+          "definition": "an alert or message from an app",
+          "meaning_vi": "thông báo",
+          "meaning_ko": "알림",
+          "pos": "noun",
+          "example": "I turned off notifications."
+        },
+        {
+          "word": "update",
+          "definition": "to make something current",
+          "meaning_vi": "cập nhật",
+          "meaning_ko": "업데이트하다",
+          "pos": "verb",
+          "example": "I need to update the software."
+        },
+        {
+          "word": "privacy",
+          "definition": "the state of being private online",
+          "meaning_vi": "quyền riêng tư",
+          "meaning_ko": "개인정보 보호",
+          "pos": "noun",
+          "example": "Online privacy is important."
+        },
+        {
+          "word": "password",
+          "definition": "a secret word or phrase for access",
+          "meaning_vi": "mật khẩu",
+          "meaning_ko": "비밀번호",
+          "pos": "noun",
+          "example": "Use a strong password."
+        },
+        {
+          "word": "bookmark",
+          "definition": "to save a webpage for quick access",
+          "meaning_vi": "đánh dấu trang",
+          "meaning_ko": "북마크",
+          "pos": "verb",
+          "example": "I bookmarked that article."
+        },
+        {
+          "word": "social media",
+          "definition": "online platforms for sharing content",
+          "meaning_vi": "mạng xã hội",
+          "meaning_ko": "소셜 미디어, SNS",
+          "pos": "noun",
+          "example": "I spend too much time on social media."
+        },
+        {
+          "word": "online shopping",
+          "definition": "buying things on the internet",
+          "meaning_vi": "mua sắm trực tuyến",
+          "meaning_ko": "온라인 쇼핑",
+          "pos": "noun",
+          "example": "I do most of my online shopping."
+        },
+        {
+          "word": "cybersecurity",
+          "definition": "protection against online threats",
+          "meaning_vi": "an ninh mạng",
+          "meaning_ko": "사이버 보안",
+          "pos": "noun",
+          "example": "Cybersecurity is increasingly important."
+        },
+        {
+          "word": "content",
+          "definition": "information shared on the internet",
+          "meaning_vi": "nội dung",
+          "meaning_ko": "콘텐츠",
+          "pos": "noun",
+          "example": "I create content for my channel."
+        },
+        {
+          "word": "influencer",
+          "definition": "a person with online influence",
+          "meaning_vi": "người có ảnh hưởng",
+          "meaning_ko": "인플루언서",
+          "pos": "noun",
+          "example": "She is a famous influencer."
+        },
+        {
+          "word": "click",
+          "definition": "to select something on a screen",
+          "meaning_vi": "nhấp chuột",
+          "meaning_ko": "클릭하다",
+          "pos": "verb",
+          "example": "Click on the link to read more."
+        },
+        {
+          "word": "post",
+          "definition": "to publish something online",
+          "meaning_vi": "đăng bài",
+          "meaning_ko": "게시하다, 올리다",
+          "pos": "verb",
+          "example": "I posted a photo on Instagram."
+        },
+        {
+          "word": "trending",
+          "definition": "currently popular online",
+          "meaning_vi": "đang thịnh hành",
+          "meaning_ko": "트렌딩, 인기",
+          "pos": "adjective",
+          "example": "That topic is trending today."
+        },
+        {
+          "word": "log in",
+          "definition": "to enter a website with credentials",
+          "meaning_vi": "đăng nhập",
+          "meaning_ko": "로그인하다",
+          "pos": "phrasal verb",
+          "example": "Please log in to your account."
+        },
+        {
+          "word": "bandwidth",
+          "definition": "the capacity for data transfer",
+          "meaning_vi": "băng thông",
+          "meaning_ko": "대역폭",
+          "pos": "noun",
+          "example": "We need more bandwidth for video calls."
+        },
+        {
+          "word": "spam",
+          "definition": "unwanted messages or emails",
+          "meaning_vi": "thư rác",
+          "meaning_ko": "스팸",
+          "pos": "noun",
+          "example": "My inbox is full of spam."
+        },
+        {
+          "word": "Wi-Fi",
+          "definition": "wireless internet connection",
+          "meaning_vi": "mạng không dây",
+          "meaning_ko": "와이파이",
+          "pos": "noun",
+          "example": "The Wi-Fi connection is slow."
+        },
+        {
+          "word": "algorithm",
+          "definition": "a set of rules used by computers",
+          "meaning_vi": "thuật toán",
+          "meaning_ko": "알고리즘",
+          "pos": "noun",
+          "example": "The algorithm shows me relevant content."
+        }
+      ]
+    },
+    "Phones + Technology": {
+      "words": [
+        {
+          "word": "smartphone",
+          "definition": "a mobile phone with computer features",
+          "meaning_vi": "điện thoại thông minh",
+          "meaning_ko": "스마트폰",
+          "pos": "noun",
+          "example": "I can't live without my smartphone."
+        },
+        {
+          "word": "application",
+          "definition": "a software program for a device",
+          "meaning_vi": "ứng dụng",
+          "meaning_ko": "앱, 어플리케이션",
+          "pos": "noun",
+          "example": "I downloaded a new application."
+        },
+        {
+          "word": "convenient",
+          "definition": "easy to use and saves time",
+          "meaning_vi": "thuận tiện",
+          "meaning_ko": "편리한",
+          "pos": "adjective",
+          "example": "Technology makes life convenient."
+        },
+        {
+          "word": "efficient",
+          "definition": "achieving maximum results with minimum effort",
+          "meaning_vi": "hiệu quả",
+          "meaning_ko": "효율적인",
+          "pos": "adjective",
+          "example": "This app is very efficient."
+        },
+        {
+          "word": "battery",
+          "definition": "a device that stores electrical power",
+          "meaning_vi": "pin",
+          "meaning_ko": "배터리",
+          "pos": "noun",
+          "example": "My battery is low."
+        },
+        {
+          "word": "charger",
+          "definition": "a device for recharging batteries",
+          "meaning_vi": "bộ sạc",
+          "meaning_ko": "충전기",
+          "pos": "noun",
+          "example": "I forgot my charger at home."
+        },
+        {
+          "word": "upgrade",
+          "definition": "to improve or replace with a newer version",
+          "meaning_vi": "nâng cấp",
+          "meaning_ko": "업그레이드하다",
+          "pos": "verb",
+          "example": "I upgraded my phone."
+        },
+        {
+          "word": "innovative",
+          "definition": "featuring new methods or ideas",
+          "meaning_vi": "đổi mới, sáng tạo",
+          "meaning_ko": "혁신적인",
+          "pos": "adjective",
+          "example": "This device is innovative."
+        },
+        {
+          "word": "gadget",
+          "definition": "a small mechanical or electronic device",
+          "meaning_vi": "thiết bị điện tử",
+          "meaning_ko": "전자기기, 가젯",
+          "pos": "noun",
+          "example": "I love trying new gadgets."
+        },
+        {
+          "word": "wireless",
+          "definition": "using radio waves instead of wires",
+          "meaning_vi": "không dây",
+          "meaning_ko": "무선의",
+          "pos": "adjective",
+          "example": "I use wireless earphones."
+        },
+        {
+          "word": "portable",
+          "definition": "easy to carry around",
+          "meaning_vi": "di động, dễ mang theo",
+          "meaning_ko": "휴대용의",
+          "pos": "adjective",
+          "example": "This device is very portable."
+        },
+        {
+          "word": "touchscreen",
+          "definition": "a screen that responds to touch",
+          "meaning_vi": "màn hình cảm ứng",
+          "meaning_ko": "터치스크린",
+          "pos": "noun",
+          "example": "Most phones have a touchscreen now."
+        },
+        {
+          "word": "storage",
+          "definition": "space for saving data",
+          "meaning_vi": "bộ nhớ, dung lượng",
+          "meaning_ko": "저장 공간",
+          "pos": "noun",
+          "example": "I'm running out of storage."
+        },
+        {
+          "word": "backup",
+          "definition": "a copy of data for safety",
+          "meaning_vi": "sao lưu",
+          "meaning_ko": "백업",
+          "pos": "noun",
+          "example": "Always make a backup of your files."
+        },
+        {
+          "word": "Bluetooth",
+          "definition": "short-range wireless technology",
+          "meaning_vi": "Bluetooth",
+          "meaning_ko": "블루투스",
+          "pos": "noun",
+          "example": "Connect your headphones via Bluetooth."
+        },
+        {
+          "word": "screenshot",
+          "definition": "an image of what's on your screen",
+          "meaning_vi": "chụp màn hình",
+          "meaning_ko": "스크린샷",
+          "pos": "noun",
+          "example": "I took a screenshot of the message."
+        },
+        {
+          "word": "lag",
+          "definition": "a delay in response time",
+          "meaning_vi": "giật, lag",
+          "meaning_ko": "렉, 지연",
+          "pos": "noun",
+          "example": "The app keeps lagging."
+        },
+        {
+          "word": "crash",
+          "definition": "to suddenly stop working",
+          "meaning_vi": "bị lỗi, bị sập",
+          "meaning_ko": "다운되다, 크래시",
+          "pos": "verb",
+          "example": "My phone crashed during the update."
+        },
+        {
+          "word": "sync",
+          "definition": "to make data match across devices",
+          "meaning_vi": "đồng bộ hóa",
+          "meaning_ko": "동기화하다",
+          "pos": "verb",
+          "example": "My phone syncs with my laptop."
+        },
+        {
+          "word": "cloud",
+          "definition": "online storage accessible from anywhere",
+          "meaning_vi": "đám mây (lưu trữ)",
+          "meaning_ko": "클라우드",
+          "pos": "noun",
+          "example": "I store photos in the cloud."
+        },
+        {
+          "word": "wearable",
+          "definition": "a device worn on the body",
+          "meaning_vi": "thiết bị đeo",
+          "meaning_ko": "웨어러블 기기",
+          "pos": "noun",
+          "example": "Smartwatches are popular wearables."
+        },
+        {
+          "word": "AI",
+          "definition": "artificial intelligence",
+          "meaning_vi": "trí tuệ nhân tạo",
+          "meaning_ko": "인공지능, AI",
+          "pos": "noun",
+          "example": "AI is changing how we use technology."
+        },
+        {
+          "word": "voice assistant",
+          "definition": "AI software that responds to voice",
+          "meaning_vi": "trợ lý giọng nói",
+          "meaning_ko": "음성 비서",
+          "pos": "noun",
+          "example": "I use a voice assistant to set alarms."
+        },
+        {
+          "word": "data plan",
+          "definition": "a mobile phone internet subscription",
+          "meaning_vi": "gói cước dữ liệu",
+          "meaning_ko": "데이터 요금제",
+          "pos": "noun",
+          "example": "I need a bigger data plan."
+        },
+        {
+          "word": "screen time",
+          "definition": "time spent looking at a screen",
+          "meaning_vi": "thời gian sử dụng thiết bị",
+          "meaning_ko": "스크린 타임",
+          "pos": "noun",
+          "example": "I'm trying to reduce my screen time."
+        }
+      ]
+    },
+    "Health": {
+      "words": [
+        {
+          "word": "symptom",
+          "definition": "a sign of a medical condition",
+          "meaning_vi": "triệu chứng",
+          "meaning_ko": "증상",
+          "pos": "noun",
+          "example": "What are your symptoms?"
+        },
+        {
+          "word": "treatment",
+          "definition": "medical care for an illness",
+          "meaning_vi": "điều trị",
+          "meaning_ko": "치료",
+          "pos": "noun",
+          "example": "The treatment was effective."
+        },
+        {
+          "word": "prescription",
+          "definition": "a doctor's written order for medicine",
+          "meaning_vi": "đơn thuốc",
+          "meaning_ko": "처방전",
+          "pos": "noun",
+          "example": "I need to fill this prescription."
+        },
+        {
+          "word": "exercise",
+          "definition": "physical activity for fitness",
+          "meaning_vi": "tập thể dục",
+          "meaning_ko": "운동",
+          "pos": "noun",
+          "example": "I exercise three times a week."
+        },
+        {
+          "word": "nutrition",
+          "definition": "eating healthy food for well-being",
+          "meaning_vi": "dinh dưỡng",
+          "meaning_ko": "영양",
+          "pos": "noun",
+          "example": "Good nutrition is important."
+        },
+        {
+          "word": "stress",
+          "definition": "mental or emotional strain",
+          "meaning_vi": "căng thẳng",
+          "meaning_ko": "스트레스",
+          "pos": "noun",
+          "example": "I try to manage my stress."
+        },
+        {
+          "word": "checkup",
+          "definition": "a routine medical examination",
+          "meaning_vi": "khám sức khỏe định kỳ",
+          "meaning_ko": "건강검진",
+          "pos": "noun",
+          "example": "I have a checkup tomorrow."
+        },
+        {
+          "word": "recover",
+          "definition": "to return to normal health",
+          "meaning_vi": "hồi phục",
+          "meaning_ko": "회복하다",
+          "pos": "verb",
+          "example": "I hope you recover soon."
+        },
+        {
+          "word": "prevent",
+          "definition": "to stop something from happening",
+          "meaning_vi": "phòng ngừa",
+          "meaning_ko": "예방하다",
+          "pos": "verb",
+          "example": "Exercise helps prevent disease."
+        },
+        {
+          "word": "wellness",
+          "definition": "the state of being healthy",
+          "meaning_vi": "sức khỏe toàn diện",
+          "meaning_ko": "웰빙, 건강",
+          "pos": "noun",
+          "example": "I focus on my wellness."
+        },
+        {
+          "word": "fitness",
+          "definition": "the condition of being physically fit",
+          "meaning_vi": "thể lực",
+          "meaning_ko": "체력, 피트니스",
+          "pos": "noun",
+          "example": "Fitness is a priority for me."
+        },
+        {
+          "word": "habit",
+          "definition": "a regular practice or routine",
+          "meaning_vi": "thói quen",
+          "meaning_ko": "습관",
+          "pos": "noun",
+          "example": "I'm building healthy habits."
+        },
+        {
+          "word": "immune system",
+          "definition": "the body's defense against illness",
+          "meaning_vi": "hệ miễn dịch",
+          "meaning_ko": "면역 체계",
+          "pos": "noun",
+          "example": "Vitamin C supports your immune system."
+        },
+        {
+          "word": "mental health",
+          "definition": "psychological and emotional well-being",
+          "meaning_vi": "sức khỏe tâm thần",
+          "meaning_ko": "정신 건강",
+          "pos": "noun",
+          "example": "Mental health is as important as physical health."
+        },
+        {
+          "word": "allergy",
+          "definition": "a harmful reaction to a substance",
+          "meaning_vi": "dị ứng",
+          "meaning_ko": "알레르기",
+          "pos": "noun",
+          "example": "I have a peanut allergy."
+        },
+        {
+          "word": "insomnia",
+          "definition": "inability to sleep",
+          "meaning_vi": "mất ngủ",
+          "meaning_ko": "불면증",
+          "pos": "noun",
+          "example": "I suffer from insomnia sometimes."
+        },
+        {
+          "word": "meditation",
+          "definition": "the practice of focused calm thinking",
+          "meaning_vi": "thiền",
+          "meaning_ko": "명상",
+          "pos": "noun",
+          "example": "Meditation helps me relax."
+        },
+        {
+          "word": "diet",
+          "definition": "the food a person regularly eats",
+          "meaning_vi": "chế độ ăn",
+          "meaning_ko": "식단, 다이어트",
+          "pos": "noun",
+          "example": "I'm on a healthy diet."
+        },
+        {
+          "word": "supplement",
+          "definition": "an additional nutrient product",
+          "meaning_vi": "thực phẩm bổ sung",
+          "meaning_ko": "보충제, 영양제",
+          "pos": "noun",
+          "example": "I take vitamin supplements."
+        },
+        {
+          "word": "fatigue",
+          "definition": "extreme tiredness",
+          "meaning_vi": "mệt mỏi",
+          "meaning_ko": "피로",
+          "pos": "noun",
+          "example": "I feel fatigue after a long day."
+        },
+        {
+          "word": "hydrate",
+          "definition": "to drink enough water",
+          "meaning_vi": "bổ sung nước",
+          "meaning_ko": "수분 보충하다",
+          "pos": "verb",
+          "example": "Remember to hydrate during exercise."
+        },
+        {
+          "word": "posture",
+          "definition": "the position of the body",
+          "meaning_vi": "tư thế",
+          "meaning_ko": "자세",
+          "pos": "noun",
+          "example": "Sitting posture affects your back."
+        },
+        {
+          "word": "routine",
+          "definition": "a regular series of actions",
+          "meaning_vi": "thói quen hàng ngày",
+          "meaning_ko": "루틴, 일과",
+          "pos": "noun",
+          "example": "My morning routine includes yoga."
+        },
+        {
+          "word": "physician",
+          "definition": "a medical doctor",
+          "meaning_vi": "bác sĩ",
+          "meaning_ko": "의사",
+          "pos": "noun",
+          "example": "You should see a physician."
+        },
+        {
+          "word": "well-being",
+          "definition": "a state of comfort and happiness",
+          "meaning_vi": "hạnh phúc, khỏe mạnh",
+          "meaning_ko": "안녕, 복지",
+          "pos": "noun",
+          "example": "I care about my well-being."
+        }
+      ]
+    },
+    "Vacation": {
+      "words": [
+        {
+          "word": "destination",
+          "definition": "the place someone is going to",
+          "meaning_vi": "điểm đến",
+          "meaning_ko": "목적지, 여행지",
+          "pos": "noun",
+          "example": "What's your vacation destination?"
+        },
+        {
+          "word": "itinerary",
+          "definition": "a planned route or schedule",
+          "meaning_vi": "lịch trình",
+          "meaning_ko": "여행 일정",
+          "pos": "noun",
+          "example": "I made a detailed itinerary."
+        },
+        {
+          "word": "memorable",
+          "definition": "worth remembering",
+          "meaning_vi": "đáng nhớ",
+          "meaning_ko": "기억에 남는",
+          "pos": "adjective",
+          "example": "It was a memorable trip."
+        },
+        {
+          "word": "relaxation",
+          "definition": "being free from tension",
+          "meaning_vi": "sự thư giãn",
+          "meaning_ko": "휴식",
+          "pos": "noun",
+          "example": "I need some relaxation."
+        },
+        {
+          "word": "adventure",
+          "definition": "an exciting or unusual experience",
+          "meaning_vi": "cuộc phiêu lưu",
+          "meaning_ko": "모험",
+          "pos": "noun",
+          "example": "I love adventure travel."
+        },
+        {
+          "word": "sightseeing",
+          "definition": "visiting places of interest",
+          "meaning_vi": "ngắm cảnh, tham quan",
+          "meaning_ko": "관광",
+          "pos": "noun",
+          "example": "We did a lot of sightseeing."
+        },
+        {
+          "word": "explore",
+          "definition": "to travel through to learn about",
+          "meaning_vi": "khám phá",
+          "meaning_ko": "탐험하다",
+          "pos": "verb",
+          "example": "I want to explore new places."
+        },
+        {
+          "word": "souvenir",
+          "definition": "something kept as a reminder",
+          "meaning_vi": "quà lưu niệm",
+          "meaning_ko": "기념품",
+          "pos": "noun",
+          "example": "I bought some souvenirs."
+        },
+        {
+          "word": "getaway",
+          "definition": "a short vacation",
+          "meaning_vi": "chuyến đi ngắn",
+          "meaning_ko": "여행, 휴가",
+          "pos": "noun",
+          "example": "We planned a weekend getaway."
+        },
+        {
+          "word": "breathtaking",
+          "definition": "extremely impressive or beautiful",
+          "meaning_vi": "ngoạn mục",
+          "meaning_ko": "숨이 막힐 듯 아름다운",
+          "pos": "adjective",
+          "example": "The view was breathtaking."
+        },
+        {
+          "word": "bucket list",
+          "definition": "things to do before dying",
+          "meaning_vi": "danh sách ước nguyện",
+          "meaning_ko": "버킷리스트",
+          "pos": "noun",
+          "example": "It's on my bucket list."
+        },
+        {
+          "word": "pack",
+          "definition": "to put items into a suitcase",
+          "meaning_vi": "xếp hành lý",
+          "meaning_ko": "짐을 싸다",
+          "pos": "verb",
+          "example": "I haven't packed yet."
+        },
+        {
+          "word": "jet lag",
+          "definition": "tiredness from time zone changes",
+          "meaning_vi": "mệt mỏi do lệch múi giờ",
+          "meaning_ko": "시차 피로",
+          "pos": "noun",
+          "example": "I always get jet lag after long flights."
+        },
+        {
+          "word": "local cuisine",
+          "definition": "the food typical of a region",
+          "meaning_vi": "ẩm thực địa phương",
+          "meaning_ko": "현지 음식",
+          "pos": "noun",
+          "example": "I always try the local cuisine."
+        },
+        {
+          "word": "tour guide",
+          "definition": "a person who leads tourists",
+          "meaning_vi": "hướng dẫn viên du lịch",
+          "meaning_ko": "투어 가이드",
+          "pos": "noun",
+          "example": "Our tour guide was very knowledgeable."
+        },
+        {
+          "word": "off the beaten path",
+          "definition": "away from popular tourist areas",
+          "meaning_vi": "nơi ít người biết",
+          "meaning_ko": "관광객이 잘 모르는 곳",
+          "pos": "idiom",
+          "example": "I prefer places off the beaten path."
+        },
+        {
+          "word": "road trip",
+          "definition": "a long journey by car",
+          "meaning_vi": "chuyến đi đường dài bằng xe",
+          "meaning_ko": "로드 트립",
+          "pos": "noun",
+          "example": "We went on a road trip to the coast."
+        },
+        {
+          "word": "round trip",
+          "definition": "a journey to a place and back",
+          "meaning_vi": "khứ hồi",
+          "meaning_ko": "왕복",
+          "pos": "noun",
+          "example": "I booked a round trip ticket."
+        },
+        {
+          "word": "resort",
+          "definition": "a place for vacation and relaxation",
+          "meaning_vi": "khu nghỉ dưỡng",
+          "meaning_ko": "리조트",
+          "pos": "noun",
+          "example": "We stayed at a beautiful resort."
+        },
+        {
+          "word": "backpacking",
+          "definition": "traveling cheaply with a backpack",
+          "meaning_vi": "du lịch bụi",
+          "meaning_ko": "배낭여행",
+          "pos": "noun",
+          "example": "Backpacking through Europe was amazing."
+        },
+        {
+          "word": "scenic",
+          "definition": "having beautiful natural scenery",
+          "meaning_vi": "phong cảnh đẹp",
+          "meaning_ko": "경치가 좋은",
+          "pos": "adjective",
+          "example": "We took the scenic route."
+        },
+        {
+          "word": "wander",
+          "definition": "to walk around without a purpose",
+          "meaning_vi": "lang thang",
+          "meaning_ko": "돌아다니다",
+          "pos": "verb",
+          "example": "I love to wander through new cities."
+        },
+        {
+          "word": "unplug",
+          "definition": "to disconnect from technology",
+          "meaning_vi": "ngắt kết nối",
+          "meaning_ko": "디지털 디톡스하다",
+          "pos": "verb",
+          "example": "I like to unplug during vacations."
+        },
+        {
+          "word": "recharge",
+          "definition": "to regain energy",
+          "meaning_vi": "nạp lại năng lượng",
+          "meaning_ko": "재충전하다",
+          "pos": "verb",
+          "example": "Vacations help me recharge."
+        },
+        {
+          "word": "travel insurance",
+          "definition": "insurance covering trip problems",
+          "meaning_vi": "bảo hiểm du lịch",
+          "meaning_ko": "여행자 보험",
+          "pos": "noun",
+          "example": "Always buy travel insurance."
+        }
+      ]
+    },
+    "Hotels": {
+      "words": [
+        {
+          "word": "accommodation",
+          "definition": "a place to stay",
+          "meaning_vi": "chỗ ở",
+          "meaning_ko": "숙소",
+          "pos": "noun",
+          "example": "We booked accommodation online."
+        },
+        {
+          "word": "reservation",
+          "definition": "an arrangement to book a room",
+          "meaning_vi": "đặt phòng",
+          "meaning_ko": "예약",
+          "pos": "noun",
+          "example": "I have a reservation for tonight."
+        },
+        {
+          "word": "check-in",
+          "definition": "registering at a hotel on arrival",
+          "meaning_vi": "làm thủ tục nhận phòng",
+          "meaning_ko": "체크인",
+          "pos": "noun",
+          "example": "Check-in time is 3 PM."
+        },
+        {
+          "word": "check-out",
+          "definition": "leaving a hotel and paying",
+          "meaning_vi": "trả phòng",
+          "meaning_ko": "체크아웃",
+          "pos": "noun",
+          "example": "Check-out is at 11 AM."
+        },
+        {
+          "word": "amenities",
+          "definition": "desirable features and facilities",
+          "meaning_vi": "tiện nghi",
+          "meaning_ko": "편의시설",
+          "pos": "noun",
+          "example": "The hotel has great amenities."
+        },
+        {
+          "word": "lobby",
+          "definition": "the entrance area of a hotel",
+          "meaning_vi": "sảnh khách sạn",
+          "meaning_ko": "로비",
+          "pos": "noun",
+          "example": "I'll meet you in the lobby."
+        },
+        {
+          "word": "suite",
+          "definition": "a set of connected rooms in a hotel",
+          "meaning_vi": "phòng suite",
+          "meaning_ko": "스위트룸",
+          "pos": "noun",
+          "example": "We booked a suite for our anniversary."
+        },
+        {
+          "word": "housekeeping",
+          "definition": "hotel cleaning and maintenance",
+          "meaning_vi": "dịch vụ dọn phòng",
+          "meaning_ko": "하우스키핑, 객실 관리",
+          "pos": "noun",
+          "example": "Housekeeping comes at noon."
+        },
+        {
+          "word": "complimentary",
+          "definition": "given for free by a hotel",
+          "meaning_vi": "miễn phí",
+          "meaning_ko": "무료의",
+          "pos": "adjective",
+          "example": "Breakfast is complimentary."
+        },
+        {
+          "word": "concierge",
+          "definition": "a hotel employee who assists guests",
+          "meaning_vi": "nhân viên hỗ trợ khách",
+          "meaning_ko": "컨시어지",
+          "pos": "noun",
+          "example": "The concierge helped us book tickets."
+        },
+        {
+          "word": "room service",
+          "definition": "food delivered to a hotel room",
+          "meaning_vi": "dịch vụ phòng",
+          "meaning_ko": "룸서비스",
+          "pos": "noun",
+          "example": "Let's order room service tonight."
+        },
+        {
+          "word": "front desk",
+          "definition": "the reception area of a hotel",
+          "meaning_vi": "quầy lễ tân",
+          "meaning_ko": "프런트 데스크",
+          "pos": "noun",
+          "example": "Please ask at the front desk."
+        },
+        {
+          "word": "vacancy",
+          "definition": "an available room",
+          "meaning_vi": "phòng trống",
+          "meaning_ko": "빈 방",
+          "pos": "noun",
+          "example": "Do you have any vacancies?"
+        },
+        {
+          "word": "booking",
+          "definition": "a reservation for a room",
+          "meaning_vi": "đặt phòng",
+          "meaning_ko": "예약",
+          "pos": "noun",
+          "example": "I made a booking for two nights."
+        },
+        {
+          "word": "bed and breakfast",
+          "definition": "a small lodging with breakfast included",
+          "meaning_vi": "nhà nghỉ có bữa sáng",
+          "meaning_ko": "민박",
+          "pos": "noun",
+          "example": "We stayed at a charming bed and breakfast."
+        },
+        {
+          "word": "five-star",
+          "definition": "of the highest quality",
+          "meaning_vi": "năm sao",
+          "meaning_ko": "5성급의",
+          "pos": "adjective",
+          "example": "We stayed at a five-star hotel."
+        },
+        {
+          "word": "view",
+          "definition": "what can be seen from a window",
+          "meaning_vi": "tầm nhìn",
+          "meaning_ko": "전망",
+          "pos": "noun",
+          "example": "Our room has an ocean view."
+        },
+        {
+          "word": "single room",
+          "definition": "a room for one person",
+          "meaning_vi": "phòng đơn",
+          "meaning_ko": "싱글룸",
+          "pos": "noun",
+          "example": "I booked a single room."
+        },
+        {
+          "word": "double room",
+          "definition": "a room for two people",
+          "meaning_vi": "phòng đôi",
+          "meaning_ko": "더블룸",
+          "pos": "noun",
+          "example": "We need a double room."
+        },
+        {
+          "word": "key card",
+          "definition": "an electronic card to open a door",
+          "meaning_vi": "thẻ từ phòng",
+          "meaning_ko": "카드키",
+          "pos": "noun",
+          "example": "I lost my key card."
+        },
+        {
+          "word": "luggage",
+          "definition": "suitcases and bags for traveling",
+          "meaning_vi": "hành lý",
+          "meaning_ko": "짐, 수하물",
+          "pos": "noun",
+          "example": "Can you help with my luggage?"
+        },
+        {
+          "word": "early check-in",
+          "definition": "arriving before the standard time",
+          "meaning_vi": "nhận phòng sớm",
+          "meaning_ko": "얼리 체크인",
+          "pos": "noun",
+          "example": "Is early check-in possible?"
+        },
+        {
+          "word": "late check-out",
+          "definition": "leaving after the standard time",
+          "meaning_vi": "trả phòng muộn",
+          "meaning_ko": "레이트 체크아웃",
+          "pos": "noun",
+          "example": "Can I get a late check-out?"
+        },
+        {
+          "word": "wake-up call",
+          "definition": "a phone call to wake a guest",
+          "meaning_vi": "gọi báo thức",
+          "meaning_ko": "모닝콜",
+          "pos": "noun",
+          "example": "I requested a wake-up call at 7 AM."
+        },
+        {
+          "word": "mini bar",
+          "definition": "a small fridge with drinks in a room",
+          "meaning_vi": "tủ lạnh mini",
+          "meaning_ko": "미니바",
+          "pos": "noun",
+          "example": "There are snacks in the mini bar."
+        }
+      ]
+    },
+    "Park": {
+      "words": [
+        {
+          "word": "nature",
+          "definition": "the natural world",
+          "meaning_vi": "thiên nhiên",
+          "meaning_ko": "자연",
+          "pos": "noun",
+          "example": "I love being in nature."
+        },
+        {
+          "word": "scenery",
+          "definition": "the natural features of a landscape",
+          "meaning_vi": "phong cảnh",
+          "meaning_ko": "풍경, 경치",
+          "pos": "noun",
+          "example": "The scenery is beautiful."
+        },
+        {
+          "word": "trail",
+          "definition": "a path through nature",
+          "meaning_vi": "đường mòn",
+          "meaning_ko": "산책로, 트레일",
+          "pos": "noun",
+          "example": "We walked along the trail."
+        },
+        {
+          "word": "picnic",
+          "definition": "an outdoor meal in a park",
+          "meaning_vi": "dã ngoại",
+          "meaning_ko": "소풍, 피크닉",
+          "pos": "noun",
+          "example": "We had a picnic in the park."
+        },
+        {
+          "word": "peaceful",
+          "definition": "free from disturbance",
+          "meaning_vi": "yên bình",
+          "meaning_ko": "평화로운",
+          "pos": "adjective",
+          "example": "The park is very peaceful."
+        },
+        {
+          "word": "refreshing",
+          "definition": "making one feel fresh and energized",
+          "meaning_vi": "sảng khoái",
+          "meaning_ko": "상쾌한",
+          "pos": "adjective",
+          "example": "The fresh air is refreshing."
+        },
+        {
+          "word": "jogging",
+          "definition": "running at a slow steady pace",
+          "meaning_vi": "chạy bộ",
+          "meaning_ko": "조깅",
+          "pos": "noun",
+          "example": "I go jogging in the park."
+        },
+        {
+          "word": "stroll",
+          "definition": "a leisurely walk",
+          "meaning_vi": "đi dạo",
+          "meaning_ko": "산책",
+          "pos": "noun",
+          "example": "We took a stroll through the park."
+        },
+        {
+          "word": "escape",
+          "definition": "to get away from daily routine",
+          "meaning_vi": "thoát khỏi",
+          "meaning_ko": "벗어나다",
+          "pos": "verb",
+          "example": "The park is a nice escape from the city."
+        },
+        {
+          "word": "bench",
+          "definition": "a long seat in a public place",
+          "meaning_vi": "ghế đá, ghế dài",
+          "meaning_ko": "벤치",
+          "pos": "noun",
+          "example": "I sat on a bench and read a book."
+        },
+        {
+          "word": "fountain",
+          "definition": "a structure that sends water into the air",
+          "meaning_vi": "đài phun nước",
+          "meaning_ko": "분수",
+          "pos": "noun",
+          "example": "There's a beautiful fountain in the park."
+        },
+        {
+          "word": "shade",
+          "definition": "shelter from direct sunlight",
+          "meaning_vi": "bóng mát",
+          "meaning_ko": "그늘",
+          "pos": "noun",
+          "example": "Let's sit in the shade."
+        },
+        {
+          "word": "playground",
+          "definition": "an area for children to play",
+          "meaning_vi": "sân chơi",
+          "meaning_ko": "놀이터",
+          "pos": "noun",
+          "example": "The kids love the playground."
+        },
+        {
+          "word": "botanical garden",
+          "definition": "a garden with many plant types",
+          "meaning_vi": "vườn bách thảo",
+          "meaning_ko": "식물원",
+          "pos": "noun",
+          "example": "We visited the botanical garden."
+        },
+        {
+          "word": "pond",
+          "definition": "a small body of still water",
+          "meaning_vi": "ao",
+          "meaning_ko": "연못",
+          "pos": "noun",
+          "example": "There are ducks in the pond."
+        },
+        {
+          "word": "cycling",
+          "definition": "riding a bicycle",
+          "meaning_vi": "đi xe đạp",
+          "meaning_ko": "자전거 타기",
+          "pos": "noun",
+          "example": "The park has paths for cycling."
+        },
+        {
+          "word": "greenery",
+          "definition": "green plants and vegetation",
+          "meaning_vi": "cây xanh",
+          "meaning_ko": "녹지, 푸른 자연",
+          "pos": "noun",
+          "example": "I love being surrounded by greenery."
+        },
+        {
+          "word": "fresh air",
+          "definition": "clean outdoor air",
+          "meaning_vi": "không khí trong lành",
+          "meaning_ko": "맑은 공기",
+          "pos": "noun",
+          "example": "I need some fresh air."
+        },
+        {
+          "word": "wildlife",
+          "definition": "wild animals in their natural habitat",
+          "meaning_vi": "động vật hoang dã",
+          "meaning_ko": "야생 동물",
+          "pos": "noun",
+          "example": "You can spot wildlife in the park."
+        },
+        {
+          "word": "stretch",
+          "definition": "to extend the body for exercise",
+          "meaning_vi": "giãn cơ",
+          "meaning_ko": "스트레칭하다",
+          "pos": "verb",
+          "example": "I stretch in the park before jogging."
+        },
+        {
+          "word": "outdoor activity",
+          "definition": "an activity done outside",
+          "meaning_vi": "hoạt động ngoài trời",
+          "meaning_ko": "야외 활동",
+          "pos": "noun",
+          "example": "I enjoy outdoor activities."
+        },
+        {
+          "word": "breeze",
+          "definition": "a gentle wind",
+          "meaning_vi": "gió nhẹ",
+          "meaning_ko": "산들바람",
+          "pos": "noun",
+          "example": "There's a nice breeze today."
+        },
+        {
+          "word": "blossom",
+          "definition": "a flower, especially on a tree",
+          "meaning_vi": "hoa (trên cây)",
+          "meaning_ko": "꽃, 개화",
+          "pos": "noun",
+          "example": "The cherry blossoms are beautiful in spring."
+        },
+        {
+          "word": "sunset",
+          "definition": "the time when the sun goes down",
+          "meaning_vi": "hoàng hôn",
+          "meaning_ko": "일몰",
+          "pos": "noun",
+          "example": "We watched the sunset from the park."
+        },
+        {
+          "word": "recreation",
+          "definition": "activities done for enjoyment",
+          "meaning_vi": "giải trí, vui chơi",
+          "meaning_ko": "레크리에이션",
+          "pos": "noun",
+          "example": "The park offers many recreation options."
+        }
+      ]
+    },
+    "Geography": {
+      "words": [
+        {
+          "word": "landscape",
+          "definition": "the visible features of an area",
+          "meaning_vi": "phong cảnh",
+          "meaning_ko": "풍경, 경관",
+          "pos": "noun",
+          "example": "The landscape is stunning."
+        },
+        {
+          "word": "scenery",
+          "definition": "natural features of a place",
+          "meaning_vi": "cảnh quan",
+          "meaning_ko": "풍경",
+          "pos": "noun",
+          "example": "I enjoy the beautiful scenery."
+        },
+        {
+          "word": "coastline",
+          "definition": "the outline of a coast",
+          "meaning_vi": "bờ biển",
+          "meaning_ko": "해안선",
+          "pos": "noun",
+          "example": "The coastline is gorgeous."
+        },
+        {
+          "word": "peninsula",
+          "definition": "land surrounded by water on three sides",
+          "meaning_vi": "bán đảo",
+          "meaning_ko": "반도",
+          "pos": "noun",
+          "example": "Korea is a peninsula."
+        },
+        {
+          "word": "climate",
+          "definition": "the typical weather of an area",
+          "meaning_vi": "khí hậu",
+          "meaning_ko": "기후",
+          "pos": "noun",
+          "example": "The climate here is mild."
+        },
+        {
+          "word": "terrain",
+          "definition": "the physical features of land",
+          "meaning_vi": "địa hình",
+          "meaning_ko": "지형",
+          "pos": "noun",
+          "example": "The terrain is mountainous."
+        },
+        {
+          "word": "humid",
+          "definition": "having high moisture in the air",
+          "meaning_vi": "ẩm ướt",
+          "meaning_ko": "습한",
+          "pos": "adjective",
+          "example": "Summers here are very humid."
+        },
+        {
+          "word": "temperate",
+          "definition": "having mild temperatures",
+          "meaning_vi": "ôn hòa",
+          "meaning_ko": "온대의",
+          "pos": "adjective",
+          "example": "We have a temperate climate."
+        },
+        {
+          "word": "continent",
+          "definition": "one of the main landmasses",
+          "meaning_vi": "châu lục",
+          "meaning_ko": "대륙",
+          "pos": "noun",
+          "example": "Asia is the largest continent."
+        },
+        {
+          "word": "island",
+          "definition": "land surrounded by water on all sides",
+          "meaning_vi": "đảo",
+          "meaning_ko": "섬",
+          "pos": "noun",
+          "example": "We visited a tropical island."
+        },
+        {
+          "word": "mountain range",
+          "definition": "a series of mountains",
+          "meaning_vi": "dãy núi",
+          "meaning_ko": "산맥",
+          "pos": "noun",
+          "example": "The mountain range is impressive."
+        },
+        {
+          "word": "valley",
+          "definition": "a low area between hills or mountains",
+          "meaning_vi": "thung lũng",
+          "meaning_ko": "계곡",
+          "pos": "noun",
+          "example": "The valley is full of flowers in spring."
+        },
+        {
+          "word": "rural",
+          "definition": "relating to the countryside",
+          "meaning_vi": "nông thôn",
+          "meaning_ko": "시골의",
+          "pos": "adjective",
+          "example": "I grew up in a rural area."
+        },
+        {
+          "word": "urban",
+          "definition": "relating to a city",
+          "meaning_vi": "thành thị",
+          "meaning_ko": "도시의",
+          "pos": "adjective",
+          "example": "Urban areas are more crowded."
+        },
+        {
+          "word": "tropical",
+          "definition": "having a hot and humid climate",
+          "meaning_vi": "nhiệt đới",
+          "meaning_ko": "열대의",
+          "pos": "adjective",
+          "example": "I'd love to visit a tropical country."
+        },
+        {
+          "word": "desert",
+          "definition": "a dry barren area with little rain",
+          "meaning_vi": "sa mạc",
+          "meaning_ko": "사막",
+          "pos": "noun",
+          "example": "The desert gets very hot during the day."
+        },
+        {
+          "word": "glacier",
+          "definition": "a large mass of slow-moving ice",
+          "meaning_vi": "sông băng",
+          "meaning_ko": "빙하",
+          "pos": "noun",
+          "example": "We saw a glacier on our trip."
+        },
+        {
+          "word": "volcano",
+          "definition": "a mountain with an eruption opening",
+          "meaning_vi": "núi lửa",
+          "meaning_ko": "화산",
+          "pos": "noun",
+          "example": "That volcano is still active."
+        },
+        {
+          "word": "waterfall",
+          "definition": "water falling from a height",
+          "meaning_vi": "thác nước",
+          "meaning_ko": "폭포",
+          "pos": "noun",
+          "example": "The waterfall was spectacular."
+        },
+        {
+          "word": "elevation",
+          "definition": "the height of land above sea level",
+          "meaning_vi": "độ cao",
+          "meaning_ko": "고도, 해발",
+          "pos": "noun",
+          "example": "The elevation here is 1000 meters."
+        },
+        {
+          "word": "natural resource",
+          "definition": "materials found in nature",
+          "meaning_vi": "tài nguyên thiên nhiên",
+          "meaning_ko": "천연 자원",
+          "pos": "noun",
+          "example": "Water is a precious natural resource."
+        },
+        {
+          "word": "ecosystem",
+          "definition": "a community of living things",
+          "meaning_vi": "hệ sinh thái",
+          "meaning_ko": "생태계",
+          "pos": "noun",
+          "example": "We need to protect our ecosystem."
+        },
+        {
+          "word": "habitat",
+          "definition": "the natural home of an animal or plant",
+          "meaning_vi": "môi trường sống",
+          "meaning_ko": "서식지",
+          "pos": "noun",
+          "example": "Forests are important habitats."
+        },
+        {
+          "word": "fertile",
+          "definition": "able to produce good crops",
+          "meaning_vi": "màu mỡ",
+          "meaning_ko": "비옥한",
+          "pos": "adjective",
+          "example": "The soil in this valley is very fertile."
+        },
+        {
+          "word": "canyon",
+          "definition": "a deep narrow valley with steep sides",
+          "meaning_vi": "hẻm núi",
+          "meaning_ko": "협곡, 캐니언",
+          "pos": "noun",
+          "example": "The Grand Canyon is a famous landmark."
+        }
+      ]
+    },
+    "Weather": {
+      "words": [
+        {
+          "word": "forecast",
+          "definition": "a prediction of future weather",
+          "meaning_vi": "dự báo thời tiết",
+          "meaning_ko": "일기 예보",
+          "pos": "noun",
+          "example": "I checked the weather forecast."
+        },
+        {
+          "word": "temperature",
+          "definition": "the degree of heat or cold",
+          "meaning_vi": "nhiệt độ",
+          "meaning_ko": "온도, 기온",
+          "pos": "noun",
+          "example": "The temperature is rising."
+        },
+        {
+          "word": "humid",
+          "definition": "having high moisture in the air",
+          "meaning_vi": "ẩm ướt",
+          "meaning_ko": "습한",
+          "pos": "adjective",
+          "example": "It's very humid today."
+        },
+        {
+          "word": "chilly",
+          "definition": "uncomfortably cool",
+          "meaning_vi": "se lạnh",
+          "meaning_ko": "쌀쌀한",
+          "pos": "adjective",
+          "example": "It's a bit chilly outside."
+        },
+        {
+          "word": "breeze",
+          "definition": "a gentle wind",
+          "meaning_vi": "gió nhẹ",
+          "meaning_ko": "산들바람",
+          "pos": "noun",
+          "example": "There's a nice breeze."
+        },
+        {
+          "word": "scorching",
+          "definition": "very hot",
+          "meaning_vi": "nóng cháy",
+          "meaning_ko": "타는 듯이 더운",
+          "pos": "adjective",
+          "example": "It's scorching outside."
+        },
+        {
+          "word": "freezing",
+          "definition": "extremely cold",
+          "meaning_vi": "đóng băng, rất lạnh",
+          "meaning_ko": "얼어붙는, 매우 추운",
+          "pos": "adjective",
+          "example": "It's freezing today."
+        },
+        {
+          "word": "drizzle",
+          "definition": "light rain falling in fine drops",
+          "meaning_vi": "mưa phùn",
+          "meaning_ko": "이슬비",
+          "pos": "noun",
+          "example": "There's a light drizzle."
+        },
+        {
+          "word": "pour",
+          "definition": "to rain heavily",
+          "meaning_vi": "mưa lớn",
+          "meaning_ko": "쏟아지다",
+          "pos": "verb",
+          "example": "It's pouring outside."
+        },
+        {
+          "word": "mild",
+          "definition": "not severe or extreme in weather",
+          "meaning_vi": "ôn hòa",
+          "meaning_ko": "온화한",
+          "pos": "adjective",
+          "example": "The weather is mild today."
+        },
+        {
+          "word": "season",
+          "definition": "a division of the year by weather",
+          "meaning_vi": "mùa",
+          "meaning_ko": "계절",
+          "pos": "noun",
+          "example": "Spring is my favorite season."
+        },
+        {
+          "word": "heatwave",
+          "definition": "a long period of very hot weather",
+          "meaning_vi": "đợt nóng",
+          "meaning_ko": "폭염",
+          "pos": "noun",
+          "example": "We're having a heatwave this week."
+        },
+        {
+          "word": "thunderstorm",
+          "definition": "a storm with lightning and thunder",
+          "meaning_vi": "bão có sấm sét",
+          "meaning_ko": "뇌우, 천둥번개",
+          "pos": "noun",
+          "example": "There was a thunderstorm last night."
+        },
+        {
+          "word": "overcast",
+          "definition": "covered with clouds",
+          "meaning_vi": "u ám, nhiều mây",
+          "meaning_ko": "흐린",
+          "pos": "adjective",
+          "example": "The sky is overcast today."
+        },
+        {
+          "word": "sunshine",
+          "definition": "direct sunlight",
+          "meaning_vi": "ánh nắng",
+          "meaning_ko": "햇살",
+          "pos": "noun",
+          "example": "I enjoy the warm sunshine."
+        },
+        {
+          "word": "gust",
+          "definition": "a sudden strong rush of wind",
+          "meaning_vi": "cơn gió mạnh",
+          "meaning_ko": "돌풍",
+          "pos": "noun",
+          "example": "A gust of wind blew my hat off."
+        },
+        {
+          "word": "downpour",
+          "definition": "a very heavy rainfall",
+          "meaning_vi": "mưa xối xả",
+          "meaning_ko": "폭우",
+          "pos": "noun",
+          "example": "We got caught in a downpour."
+        },
+        {
+          "word": "foggy",
+          "definition": "full of fog; hard to see through",
+          "meaning_vi": "sương mù",
+          "meaning_ko": "안개 낀",
+          "pos": "adjective",
+          "example": "It's very foggy this morning."
+        },
+        {
+          "word": "clear sky",
+          "definition": "a sky without clouds",
+          "meaning_vi": "trời quang đãng",
+          "meaning_ko": "맑은 하늘",
+          "pos": "noun",
+          "example": "We had a beautiful clear sky today."
+        },
+        {
+          "word": "monsoon",
+          "definition": "a seasonal heavy rain period",
+          "meaning_vi": "mùa mưa",
+          "meaning_ko": "몬순, 장마",
+          "pos": "noun",
+          "example": "The monsoon season starts in June."
+        },
+        {
+          "word": "humidity",
+          "definition": "the amount of moisture in the air",
+          "meaning_vi": "độ ẩm",
+          "meaning_ko": "습도",
+          "pos": "noun",
+          "example": "The humidity is very high today."
+        },
+        {
+          "word": "blizzard",
+          "definition": "a severe snowstorm",
+          "meaning_vi": "bão tuyết",
+          "meaning_ko": "눈보라",
+          "pos": "noun",
+          "example": "The blizzard shut down the roads."
+        },
+        {
+          "word": "umbrella",
+          "definition": "a device to protect from rain",
+          "meaning_vi": "ô, dù",
+          "meaning_ko": "우산",
+          "pos": "noun",
+          "example": "Don't forget your umbrella."
+        },
+        {
+          "word": "weather app",
+          "definition": "an application showing weather info",
+          "meaning_vi": "ứng dụng thời tiết",
+          "meaning_ko": "날씨 앱",
+          "pos": "noun",
+          "example": "I check my weather app every morning."
+        },
+        {
+          "word": "dress for the weather",
+          "definition": "to wear appropriate clothes",
+          "meaning_vi": "mặc phù hợp thời tiết",
+          "meaning_ko": "날씨에 맞게 입다",
+          "pos": "phrase",
+          "example": "Always dress for the weather."
+        }
+      ]
+    },
+    "Shopping": {
+      "words": [
+        {
+          "word": "bargain",
+          "definition": "a good deal or low price",
+          "meaning_vi": "món hời",
+          "meaning_ko": "특가, 할인 상품",
+          "pos": "noun",
+          "example": "I found a great bargain."
+        },
+        {
+          "word": "discount",
+          "definition": "a reduction in price",
+          "meaning_vi": "giảm giá",
+          "meaning_ko": "할인",
+          "pos": "noun",
+          "example": "There's a 50% discount."
+        },
+        {
+          "word": "affordable",
+          "definition": "reasonably priced",
+          "meaning_vi": "giá phải chăng",
+          "meaning_ko": "적당한 가격의",
+          "pos": "adjective",
+          "example": "The prices are affordable."
+        },
+        {
+          "word": "purchase",
+          "definition": "to buy something",
+          "meaning_vi": "mua",
+          "meaning_ko": "구매하다",
+          "pos": "verb",
+          "example": "I made a purchase online."
+        },
+        {
+          "word": "refund",
+          "definition": "money returned for a returned item",
+          "meaning_vi": "hoàn tiền",
+          "meaning_ko": "환불",
+          "pos": "noun",
+          "example": "Can I get a refund?"
+        },
+        {
+          "word": "exchange",
+          "definition": "to return for something different",
+          "meaning_vi": "đổi hàng",
+          "meaning_ko": "교환하다",
+          "pos": "verb",
+          "example": "Can I exchange this for a larger size?"
+        },
+        {
+          "word": "receipt",
+          "definition": "a proof of purchase",
+          "meaning_vi": "hóa đơn",
+          "meaning_ko": "영수증",
+          "pos": "noun",
+          "example": "Keep your receipt."
+        },
+        {
+          "word": "browse",
+          "definition": "to look at items casually",
+          "meaning_vi": "xem hàng",
+          "meaning_ko": "둘러보다",
+          "pos": "verb",
+          "example": "I like to browse in bookstores."
+        },
+        {
+          "word": "window shopping",
+          "definition": "looking without buying",
+          "meaning_vi": "ngắm đồ",
+          "meaning_ko": "아이쇼핑",
+          "pos": "noun",
+          "example": "I enjoy window shopping."
+        },
+        {
+          "word": "splurge",
+          "definition": "to spend money freely on a luxury",
+          "meaning_vi": "chi tiêu thoải mái",
+          "meaning_ko": "과소비하다",
+          "pos": "verb",
+          "example": "I decided to splurge on a nice bag."
+        },
+        {
+          "word": "compare",
+          "definition": "to examine differences between items",
+          "meaning_vi": "so sánh",
+          "meaning_ko": "비교하다",
+          "pos": "verb",
+          "example": "I compare prices before buying."
+        },
+        {
+          "word": "brand",
+          "definition": "a company's product identity",
+          "meaning_vi": "thương hiệu",
+          "meaning_ko": "브랜드",
+          "pos": "noun",
+          "example": "What brand do you prefer?"
+        },
+        {
+          "word": "sale",
+          "definition": "a period of reduced prices",
+          "meaning_vi": "đợt giảm giá",
+          "meaning_ko": "세일",
+          "pos": "noun",
+          "example": "There's a big sale this weekend."
+        },
+        {
+          "word": "try on",
+          "definition": "to test clothing by wearing it",
+          "meaning_vi": "thử đồ",
+          "meaning_ko": "입어보다",
+          "pos": "phrasal verb",
+          "example": "Can I try this on?"
+        },
+        {
+          "word": "cashier",
+          "definition": "a person who handles payments",
+          "meaning_vi": "thu ngân",
+          "meaning_ko": "계산원",
+          "pos": "noun",
+          "example": "Pay the cashier at the counter."
+        },
+        {
+          "word": "queue",
+          "definition": "a line of people waiting",
+          "meaning_vi": "xếp hàng",
+          "meaning_ko": "줄, 대기열",
+          "pos": "noun",
+          "example": "There's a long queue at checkout."
+        },
+        {
+          "word": "coupon",
+          "definition": "a voucher for a discount",
+          "meaning_vi": "phiếu giảm giá",
+          "meaning_ko": "쿠폰",
+          "pos": "noun",
+          "example": "I have a coupon for 20% off."
+        },
+        {
+          "word": "in stock",
+          "definition": "available for purchase",
+          "meaning_vi": "còn hàng",
+          "meaning_ko": "재고 있는",
+          "pos": "adjective",
+          "example": "Is this item in stock?"
+        },
+        {
+          "word": "out of stock",
+          "definition": "not available",
+          "meaning_vi": "hết hàng",
+          "meaning_ko": "품절된",
+          "pos": "adjective",
+          "example": "Sorry, that item is out of stock."
+        },
+        {
+          "word": "checkout",
+          "definition": "the process of paying for goods",
+          "meaning_vi": "thanh toán",
+          "meaning_ko": "계산, 결제",
+          "pos": "noun",
+          "example": "The checkout process was quick."
+        },
+        {
+          "word": "mall",
+          "definition": "a large shopping center",
+          "meaning_vi": "trung tâm thương mại",
+          "meaning_ko": "쇼핑몰",
+          "pos": "noun",
+          "example": "Let's go to the mall."
+        },
+        {
+          "word": "deal",
+          "definition": "a good offer or transaction",
+          "meaning_vi": "ưu đãi",
+          "meaning_ko": "거래, 딜",
+          "pos": "noun",
+          "example": "That's a really good deal."
+        },
+        {
+          "word": "impulse buy",
+          "definition": "an unplanned purchase",
+          "meaning_vi": "mua sắm bốc đồng",
+          "meaning_ko": "충동 구매",
+          "pos": "noun",
+          "example": "The candy was an impulse buy."
+        },
+        {
+          "word": "return policy",
+          "definition": "rules for returning items",
+          "meaning_vi": "chính sách đổi trả",
+          "meaning_ko": "반품 정책",
+          "pos": "noun",
+          "example": "Check the return policy first."
+        },
+        {
+          "word": "wishlist",
+          "definition": "a list of desired items",
+          "meaning_vi": "danh sách yêu thích",
+          "meaning_ko": "위시리스트",
+          "pos": "noun",
+          "example": "I added it to my wishlist."
+        }
+      ]
+    },
+    "Fashion": {
+      "words": [
+        {
+          "word": "outfit",
+          "definition": "a set of clothes worn together",
+          "meaning_vi": "bộ đồ",
+          "meaning_ko": "의상, 코디",
+          "pos": "noun",
+          "example": "I love your outfit."
+        },
+        {
+          "word": "trendy",
+          "definition": "very fashionable and current",
+          "meaning_vi": "thời trang",
+          "meaning_ko": "트렌디한, 유행하는",
+          "pos": "adjective",
+          "example": "This style is very trendy."
+        },
+        {
+          "word": "casual",
+          "definition": "relaxed and informal",
+          "meaning_vi": "bình thường, thoải mái",
+          "meaning_ko": "캐주얼한",
+          "pos": "adjective",
+          "example": "I prefer casual clothes."
+        },
+        {
+          "word": "formal",
+          "definition": "suitable for official occasions",
+          "meaning_vi": "trang trọng",
+          "meaning_ko": "정장, 포멀한",
+          "pos": "adjective",
+          "example": "I need something formal for the event."
+        },
+        {
+          "word": "accessory",
+          "definition": "an item added to complement an outfit",
+          "meaning_vi": "phụ kiện",
+          "meaning_ko": "액세서리",
+          "pos": "noun",
+          "example": "Accessories complete an outfit."
+        },
+        {
+          "word": "versatile",
+          "definition": "able to be used in many ways",
+          "meaning_vi": "đa năng",
+          "meaning_ko": "다용도의, 활용도 높은",
+          "pos": "adjective",
+          "example": "This jacket is versatile."
+        },
+        {
+          "word": "comfortable",
+          "definition": "providing physical ease",
+          "meaning_vi": "thoải mái",
+          "meaning_ko": "편안한",
+          "pos": "adjective",
+          "example": "Comfort is important to me."
+        },
+        {
+          "word": "style",
+          "definition": "a distinctive appearance or design",
+          "meaning_vi": "phong cách",
+          "meaning_ko": "스타일",
+          "pos": "noun",
+          "example": "I like your style."
+        },
+        {
+          "word": "match",
+          "definition": "to go well together in appearance",
+          "meaning_vi": "phối hợp",
+          "meaning_ko": "어울리다",
+          "pos": "verb",
+          "example": "Does this shirt match these pants?"
+        },
+        {
+          "word": "wardrobe",
+          "definition": "a person's collection of clothes",
+          "meaning_vi": "tủ quần áo",
+          "meaning_ko": "옷장",
+          "pos": "noun",
+          "example": "I need to update my wardrobe."
+        },
+        {
+          "word": "fit",
+          "definition": "how well clothing suits the body",
+          "meaning_vi": "vừa vặn",
+          "meaning_ko": "핏, 맞음새",
+          "pos": "noun",
+          "example": "The fit is perfect."
+        },
+        {
+          "word": "layer",
+          "definition": "to wear multiple items of clothing",
+          "meaning_vi": "mặc nhiều lớp",
+          "meaning_ko": "레이어링하다",
+          "pos": "verb",
+          "example": "I layer my clothes in winter."
+        },
+        {
+          "word": "tailor",
+          "definition": "a person who makes or alters clothes",
+          "meaning_vi": "thợ may",
+          "meaning_ko": "재봉사",
+          "pos": "noun",
+          "example": "I took the suit to a tailor."
+        },
+        {
+          "word": "fabric",
+          "definition": "the cloth or material of clothing",
+          "meaning_vi": "vải",
+          "meaning_ko": "원단, 직물",
+          "pos": "noun",
+          "example": "I prefer natural fabrics like cotton."
+        },
+        {
+          "word": "seasonal",
+          "definition": "relating to a particular time of year",
+          "meaning_vi": "theo mùa",
+          "meaning_ko": "계절의",
+          "pos": "adjective",
+          "example": "These are seasonal colors."
+        },
+        {
+          "word": "dress code",
+          "definition": "rules about what to wear",
+          "meaning_vi": "quy định trang phục",
+          "meaning_ko": "드레스 코드",
+          "pos": "noun",
+          "example": "The restaurant has a dress code."
+        },
+        {
+          "word": "sneakers",
+          "definition": "casual sports shoes",
+          "meaning_vi": "giày thể thao",
+          "meaning_ko": "운동화, 스니커즈",
+          "pos": "noun",
+          "example": "I wear sneakers every day."
+        },
+        {
+          "word": "lookbook",
+          "definition": "a collection of photos showing fashion",
+          "meaning_vi": "tạp chí thời trang",
+          "meaning_ko": "룩북",
+          "pos": "noun",
+          "example": "I follow fashion lookbooks online."
+        },
+        {
+          "word": "secondhand",
+          "definition": "previously owned or used",
+          "meaning_vi": "đồ cũ, secondhand",
+          "meaning_ko": "중고의",
+          "pos": "adjective",
+          "example": "I buy secondhand clothes sometimes."
+        },
+        {
+          "word": "sustainable fashion",
+          "definition": "clothing made ethically",
+          "meaning_vi": "thời trang bền vững",
+          "meaning_ko": "지속가능한 패션",
+          "pos": "noun",
+          "example": "I support sustainable fashion."
+        },
+        {
+          "word": "vintage",
+          "definition": "from an earlier period, retro",
+          "meaning_vi": "cổ điển",
+          "meaning_ko": "빈티지",
+          "pos": "adjective",
+          "example": "She wears vintage dresses."
+        },
+        {
+          "word": "size",
+          "definition": "the measurement of clothing",
+          "meaning_vi": "kích cỡ",
+          "meaning_ko": "사이즈",
+          "pos": "noun",
+          "example": "What size do you wear?"
+        },
+        {
+          "word": "slim fit",
+          "definition": "clothing that fits close to the body",
+          "meaning_vi": "ôm sát",
+          "meaning_ko": "슬림핏",
+          "pos": "adjective",
+          "example": "I prefer slim fit shirts."
+        },
+        {
+          "word": "oversized",
+          "definition": "larger than the usual size",
+          "meaning_vi": "rộng thùng thình",
+          "meaning_ko": "오버사이즈",
+          "pos": "adjective",
+          "example": "Oversized hoodies are comfortable."
+        },
+        {
+          "word": "mix and match",
+          "definition": "to combine different items",
+          "meaning_vi": "phối đồ",
+          "meaning_ko": "믹스앤매치",
+          "pos": "verb",
+          "example": "I like to mix and match colors."
+        }
+      ]
+    },
+    "Banks": {
+      "words": [
+        {
+          "word": "account",
+          "definition": "an arrangement with a bank for money",
+          "meaning_vi": "tài khoản",
+          "meaning_ko": "계좌",
+          "pos": "noun",
+          "example": "I opened a savings account."
+        },
+        {
+          "word": "deposit",
+          "definition": "to put money into an account",
+          "meaning_vi": "gửi tiền",
+          "meaning_ko": "입금하다",
+          "pos": "verb",
+          "example": "I need to deposit this check."
+        },
+        {
+          "word": "withdraw",
+          "definition": "to take money out of an account",
+          "meaning_vi": "rút tiền",
+          "meaning_ko": "출금하다",
+          "pos": "verb",
+          "example": "I withdrew some cash."
+        },
+        {
+          "word": "transfer",
+          "definition": "to move money between accounts",
+          "meaning_vi": "chuyển khoản",
+          "meaning_ko": "이체하다",
+          "pos": "verb",
+          "example": "I transferred money online."
+        },
+        {
+          "word": "balance",
+          "definition": "the amount of money in an account",
+          "meaning_vi": "số dư",
+          "meaning_ko": "잔액",
+          "pos": "noun",
+          "example": "I checked my balance."
+        },
+        {
+          "word": "transaction",
+          "definition": "a financial exchange or activity",
+          "meaning_vi": "giao dịch",
+          "meaning_ko": "거래",
+          "pos": "noun",
+          "example": "The transaction was successful."
+        },
+        {
+          "word": "loan",
+          "definition": "money borrowed from a bank",
+          "meaning_vi": "khoản vay",
+          "meaning_ko": "대출",
+          "pos": "noun",
+          "example": "I applied for a loan."
+        },
+        {
+          "word": "interest",
+          "definition": "money paid for borrowing or saving",
+          "meaning_vi": "lãi suất",
+          "meaning_ko": "이자",
+          "pos": "noun",
+          "example": "The interest rate is low."
+        },
+        {
+          "word": "ATM",
+          "definition": "a machine for banking transactions",
+          "meaning_vi": "máy ATM",
+          "meaning_ko": "ATM, 현금인출기",
+          "pos": "noun",
+          "example": "I need to find an ATM."
+        },
+        {
+          "word": "savings",
+          "definition": "money kept for the future",
+          "meaning_vi": "tiền tiết kiệm",
+          "meaning_ko": "저축",
+          "pos": "noun",
+          "example": "I put money into savings every month."
+        },
+        {
+          "word": "credit card",
+          "definition": "a card for borrowing to make purchases",
+          "meaning_vi": "thẻ tín dụng",
+          "meaning_ko": "신용카드",
+          "pos": "noun",
+          "example": "I paid by credit card."
+        },
+        {
+          "word": "debit card",
+          "definition": "a card that takes money directly from your account",
+          "meaning_vi": "thẻ ghi nợ",
+          "meaning_ko": "체크카드",
+          "pos": "noun",
+          "example": "I prefer using a debit card."
+        },
+        {
+          "word": "mobile banking",
+          "definition": "managing money via phone",
+          "meaning_vi": "ngân hàng di động",
+          "meaning_ko": "모바일 뱅킹",
+          "pos": "noun",
+          "example": "Mobile banking is so convenient."
+        },
+        {
+          "word": "exchange rate",
+          "definition": "the value of one currency against another",
+          "meaning_vi": "tỷ giá hối đoái",
+          "meaning_ko": "환율",
+          "pos": "noun",
+          "example": "What's the exchange rate today?"
+        },
+        {
+          "word": "fee",
+          "definition": "a charge for a service",
+          "meaning_vi": "phí",
+          "meaning_ko": "수수료",
+          "pos": "noun",
+          "example": "Is there a transaction fee?"
+        },
+        {
+          "word": "statement",
+          "definition": "a record of account transactions",
+          "meaning_vi": "sao kê",
+          "meaning_ko": "명세서",
+          "pos": "noun",
+          "example": "I reviewed my monthly statement."
+        },
+        {
+          "word": "budget",
+          "definition": "a plan for spending money",
+          "meaning_vi": "ngân sách",
+          "meaning_ko": "예산",
+          "pos": "noun",
+          "example": "I try to stick to my budget."
+        },
+        {
+          "word": "invest",
+          "definition": "to put money into something for profit",
+          "meaning_vi": "đầu tư",
+          "meaning_ko": "투자하다",
+          "pos": "verb",
+          "example": "I want to invest in stocks."
+        },
+        {
+          "word": "debt",
+          "definition": "money that is owed",
+          "meaning_vi": "nợ",
+          "meaning_ko": "빚, 부채",
+          "pos": "noun",
+          "example": "I want to pay off my debt."
+        },
+        {
+          "word": "installment",
+          "definition": "a partial payment made regularly",
+          "meaning_vi": "trả góp",
+          "meaning_ko": "할부",
+          "pos": "noun",
+          "example": "I paid for it in installments."
+        },
+        {
+          "word": "PIN",
+          "definition": "a personal identification number",
+          "meaning_vi": "mã PIN",
+          "meaning_ko": "비밀번호, PIN",
+          "pos": "noun",
+          "example": "Enter your PIN to confirm."
+        },
+        {
+          "word": "wire transfer",
+          "definition": "sending money electronically",
+          "meaning_vi": "chuyển khoản ngân hàng",
+          "meaning_ko": "송금",
+          "pos": "noun",
+          "example": "I made a wire transfer abroad."
+        },
+        {
+          "word": "overdraft",
+          "definition": "spending more than your account balance",
+          "meaning_vi": "thấu chi",
+          "meaning_ko": "당좌 대월",
+          "pos": "noun",
+          "example": "I accidentally went into overdraft."
+        },
+        {
+          "word": "currency",
+          "definition": "the money used in a country",
+          "meaning_vi": "tiền tệ",
+          "meaning_ko": "통화",
+          "pos": "noun",
+          "example": "The local currency is the won."
+        },
+        {
+          "word": "financial literacy",
+          "definition": "understanding how money works",
+          "meaning_vi": "kiến thức tài chính",
+          "meaning_ko": "금융 지식",
+          "pos": "noun",
+          "example": "Financial literacy is very important."
+        }
+      ]
+    },
+    "Work": {
+      "words": [
+        {
+          "word": "colleague",
+          "definition": "a person you work with",
+          "meaning_vi": "đồng nghiệp",
+          "meaning_ko": "동료",
+          "pos": "noun",
+          "example": "My colleagues are friendly."
+        },
+        {
+          "word": "deadline",
+          "definition": "the latest time for completion",
+          "meaning_vi": "hạn chót",
+          "meaning_ko": "마감일",
+          "pos": "noun",
+          "example": "I have a deadline tomorrow."
+        },
+        {
+          "word": "meeting",
+          "definition": "a gathering for discussion",
+          "meaning_vi": "cuộc họp",
+          "meaning_ko": "회의",
+          "pos": "noun",
+          "example": "I have a meeting at 2 PM."
+        },
+        {
+          "word": "project",
+          "definition": "a planned piece of work",
+          "meaning_vi": "dự án",
+          "meaning_ko": "프로젝트",
+          "pos": "noun",
+          "example": "I'm working on a new project."
+        },
+        {
+          "word": "promotion",
+          "definition": "advancement to a higher position",
+          "meaning_vi": "thăng chức",
+          "meaning_ko": "승진",
+          "pos": "noun",
+          "example": "I got a promotion."
+        },
+        {
+          "word": "overtime",
+          "definition": "time worked beyond normal hours",
+          "meaning_vi": "làm thêm giờ",
+          "meaning_ko": "야근, 초과근무",
+          "pos": "noun",
+          "example": "I worked overtime last week."
+        },
+        {
+          "word": "teamwork",
+          "definition": "working together as a team",
+          "meaning_vi": "làm việc nhóm",
+          "meaning_ko": "팀워크",
+          "pos": "noun",
+          "example": "Teamwork is important."
+        },
+        {
+          "word": "collaborate",
+          "definition": "to work together on a task",
+          "meaning_vi": "hợp tác",
+          "meaning_ko": "협업하다",
+          "pos": "verb",
+          "example": "We collaborate on projects."
+        },
+        {
+          "word": "productive",
+          "definition": "achieving a lot of results",
+          "meaning_vi": "năng suất cao",
+          "meaning_ko": "생산적인",
+          "pos": "adjective",
+          "example": "I had a productive day."
+        },
+        {
+          "word": "challenging",
+          "definition": "demanding effort and determination",
+          "meaning_vi": "đầy thử thách",
+          "meaning_ko": "도전적인",
+          "pos": "adjective",
+          "example": "The work is challenging but rewarding."
+        },
+        {
+          "word": "rewarding",
+          "definition": "giving satisfaction and fulfillment",
+          "meaning_vi": "bõ công",
+          "meaning_ko": "보람 있는",
+          "pos": "adjective",
+          "example": "My job is rewarding."
+        },
+        {
+          "word": "flexible",
+          "definition": "able to change or be changed easily",
+          "meaning_vi": "linh hoạt",
+          "meaning_ko": "유연한",
+          "pos": "adjective",
+          "example": "I have flexible working hours."
+        },
+        {
+          "word": "workload",
+          "definition": "the amount of work to be done",
+          "meaning_vi": "khối lượng công việc",
+          "meaning_ko": "업무량",
+          "pos": "noun",
+          "example": "My workload has increased recently."
+        },
+        {
+          "word": "presentation",
+          "definition": "a formal talk to an audience",
+          "meaning_vi": "bài thuyết trình",
+          "meaning_ko": "프레젠테이션, 발표",
+          "pos": "noun",
+          "example": "I'm preparing a presentation."
+        },
+        {
+          "word": "commute",
+          "definition": "to travel between home and work",
+          "meaning_vi": "đi làm hàng ngày",
+          "meaning_ko": "통근하다",
+          "pos": "verb",
+          "example": "I commute by bus."
+        },
+        {
+          "word": "work-life balance",
+          "definition": "balance between job and personal life",
+          "meaning_vi": "cân bằng công việc - cuộc sống",
+          "meaning_ko": "워라밸",
+          "pos": "noun",
+          "example": "Work-life balance is essential."
+        },
+        {
+          "word": "resign",
+          "definition": "to leave a job voluntarily",
+          "meaning_vi": "từ chức",
+          "meaning_ko": "사직하다",
+          "pos": "verb",
+          "example": "She resigned from her position."
+        },
+        {
+          "word": "remote work",
+          "definition": "working from outside the office",
+          "meaning_vi": "làm việc từ xa",
+          "meaning_ko": "재택근무",
+          "pos": "noun",
+          "example": "I prefer remote work."
+        },
+        {
+          "word": "networking",
+          "definition": "making professional contacts",
+          "meaning_vi": "kết nối mạng lưới",
+          "meaning_ko": "네트워킹",
+          "pos": "noun",
+          "example": "Networking helps your career."
+        },
+        {
+          "word": "internship",
+          "definition": "a temporary work experience position",
+          "meaning_vi": "thực tập",
+          "meaning_ko": "인턴십",
+          "pos": "noun",
+          "example": "I did an internship in college."
+        },
+        {
+          "word": "feedback",
+          "definition": "comments about performance",
+          "meaning_vi": "phản hồi",
+          "meaning_ko": "피드백",
+          "pos": "noun",
+          "example": "My manager gave me positive feedback."
+        },
+        {
+          "word": "multitask",
+          "definition": "to do several things at once",
+          "meaning_vi": "làm nhiều việc cùng lúc",
+          "meaning_ko": "멀티태스킹하다",
+          "pos": "verb",
+          "example": "I often multitask at work."
+        },
+        {
+          "word": "mentor",
+          "definition": "an experienced person who guides you",
+          "meaning_vi": "người hướng dẫn",
+          "meaning_ko": "멘토",
+          "pos": "noun",
+          "example": "My mentor helped me a lot."
+        },
+        {
+          "word": "salary",
+          "definition": "regular payment for work",
+          "meaning_vi": "lương",
+          "meaning_ko": "급여, 월급",
+          "pos": "noun",
+          "example": "I'm happy with my salary."
+        },
+        {
+          "word": "career path",
+          "definition": "the progression of jobs in one's career",
+          "meaning_vi": "con đường sự nghiệp",
+          "meaning_ko": "커리어 패스",
+          "pos": "noun",
+          "example": "I'm thinking about my career path."
+        }
+      ]
+    },
+    "Gatherings": {
+      "words": [
+        {
+          "word": "celebrate",
+          "definition": "to honor with festivities",
+          "meaning_vi": "ăn mừng",
+          "meaning_ko": "축하하다",
+          "pos": "verb",
+          "example": "We celebrated her birthday."
+        },
+        {
+          "word": "occasion",
+          "definition": "a special event or time",
+          "meaning_vi": "dịp",
+          "meaning_ko": "행사",
+          "pos": "noun",
+          "example": "It was a special occasion."
+        },
+        {
+          "word": "host",
+          "definition": "a person who receives or entertains guests",
+          "meaning_vi": "chủ nhà (tiếp khách)",
+          "meaning_ko": "호스트, 주최자",
+          "pos": "noun",
+          "example": "She was a great host."
+        },
+        {
+          "word": "invite",
+          "definition": "to ask someone to attend an event",
+          "meaning_vi": "mời",
+          "meaning_ko": "초대하다",
+          "pos": "verb",
+          "example": "I invited my friends over."
+        },
+        {
+          "word": "socialize",
+          "definition": "to interact with others",
+          "meaning_vi": "giao lưu xã hội",
+          "meaning_ko": "사교하다",
+          "pos": "verb",
+          "example": "I enjoy socializing at parties."
+        },
+        {
+          "word": "memorable",
+          "definition": "worth remembering",
+          "meaning_vi": "đáng nhớ",
+          "meaning_ko": "기억에 남는",
+          "pos": "adjective",
+          "example": "It was a memorable night."
+        },
+        {
+          "word": "reunion",
+          "definition": "a gathering of people previously together",
+          "meaning_vi": "họp mặt",
+          "meaning_ko": "동창회, 재회",
+          "pos": "noun",
+          "example": "We had a family reunion."
+        },
+        {
+          "word": "get-together",
+          "definition": "an informal social gathering",
+          "meaning_vi": "buổi gặp mặt",
+          "meaning_ko": "모임",
+          "pos": "noun",
+          "example": "We had a small get-together."
+        },
+        {
+          "word": "potluck",
+          "definition": "a gathering where everyone brings food",
+          "meaning_vi": "tiệc mỗi người mang một món",
+          "meaning_ko": "포트럭",
+          "pos": "noun",
+          "example": "We're having a potluck dinner."
+        },
+        {
+          "word": "toast",
+          "definition": "a short speech before drinking",
+          "meaning_vi": "lời chúc mừng",
+          "meaning_ko": "건배사",
+          "pos": "noun",
+          "example": "He gave a beautiful toast."
+        },
+        {
+          "word": "mingle",
+          "definition": "to move among people and talk",
+          "meaning_vi": "giao lưu",
+          "meaning_ko": "어울리다",
+          "pos": "verb",
+          "example": "I like to mingle at parties."
+        },
+        {
+          "word": "surprise party",
+          "definition": "a party organized in secret",
+          "meaning_vi": "tiệc bất ngờ",
+          "meaning_ko": "서프라이즈 파티",
+          "pos": "noun",
+          "example": "We planned a surprise party for him."
+        },
+        {
+          "word": "housewarming",
+          "definition": "a party for a new home",
+          "meaning_vi": "tiệc tân gia",
+          "meaning_ko": "집들이",
+          "pos": "noun",
+          "example": "They're having a housewarming."
+        },
+        {
+          "word": "RSVP",
+          "definition": "to respond to an invitation",
+          "meaning_vi": "phản hồi lời mời",
+          "meaning_ko": "참석 여부 회신",
+          "pos": "verb",
+          "example": "Please RSVP by Friday."
+        },
+        {
+          "word": "dress up",
+          "definition": "to wear nice or formal clothes",
+          "meaning_vi": "ăn mặc đẹp",
+          "meaning_ko": "차려 입다",
+          "pos": "phrasal verb",
+          "example": "Should I dress up for the party?"
+        },
+        {
+          "word": "catch up",
+          "definition": "to talk about what's happened recently",
+          "meaning_vi": "nói chuyện gần đây",
+          "meaning_ko": "근황을 나누다",
+          "pos": "phrasal verb",
+          "example": "It was nice to catch up with old friends."
+        },
+        {
+          "word": "turn up",
+          "definition": "to arrive at an event",
+          "meaning_vi": "đến, xuất hiện",
+          "meaning_ko": "나타나다",
+          "pos": "phrasal verb",
+          "example": "Many people turned up to the party."
+        },
+        {
+          "word": "icebreaker",
+          "definition": "an activity to help people socialize",
+          "meaning_vi": "hoạt động phá băng",
+          "meaning_ko": "아이스브레이킹",
+          "pos": "noun",
+          "example": "We played an icebreaker game."
+        },
+        {
+          "word": "festive",
+          "definition": "cheerful and celebratory",
+          "meaning_vi": "lễ hội, vui tươi",
+          "meaning_ko": "축제 분위기의",
+          "pos": "adjective",
+          "example": "The atmosphere was very festive."
+        },
+        {
+          "word": "catering",
+          "definition": "providing food for an event",
+          "meaning_vi": "dịch vụ ăn uống",
+          "meaning_ko": "케이터링",
+          "pos": "noun",
+          "example": "We ordered catering for the event."
+        },
+        {
+          "word": "have a blast",
+          "definition": "to have a great time",
+          "meaning_vi": "vui hết nấc",
+          "meaning_ko": "정말 재미있게 놀다",
+          "pos": "idiom",
+          "example": "We had a blast at the party."
+        },
+        {
+          "word": "bonfire",
+          "definition": "a large outdoor fire",
+          "meaning_vi": "lửa trại",
+          "meaning_ko": "모닥불",
+          "pos": "noun",
+          "example": "We sat around the bonfire."
+        },
+        {
+          "word": "hangout",
+          "definition": "to spend time with friends casually",
+          "meaning_vi": "đi chơi",
+          "meaning_ko": "어울리다, 놀다",
+          "pos": "verb",
+          "example": "We usually hang out on weekends."
+        },
+        {
+          "word": "gathering",
+          "definition": "an assembly of people",
+          "meaning_vi": "buổi tụ họp",
+          "meaning_ko": "모임",
+          "pos": "noun",
+          "example": "It was a nice gathering of friends."
+        },
+        {
+          "word": "cheers",
+          "definition": "an expression before drinking together",
+          "meaning_vi": "chúc mừng",
+          "meaning_ko": "건배",
+          "pos": "interjection",
+          "example": "Cheers to our friendship!"
+        }
+      ]
+    },
+    "Family and Friends": {
+      "words": [
+        {
+          "word": "relationship",
+          "definition": "a connection between people",
+          "meaning_vi": "mối quan hệ",
+          "meaning_ko": "관계",
+          "pos": "noun",
+          "example": "We have a close relationship."
+        },
+        {
+          "word": "bond",
+          "definition": "a close emotional connection",
+          "meaning_vi": "sự gắn kết",
+          "meaning_ko": "유대감",
+          "pos": "noun",
+          "example": "We share a strong bond."
+        },
+        {
+          "word": "support",
+          "definition": "to give help or encouragement",
+          "meaning_vi": "ủng hộ, hỗ trợ",
+          "meaning_ko": "지지하다",
+          "pos": "verb",
+          "example": "My family supports me."
+        },
+        {
+          "word": "confide",
+          "definition": "to tell secrets to someone trusted",
+          "meaning_vi": "tâm sự",
+          "meaning_ko": "비밀을 털어놓다",
+          "pos": "verb",
+          "example": "I confide in my best friend."
+        },
+        {
+          "word": "loyal",
+          "definition": "giving firm and constant support",
+          "meaning_vi": "trung thành",
+          "meaning_ko": "충실한",
+          "pos": "adjective",
+          "example": "My friends are loyal."
+        },
+        {
+          "word": "trustworthy",
+          "definition": "able to be relied on",
+          "meaning_vi": "đáng tin cậy",
+          "meaning_ko": "믿을 수 있는",
+          "pos": "adjective",
+          "example": "She is very trustworthy."
+        },
+        {
+          "word": "cherish",
+          "definition": "to care for lovingly",
+          "meaning_vi": "trân trọng",
+          "meaning_ko": "소중히 여기다",
+          "pos": "verb",
+          "example": "I cherish our friendship."
+        },
+        {
+          "word": "sibling",
+          "definition": "a brother or sister",
+          "meaning_vi": "anh chị em",
+          "meaning_ko": "형제자매",
+          "pos": "noun",
+          "example": "I have two siblings."
+        },
+        {
+          "word": "relative",
+          "definition": "a family member",
+          "meaning_vi": "người thân",
+          "meaning_ko": "친척",
+          "pos": "noun",
+          "example": "I visited my relatives."
+        },
+        {
+          "word": "get along",
+          "definition": "to have a good relationship with",
+          "meaning_vi": "hòa thuận",
+          "meaning_ko": "잘 지내다",
+          "pos": "phrasal verb",
+          "example": "I get along well with my sister."
+        },
+        {
+          "word": "look up to",
+          "definition": "to admire and respect someone",
+          "meaning_vi": "ngưỡng mộ",
+          "meaning_ko": "존경하다",
+          "pos": "phrasal verb",
+          "example": "I look up to my parents."
+        },
+        {
+          "word": "childhood friend",
+          "definition": "a friend from when you were young",
+          "meaning_vi": "bạn thời thơ ấu",
+          "meaning_ko": "어릴 적 친구",
+          "pos": "noun",
+          "example": "She is my childhood friend."
+        },
+        {
+          "word": "quality time",
+          "definition": "time spent meaningfully with someone",
+          "meaning_vi": "thời gian chất lượng",
+          "meaning_ko": "소중한 시간",
+          "pos": "noun",
+          "example": "I spend quality time with my family."
+        },
+        {
+          "word": "generation gap",
+          "definition": "differences between age groups",
+          "meaning_vi": "khoảng cách thế hệ",
+          "meaning_ko": "세대 차이",
+          "pos": "noun",
+          "example": "There's a generation gap with my parents."
+        },
+        {
+          "word": "upbringing",
+          "definition": "the way a child is raised",
+          "meaning_vi": "sự giáo dục, nuôi dạy",
+          "meaning_ko": "양육, 성장 환경",
+          "pos": "noun",
+          "example": "My upbringing shaped who I am."
+        },
+        {
+          "word": "extended family",
+          "definition": "relatives beyond immediate family",
+          "meaning_vi": "đại gia đình",
+          "meaning_ko": "대가족",
+          "pos": "noun",
+          "example": "I live with my extended family."
+        },
+        {
+          "word": "close-knit",
+          "definition": "having strong and close relationships",
+          "meaning_vi": "gắn bó",
+          "meaning_ko": "끈끈한, 화목한",
+          "pos": "adjective",
+          "example": "We are a close-knit family."
+        },
+        {
+          "word": "appreciate",
+          "definition": "to recognize the value of someone",
+          "meaning_vi": "trân trọng, cảm kích",
+          "meaning_ko": "감사하다, 고마워하다",
+          "pos": "verb",
+          "example": "I appreciate my friends."
+        },
+        {
+          "word": "influence",
+          "definition": "to have an effect on someone",
+          "meaning_vi": "ảnh hưởng",
+          "meaning_ko": "영향을 미치다",
+          "pos": "verb",
+          "example": "My parents influenced my career choice."
+        },
+        {
+          "word": "role model",
+          "definition": "a person others look up to",
+          "meaning_vi": "hình mẫu",
+          "meaning_ko": "롤모델",
+          "pos": "noun",
+          "example": "My mother is my role model."
+        },
+        {
+          "word": "keep in touch",
+          "definition": "to stay in contact",
+          "meaning_vi": "giữ liên lạc",
+          "meaning_ko": "연락을 유지하다",
+          "pos": "phrasal verb",
+          "example": "We keep in touch by texting."
+        },
+        {
+          "word": "hang out",
+          "definition": "to spend time together casually",
+          "meaning_vi": "đi chơi cùng",
+          "meaning_ko": "어울리다",
+          "pos": "phrasal verb",
+          "example": "We hang out every weekend."
+        },
+        {
+          "word": "empathy",
+          "definition": "understanding another's feelings",
+          "meaning_vi": "sự đồng cảm",
+          "meaning_ko": "공감",
+          "pos": "noun",
+          "example": "Empathy is important in friendships."
+        },
+        {
+          "word": "unconditional",
+          "definition": "without any conditions or limits",
+          "meaning_vi": "vô điều kiện",
+          "meaning_ko": "무조건적인",
+          "pos": "adjective",
+          "example": "My parents' love is unconditional."
+        },
+        {
+          "word": "companion",
+          "definition": "a person who accompanies someone",
+          "meaning_vi": "bạn đồng hành",
+          "meaning_ko": "동반자",
+          "pos": "noun",
+          "example": "She's been a great companion."
+        }
+      ]
+    },
+    "Transportation": {
+      "words": [
+        {
+          "word": "commute",
+          "definition": "regular travel between home and work",
+          "meaning_vi": "đi lại hàng ngày",
+          "meaning_ko": "통근",
+          "pos": "noun",
+          "example": "My commute takes an hour."
+        },
+        {
+          "word": "traffic",
+          "definition": "vehicles moving on roads",
+          "meaning_vi": "giao thông",
+          "meaning_ko": "교통, 차량",
+          "pos": "noun",
+          "example": "The traffic was terrible."
+        },
+        {
+          "word": "convenient",
+          "definition": "easy to use or access",
+          "meaning_vi": "thuận tiện",
+          "meaning_ko": "편리한",
+          "pos": "adjective",
+          "example": "The subway is convenient."
+        },
+        {
+          "word": "crowded",
+          "definition": "filled with many people",
+          "meaning_vi": "đông đúc",
+          "meaning_ko": "붐비는",
+          "pos": "adjective",
+          "example": "The bus was crowded."
+        },
+        {
+          "word": "delay",
+          "definition": "a period of time lost in waiting",
+          "meaning_vi": "sự chậm trễ",
+          "meaning_ko": "지연",
+          "pos": "noun",
+          "example": "There was a 30-minute delay."
+        },
+        {
+          "word": "transfer",
+          "definition": "to change from one vehicle to another",
+          "meaning_vi": "đổi/chuyển tuyến",
+          "meaning_ko": "환승하다",
+          "pos": "verb",
+          "example": "I transfer at this station."
+        },
+        {
+          "word": "rush hour",
+          "definition": "the busiest time for traffic",
+          "meaning_vi": "giờ cao điểm",
+          "meaning_ko": "러시아워, 출퇴근 시간",
+          "pos": "noun",
+          "example": "Avoid traveling during rush hour."
+        },
+        {
+          "word": "fare",
+          "definition": "the price of a journey",
+          "meaning_vi": "giá vé",
+          "meaning_ko": "요금",
+          "pos": "noun",
+          "example": "The fare is reasonable."
+        },
+        {
+          "word": "route",
+          "definition": "a way or course taken",
+          "meaning_vi": "tuyến đường",
+          "meaning_ko": "노선, 경로",
+          "pos": "noun",
+          "example": "This is the fastest route."
+        },
+        {
+          "word": "reliable",
+          "definition": "consistently dependable",
+          "meaning_vi": "đáng tin cậy",
+          "meaning_ko": "신뢰할 수 있는",
+          "pos": "adjective",
+          "example": "Public transport is reliable here."
+        },
+        {
+          "word": "pedestrian",
+          "definition": "a person walking on a road",
+          "meaning_vi": "người đi bộ",
+          "meaning_ko": "보행자",
+          "pos": "noun",
+          "example": "Watch out for pedestrians."
+        },
+        {
+          "word": "parking",
+          "definition": "a space for leaving vehicles",
+          "meaning_vi": "bãi đỗ xe",
+          "meaning_ko": "주차",
+          "pos": "noun",
+          "example": "Parking is expensive downtown."
+        },
+        {
+          "word": "fuel",
+          "definition": "a material used for energy",
+          "meaning_vi": "nhiên liệu",
+          "meaning_ko": "연료",
+          "pos": "noun",
+          "example": "Fuel prices have gone up."
+        },
+        {
+          "word": "carpool",
+          "definition": "sharing a car ride with others",
+          "meaning_vi": "đi chung xe",
+          "meaning_ko": "카풀",
+          "pos": "noun",
+          "example": "We carpool to save money."
+        },
+        {
+          "word": "express train",
+          "definition": "a fast train with fewer stops",
+          "meaning_vi": "tàu tốc hành",
+          "meaning_ko": "급행 열차",
+          "pos": "noun",
+          "example": "Take the express train to save time."
+        },
+        {
+          "word": "ride-sharing",
+          "definition": "using an app to share car rides",
+          "meaning_vi": "đi xe chung (ứng dụng)",
+          "meaning_ko": "라이드 쉐어링",
+          "pos": "noun",
+          "example": "Ride-sharing apps are popular."
+        },
+        {
+          "word": "navigation",
+          "definition": "finding the way to a destination",
+          "meaning_vi": "điều hướng",
+          "meaning_ko": "내비게이션",
+          "pos": "noun",
+          "example": "I used navigation to find the place."
+        },
+        {
+          "word": "seat",
+          "definition": "a place to sit in a vehicle",
+          "meaning_vi": "ghế ngồi",
+          "meaning_ko": "좌석",
+          "pos": "noun",
+          "example": "I couldn't find an empty seat."
+        },
+        {
+          "word": "public transit",
+          "definition": "shared transportation system",
+          "meaning_vi": "giao thông công cộng",
+          "meaning_ko": "대중교통",
+          "pos": "noun",
+          "example": "I use public transit every day."
+        },
+        {
+          "word": "bicycle lane",
+          "definition": "a path for cycling",
+          "meaning_vi": "làn xe đạp",
+          "meaning_ko": "자전거 도로",
+          "pos": "noun",
+          "example": "The city has bicycle lanes."
+        },
+        {
+          "word": "one-way",
+          "definition": "going in only one direction",
+          "meaning_vi": "một chiều",
+          "meaning_ko": "편도",
+          "pos": "adjective",
+          "example": "This is a one-way street."
+        },
+        {
+          "word": "roundabout",
+          "definition": "a circular road junction",
+          "meaning_vi": "vòng xuyến",
+          "meaning_ko": "로터리, 회전교차로",
+          "pos": "noun",
+          "example": "Go left at the roundabout."
+        },
+        {
+          "word": "commuter",
+          "definition": "a person who travels to work regularly",
+          "meaning_vi": "người đi làm hàng ngày",
+          "meaning_ko": "통근자",
+          "pos": "noun",
+          "example": "The train is full of commuters."
+        },
+        {
+          "word": "electric vehicle",
+          "definition": "a car powered by electricity",
+          "meaning_vi": "xe điện",
+          "meaning_ko": "전기차",
+          "pos": "noun",
+          "example": "Electric vehicles are better for the environment."
+        },
+        {
+          "word": "congestion",
+          "definition": "too much traffic causing slowness",
+          "meaning_vi": "tắc nghẽn",
+          "meaning_ko": "혼잡, 정체",
+          "pos": "noun",
+          "example": "Traffic congestion is a big problem."
+        }
+      ]
+    },
+    "Free Time": {
+      "words": [
+        {
+          "word": "hobby",
+          "definition": "an activity done regularly for pleasure",
+          "meaning_vi": "sở thích",
+          "meaning_ko": "취미",
+          "pos": "noun",
+          "example": "Reading is my hobby."
+        },
+        {
+          "word": "leisure",
+          "definition": "free time for enjoyment",
+          "meaning_vi": "thời gian rảnh",
+          "meaning_ko": "여가",
+          "pos": "noun",
+          "example": "I have more leisure time now."
+        },
+        {
+          "word": "relaxation",
+          "definition": "rest and refreshment",
+          "meaning_vi": "sự thư giãn",
+          "meaning_ko": "휴식",
+          "pos": "noun",
+          "example": "I need some relaxation."
+        },
+        {
+          "word": "pastime",
+          "definition": "an activity done for enjoyment",
+          "meaning_vi": "trò giải trí",
+          "meaning_ko": "오락, 취미 활동",
+          "pos": "noun",
+          "example": "Gardening is a popular pastime."
+        },
+        {
+          "word": "unwind",
+          "definition": "to relax after work or stress",
+          "meaning_vi": "thư giãn",
+          "meaning_ko": "긴장을 풀다",
+          "pos": "verb",
+          "example": "I like to unwind by watching TV."
+        },
+        {
+          "word": "recharge",
+          "definition": "to regain energy and motivation",
+          "meaning_vi": "nạp lại năng lượng",
+          "meaning_ko": "재충전하다",
+          "pos": "verb",
+          "example": "Weekends help me recharge."
+        },
+        {
+          "word": "boredom",
+          "definition": "the state of being uninterested",
+          "meaning_vi": "sự chán nản",
+          "meaning_ko": "지루함",
+          "pos": "noun",
+          "example": "I never feel boredom with my hobbies."
+        },
+        {
+          "word": "productive",
+          "definition": "achieving a lot in free time",
+          "meaning_vi": "năng suất",
+          "meaning_ko": "생산적인",
+          "pos": "adjective",
+          "example": "I try to be productive on weekends."
+        },
+        {
+          "word": "enjoy",
+          "definition": "to take pleasure in something",
+          "meaning_vi": "thưởng thức",
+          "meaning_ko": "즐기다",
+          "pos": "verb",
+          "example": "I enjoy spending time outdoors."
+        },
+        {
+          "word": "preference",
+          "definition": "a greater liking for something",
+          "meaning_vi": "sở thích, ưu tiên",
+          "meaning_ko": "선호",
+          "pos": "noun",
+          "example": "What's your preference?"
+        },
+        {
+          "word": "binge-watch",
+          "definition": "to watch many episodes at once",
+          "meaning_vi": "xem liên tục",
+          "meaning_ko": "몰아보다",
+          "pos": "verb",
+          "example": "I binge-watch shows on weekends."
+        },
+        {
+          "word": "work out",
+          "definition": "to exercise physically",
+          "meaning_vi": "tập thể dục",
+          "meaning_ko": "운동하다",
+          "pos": "phrasal verb",
+          "example": "I work out three times a week."
+        },
+        {
+          "word": "hang out",
+          "definition": "to spend time casually with friends",
+          "meaning_vi": "đi chơi",
+          "meaning_ko": "어울리다",
+          "pos": "phrasal verb",
+          "example": "I hang out with friends on Saturdays."
+        },
+        {
+          "word": "DIY",
+          "definition": "do-it-yourself projects",
+          "meaning_vi": "tự làm",
+          "meaning_ko": "DIY, 직접 만들기",
+          "pos": "noun",
+          "example": "I enjoy DIY projects at home."
+        },
+        {
+          "word": "podcast",
+          "definition": "a digital audio program",
+          "meaning_vi": "podcast",
+          "meaning_ko": "팟캐스트",
+          "pos": "noun",
+          "example": "I listen to podcasts while commuting."
+        },
+        {
+          "word": "gardening",
+          "definition": "the activity of growing plants",
+          "meaning_vi": "làm vườn",
+          "meaning_ko": "정원 가꾸기",
+          "pos": "noun",
+          "example": "Gardening is very relaxing for me."
+        },
+        {
+          "word": "board game",
+          "definition": "a game played on a board",
+          "meaning_vi": "trò chơi bàn cờ",
+          "meaning_ko": "보드 게임",
+          "pos": "noun",
+          "example": "We play board games on Friday nights."
+        },
+        {
+          "word": "photography",
+          "definition": "the art of taking photographs",
+          "meaning_vi": "nhiếp ảnh",
+          "meaning_ko": "사진",
+          "pos": "noun",
+          "example": "Photography is my creative outlet."
+        },
+        {
+          "word": "cooking",
+          "definition": "the practice of preparing food",
+          "meaning_vi": "nấu ăn",
+          "meaning_ko": "요리",
+          "pos": "noun",
+          "example": "Cooking is both a hobby and a skill."
+        },
+        {
+          "word": "reading",
+          "definition": "the activity of looking at books",
+          "meaning_vi": "đọc sách",
+          "meaning_ko": "독서",
+          "pos": "noun",
+          "example": "I read before bed every night."
+        },
+        {
+          "word": "sketching",
+          "definition": "drawing rough pictures",
+          "meaning_vi": "vẽ phác thảo",
+          "meaning_ko": "스케치",
+          "pos": "noun",
+          "example": "I enjoy sketching in my free time."
+        },
+        {
+          "word": "volunteering",
+          "definition": "doing unpaid work to help others",
+          "meaning_vi": "tình nguyện",
+          "meaning_ko": "자원봉사",
+          "pos": "noun",
+          "example": "Volunteering is very fulfilling."
+        },
+        {
+          "word": "meditation",
+          "definition": "focused calm thinking for relaxation",
+          "meaning_vi": "thiền",
+          "meaning_ko": "명상",
+          "pos": "noun",
+          "example": "Meditation helps me clear my mind."
+        },
+        {
+          "word": "solo travel",
+          "definition": "traveling alone",
+          "meaning_vi": "du lịch một mình",
+          "meaning_ko": "혼자 여행",
+          "pos": "noun",
+          "example": "Solo travel teaches you a lot."
+        },
+        {
+          "word": "me time",
+          "definition": "time spent alone for personal enjoyment",
+          "meaning_vi": "thời gian riêng",
+          "meaning_ko": "나만의 시간",
+          "pos": "noun",
+          "example": "I need some me time to recharge."
+        }
+      ]
+    },
+    "Holidays": {
+      "words": [
+        {
+          "word": "celebration",
+          "definition": "festivities for a special occasion",
+          "meaning_vi": "lễ kỉ niệm",
+          "meaning_ko": "축하, 기념",
+          "pos": "noun",
+          "example": "We had a big celebration."
+        },
+        {
+          "word": "tradition",
+          "definition": "a custom passed down through generations",
+          "meaning_vi": "truyền thống",
+          "meaning_ko": "전통",
+          "pos": "noun",
+          "example": "It's a family tradition."
+        },
+        {
+          "word": "festive",
+          "definition": "cheerful and celebratory",
+          "meaning_vi": "lễ hội, vui tươi",
+          "meaning_ko": "축제의, 명절의",
+          "pos": "adjective",
+          "example": "The atmosphere was festive."
+        },
+        {
+          "word": "decoration",
+          "definition": "something used to make a place look special",
+          "meaning_vi": "đồ trang trí",
+          "meaning_ko": "장식",
+          "pos": "noun",
+          "example": "We put up decorations."
+        },
+        {
+          "word": "grateful",
+          "definition": "feeling thankful for something",
+          "meaning_vi": "biết ơn",
+          "meaning_ko": "감사하는",
+          "pos": "adjective",
+          "example": "I'm grateful for my family."
+        },
+        {
+          "word": "reunion",
+          "definition": "coming together again after a time",
+          "meaning_vi": "đoàn tụ",
+          "meaning_ko": "재회",
+          "pos": "noun",
+          "example": "We have a family reunion every year."
+        },
+        {
+          "word": "anniversary",
+          "definition": "the yearly return of a special date",
+          "meaning_vi": "kỷ niệm",
+          "meaning_ko": "기념일",
+          "pos": "noun",
+          "example": "Happy anniversary!"
+        },
+        {
+          "word": "gift",
+          "definition": "something given voluntarily to someone",
+          "meaning_vi": "quà tặng",
+          "meaning_ko": "선물",
+          "pos": "noun",
+          "example": "I received many gifts."
+        },
+        {
+          "word": "fireworks",
+          "definition": "explosive devices producing colorful lights",
+          "meaning_vi": "pháo hoa",
+          "meaning_ko": "불꽃놀이",
+          "pos": "noun",
+          "example": "We watched the fireworks at midnight."
+        },
+        {
+          "word": "feast",
+          "definition": "a large meal for a celebration",
+          "meaning_vi": "bữa tiệc lớn",
+          "meaning_ko": "잔치",
+          "pos": "noun",
+          "example": "We had a feast on Thanksgiving."
+        },
+        {
+          "word": "countdown",
+          "definition": "counting backwards to an event",
+          "meaning_vi": "đếm ngược",
+          "meaning_ko": "카운트다운",
+          "pos": "noun",
+          "example": "Everyone joined the New Year countdown."
+        },
+        {
+          "word": "long weekend",
+          "definition": "a weekend extended by a holiday",
+          "meaning_vi": "cuối tuần dài",
+          "meaning_ko": "연휴",
+          "pos": "noun",
+          "example": "We traveled during the long weekend."
+        },
+        {
+          "word": "family gathering",
+          "definition": "relatives coming together",
+          "meaning_vi": "họp mặt gia đình",
+          "meaning_ko": "가족 모임",
+          "pos": "noun",
+          "example": "We have a family gathering on holidays."
+        },
+        {
+          "word": "public holiday",
+          "definition": "an official day off work",
+          "meaning_vi": "ngày lễ",
+          "meaning_ko": "공휴일",
+          "pos": "noun",
+          "example": "Monday is a public holiday."
+        },
+        {
+          "word": "cultural event",
+          "definition": "an event celebrating culture",
+          "meaning_vi": "sự kiện văn hóa",
+          "meaning_ko": "문화 행사",
+          "pos": "noun",
+          "example": "We attended a cultural event."
+        },
+        {
+          "word": "midnight",
+          "definition": "twelve o'clock at night",
+          "meaning_vi": "nửa đêm",
+          "meaning_ko": "자정",
+          "pos": "noun",
+          "example": "We stayed up until midnight."
+        },
+        {
+          "word": "custom",
+          "definition": "a traditional practice",
+          "meaning_vi": "phong tục",
+          "meaning_ko": "관습",
+          "pos": "noun",
+          "example": "Each country has its own customs."
+        },
+        {
+          "word": "parade",
+          "definition": "a public procession or march",
+          "meaning_vi": "diễu hành",
+          "meaning_ko": "퍼레이드",
+          "pos": "noun",
+          "example": "We watched the holiday parade."
+        },
+        {
+          "word": "exchange gifts",
+          "definition": "to give and receive presents",
+          "meaning_vi": "trao đổi quà",
+          "meaning_ko": "선물을 교환하다",
+          "pos": "phrasal verb",
+          "example": "We exchange gifts at Christmas."
+        },
+        {
+          "word": "seasonal",
+          "definition": "happening at a particular time of year",
+          "meaning_vi": "theo mùa",
+          "meaning_ko": "시즌의, 계절의",
+          "pos": "adjective",
+          "example": "I love seasonal holiday drinks."
+        },
+        {
+          "word": "spend time together",
+          "definition": "to be with others doing things",
+          "meaning_vi": "dành thời gian bên nhau",
+          "meaning_ko": "함께 시간을 보내다",
+          "pos": "phrase",
+          "example": "We spend time together during holidays."
+        },
+        {
+          "word": "look forward to",
+          "definition": "to feel excited about something",
+          "meaning_vi": "mong chờ",
+          "meaning_ko": "기대하다",
+          "pos": "phrasal verb",
+          "example": "I look forward to Lunar New Year."
+        },
+        {
+          "word": "New Year's resolution",
+          "definition": "a goal set for the new year",
+          "meaning_vi": "quyết tâm năm mới",
+          "meaning_ko": "새해 다짐",
+          "pos": "noun",
+          "example": "My resolution is to exercise more."
+        },
+        {
+          "word": "blessing",
+          "definition": "a wish of happiness or protection",
+          "meaning_vi": "phước lành, lời chúc",
+          "meaning_ko": "축복",
+          "pos": "noun",
+          "example": "I received many blessings."
+        },
+        {
+          "word": "time off",
+          "definition": "time away from work",
+          "meaning_vi": "ngày nghỉ",
+          "meaning_ko": "휴가, 쉬는 날",
+          "pos": "noun",
+          "example": "I need some time off to rest."
+        }
+      ]
+    }
+  }
+}

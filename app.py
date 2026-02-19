@@ -264,6 +264,16 @@ def register_blueprints(app):
     app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(questions_bp, url_prefix='/questions')
+    
+    # Import vocabulary blueprint (with error handling)
+    try:
+        from app.blueprints.vocabulary import vocabulary_bp
+        app.register_blueprint(vocabulary_bp, url_prefix='/api/vocabulary')
+        print("[OK] Vocabulary blueprint registered successfully")
+    except Exception as e:
+        print(f"[WARN] Failed to register vocabulary blueprint: {e}")
+        import traceback
+        traceback.print_exc()
 
 def create_celery(app=None):
     """Create Celery instance"""

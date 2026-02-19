@@ -394,3 +394,132 @@ class QuestionSession(db.Model):
             'round': current_round,
             'progress_percent': (seen_count / total_count * 100) if total_count > 0 else 0
         }
+
+
+class Vocabulary(db.Model):
+    """Vocabulary words for OPIc practice"""
+    __tablename__ = 'vocabulary'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    ipa = db.Column(db.String(200), nullable=True)  # IPA pronunciation
+    definition = db.Column(db.Text, nullable=True)
+    meaning_vi = db.Column(db.Text, nullable=True)  # Vietnamese translation
+    meaning_ko = db.Column(db.Text, nullable=True)  # Korean translation
+    part_of_speech = db.Column(db.String(50), nullable=True)  # noun, verb, adjective, etc.
+    example_sentence = db.Column(db.Text, nullable=True)
+    audio_url = db.Column(db.String(500), nullable=True)  # Pronunciation audio URL
+    image_url = db.Column(db.String(500), nullable=True)  # Optional image
+    topic = db.Column(db.String(100), nullable=True, index=True)  # Related OPIc topic
+    difficulty_level = db.Column(db.String(10), nullable=True)  # IM, IH, AL
+    source = db.Column(db.String(50), default='ipa-dict')  # Data source
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    updated_at = db.Column(db.DateTime, default=now_hanoi, onupdate=now_hanoi)
+    
+    # Relationships
+    user_vocab = db.relationship('UserVocabulary', backref='vocabulary', lazy='dynamic')
+    word_of_days = db.relationship('WordOfDay', backref='vocabulary', lazy='dynamic')
+    
+    def __repr__(self):
+        return f'<Vocabulary {self.word}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'word': self.word,
+            'ipa': self.ipa,
+            'definition': self.definition,
+            'meaning_vi': self.meaning_vi,
+            'meaning_ko': self.meaning_ko,
+            'part_of_speech': self.part_of_speech,
+            'example_sentence': self.example_sentence,
+            'audio_url': self.audio_url,
+            'image_url': self.image_url,
+            'topic': self.topic,
+            'difficulty_level': self.difficulty_level
+        }
+
+
+class UserVocabulary(db.Model):
+    """Track user's saved vocabulary and review progress"""
+    __tablename__ = 'user_vocabulary'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary.id'), nullable=False)
+    is_favorite = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default='new')  # new, learning, mastered
+    review_count = db.Column(db.Integer, default=0)
+    correct_count = db.Column(db.Integer, default=0)
+    next_review = db.Column(db.DateTime, nullable=True)  # Spaced repetition
+    last_viewed_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('vocabulary_list', lazy='dynamic'))
+    
+    # Unique constraint
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'vocabulary_id', name='unique_user_vocabulary'),
+        db.Index('idx_user_vocab_status', 'user_id', 'status'),
+    )
+    
+    def __repr__(self):
+        return f'<UserVocabulary User:{self.user_id} Word:{self.vocabulary_id}>'
+    
+    def to_dict(self, include_word=True):
+        data = {
+            'id': self.id,
+            'is_favorite': self.is_favorite,
+            'status': self.status,
+            'review_count': self.review_count,
+            'correct_count': self.correct_count,
+            'last_viewed_at': self.last_viewed_at.isoformat() if self.last_viewed_at else None
+        }
+        if include_word:
+            data['vocabulary'] = self.vocabulary.to_dict()
+        return data
+
+
+class WordOfDay(db.Model):
+    """Daily vocabulary word selection"""
+    __tablename__ = 'word_of_day'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False, unique=True, index=True)
+    image_url = db.Column(db.String(500), nullable=True)  # Featured image for the day
+    created_at = db.Column(db.DateTime, default=now_hanoi)
+    
+    def __repr__(self):
+        return f'<WordOfDay {self.date}: {self.vocabulary.word if self.vocabulary else "N/A"}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'date': self.date.isoformat(),
+            'image_url': self.image_url,
+            'vocabulary': self.vocabulary.to_dict() if self.vocabulary else None
+        }
+    
+    @staticmethod
+    def get_today():
+        """Get or create today's word of day"""
+        today = date.today()
+        wod = WordOfDay.query.filter_by(date=today).first()
+        if wod:
+            return wod
+        
+        # Select a random word that hasn't been word of day recently
+        from sqlalchemy.sql.expression import func
+        recent_ids = [w.vocabulary_id for w in WordOfDay.query.order_by(WordOfDay.date.desc()).limit(30).all()]
+        vocab = Vocabulary.query.filter(
+            ~Vocabulary.id.in_(recent_ids) if recent_ids else True
+        ).order_by(func.random()).first()
+        
+        if vocab:
+            wod = WordOfDay(vocabulary_id=vocab.id, date=today)
+            db.session.add(wod)
+            db.session.commit()
+            return wod
+        return None
